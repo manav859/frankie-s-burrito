@@ -1,0 +1,281 @@
+{
+  "content": {
+    "announcement": "Fresh breakfast burritos made daily in Agoura Hills. Order online for pickup.",
+    "siteName": "Frankie's Breakfast Burritos",
+    "siteTagline": "",
+    "siteLogo": "/wp-content/uploads/2026/03/WhatsApp_Image_2026-03-19_at_23.18.30-removebg-preview-1.png",
+    "siteLogoAlt": "Frankie's Breakfast Burritos",
+    "hero": {
+      "title": "FRANKIE'S\r\nBREAKFAST BURRITOS",
+      "backgroundImage": "/wp-content/uploads/2026/03/home.jpeg",
+      "mobileImage": "/wp-content/uploads/2026/03/home.jpeg",
+      "primaryCta": {
+        "label": "Order Online",
+        "href": "https://frankiesbreakfastburritos.toast.site/",
+        "variant": "primary"
+      },
+      "secondaryCta": {
+        "label": "View Menu",
+        "href": "#menu",
+        "variant": "secondary"
+      }
+    },
+    "navigation": [
+      {
+        "label": "Home",
+        "href": "#top"
+      },
+      {
+        "label": "Menu",
+        "href": "#menu"
+      },
+      {
+        "label": "Featured",
+        "href": "#featured"
+      },
+      {
+        "label": "About",
+        "href": "#about"
+      },
+      {
+        "label": "Location",
+        "href": "#location"
+      }
+    ],
+    "featuredIntro": {
+      "eyebrow": "FEATURED BURRITOS",
+      "title": "The burritos people will open the site for.",
+      "cta": {
+        "label": "See Full Menu",
+        "href": "#menu",
+        "variant": "primary"
+      }
+    },
+    "featuredItems": [],
+    "reasons": {
+      "eyebrow": "WHY PEOPLE LOVE FRANKIE'S",
+      "title": "Built like a neighborhood favorite, presented like a premium fast-casual brand.",
+      "body": "Every highlight below reinforces appetite, trust, and speed so the site feels handcrafted without slowing down the order path.",
+      "items": [
+        {
+          "number": "01",
+          "title": "Fresh ingredients, layered with intention",
+          "body": "Cage-free eggs, premium proteins, bright salsas, and queso-driven richness create a strong first impression."
+        },
+        {
+          "number": "02",
+          "title": "Fast pickup without boring food",
+          "body": "The site prioritizes order buttons, visible prices, and clear menu browsing so the path to checkout stays short."
+        },
+        {
+          "number": "03",
+          "title": "Fast pickup without boring food",
+          "body": "The site prioritizes order buttons, visible prices, and clear menu browsing so the path to checkout stays short."
+        },
+        {
+          "number": "04",
+          "title": "Fast pickup without boring food",
+          "body": "The site prioritizes order buttons, visible prices, and clear menu browsing so the path to checkout stays short."
+        }
+      ]
+    },
+    "menu": {
+      "eyebrow": "FULL MENU",
+      "title": "The full spread, presented like a house menu board.",
+      "body": "Menu sections are powered from Menu Categories and Menu Items in WordPress.",
+      "note": "Desktop uses the richer menu board layout. Mobile uses stacked sections.",
+      "categoryFocusTitle": "Category focus",
+      "categoryFocusBody": "Browse one category at a time for a cleaner, more premium menu interaction without clutter.",
+      "itemCtaLabel": "Order this burrito",
+      "image": "/wp-content/uploads/2026/03/Gemini_Generated_Image_iuxlswiuxlswiuxl.png",
+      "imageAlt": "Frankie's Breakfast Burritos menu",
+      "ctas": [],
+      "sections": [],
+      "footerNote": "Open live ordering for modifiers and full details.",
+      "footerCta": {
+        "label": "Order with Toast",
+        "href": "#location",
+        "variant": "primary"
+      }
+    },
+    "about": {
+      "eyebrow": "ABOUT FRANKIE'S",
+      "title": "A neighborhood breakfast burrito spot with enough craft to feel worth the detour.",
+      "paragraphs": [
+        "Use this section to tell the brand story in two short paragraphs.",
+        "Keep the copy specific, local, and operationally credible."
+      ],
+      "image": "/wp-content/uploads/2026/03/home.jpeg",
+      "facts": [
+        {
+          "value": "Open daily",
+          "label": "8 AM to 3 PM"
+        },
+        {
+          "value": "Agoura Hills",
+          "label": "Roadside Drive pickup"
+        }
+      ]
+    },
+    "proof": {
+      "eyebrow": "SOCIAL PROOF",
+      "title": "Trust cues that reassure people before they commit to breakfast.",
+      "body": "Testimonials are managed as their own content type so they can be reviewed independently.",
+      "backgroundImage": "/wp-content/uploads/2026/03/home.jpeg",
+      "items": [
+        {
+          "title": "Priya K.",
+          "body": "I didn’t think a breakfast burrito could taste this good. Everything is fresh, perfectly seasoned, and wrapped just right. Frankie’s is my new go-to spot every weekend",
+          "source": ""
+        },
+        {
+          "title": "Jason M",
+          "body": "Frankie’s Breakfast Burrito completely changed my mornings. The flavors are insane, the portions are huge, and it actually keeps me full till lunch. I’m officially hooked!",
+          "source": ""
+        },
+        {
+          "title": "mark specter",
+          "body": "\"The flavors are simple, pure, and balanced... the burrito is still light feeling and not greasy.\"",
+          "source": ""
+        }
+      ]
+    },
+    "location": {
+      "eyebrow": "LOCATION, HOURS, AND ORDERING",
+      "title": "Easy to find. Easy to order. Easy to come back to.",
+      "name": "Frankie's Breakfast Burritos",
+      "address": "28708 Roadside Drive",
+      "city": "Agoura Hills",
+      "region": "CA",
+      "postalCode": "91301",
+      "country": "US",
+      "phone": "+18183181034",
+      "hours": "Open daily from 8:00 AM to 3:00 PM",
+      "openingHoursSchema": [
+        "Mo-Su 08:00-15:00"
+      ],
+      "ordering": "Pickup, delivery, catering, and gift cards all route through Toast.",
+      "orderUrl": "",
+      "primaryCta": {
+        "label": "Order Online",
+        "href": "",
+        "variant": "primary"
+      },
+      "secondaryCta": {
+        "label": "Call Store",
+        "href": "tel:+18183181034",
+        "variant": "secondary"
+      },
+      "mapTitle": "Map and storefront panel",
+      "mapBody": "Responsive embed area with parking, pickup, and landmark context.",
+      "mapEmbedUrl": "https://www.google.com/maps?q=Frankie%27s%20Breakfast%20Burritos%2C%2028708%20Roadside%20Drive%2C%20Agoura%20Hills%2C%20CA%2C%2091301%2C%20US&output=embed",
+      "cateringText": "Need breakfast for a crew? Catering packs feed up to 10 with 48 hours notice.",
+      "cateringCta": {
+        "label": "Explore Catering",
+        "href": "",
+        "variant": "light"
+      }
+    },
+    "finalCta": {
+      "eyebrow": "READY TO ORDER?",
+      "title": "Start with a signature burrito. Add the tots. Make the morning better.",
+      "body": "Use this final section to push directly into the live ordering flow.",
+      "primaryCta": {
+        "label": "Order Now",
+        "href": "",
+        "variant": "light"
+      },
+      "secondaryCta": {
+        "label": "View Menu",
+        "href": "#menu",
+        "variant": "secondary"
+      }
+    },
+    "footer": {
+      "navigateHeading": "Navigate",
+      "visitHeading": "Visit",
+      "orderHeading": "Order and Social",
+      "description": "Breakfast burritos, frescas, and loaded sides served daily in Agoura Hills.",
+      "visit": [
+        "28708 Roadside Drive",
+        "Agoura Hills, CA 91301",
+        "Open daily",
+        "8:00 AM - 3:00 PM"
+      ],
+      "order": [
+        "Toast online ordering",
+        "Gift cards",
+        "Delivery",
+        "Catering",
+        "Instagram"
+      ]
+    }
+  },
+  "seo": {
+    "title": "Frankie's Breakfast Burritos | Agoura Hills Breakfast Burritos",
+    "description": "Fire-grilled breakfast burritos in Agoura Hills with pickup, catering, and online ordering.",
+    "canonicalUrl": "/",
+    "ogImage": "",
+    "keywords": "breakfast burritos agoura hills, frankies breakfast burritos, breakfast near me",
+    "noindex": false,
+    "twitterCard": "summary_large_image",
+    "schema": {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "/#organization",
+          "name": "Frankie's Breakfast Burritos",
+          "url": "/",
+          "logo": "/wp-content/uploads/2026/03/WhatsApp_Image_2026-03-19_at_23.18.30-removebg-preview-1.png",
+          "sameAs": []
+        },
+        {
+          "@type": "WebSite",
+          "@id": "/#website",
+          "url": "/",
+          "name": "Frankie's Breakfast Burritos",
+          "description": "",
+          "publisher": {
+            "@id": "/#organization"
+          }
+        },
+        {
+          "@type": "Restaurant",
+          "@id": "/#localbusiness",
+          "name": "Frankie's Breakfast Burritos",
+          "url": "/",
+          "image": [
+            "/wp-content/uploads/2026/03/home.jpeg",
+            "/wp-content/uploads/2026/03/WhatsApp_Image_2026-03-19_at_23.18.30-removebg-preview-1.png"
+          ],
+          "telephone": "+18183181034",
+          "servesCuisine": [
+            "Breakfast",
+            "Burritos",
+            "Mexican-American"
+          ],
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "28708 Roadside Drive",
+            "addressLocality": "Agoura Hills",
+            "addressRegion": "CA",
+            "postalCode": "91301",
+            "addressCountry": "US"
+          },
+          "openingHours": [
+            "Mo-Su 08:00-15:00"
+          ],
+          "acceptsReservations": false,
+          "menu": "/#menu",
+          "sameAs": []
+        }
+      ]
+    }
+  },
+  "integration": {
+    "gaMeasurementId": ""
+  },
+  "generatedAt": "2026-03-22 08:40:27",
+  "preview": false
+}

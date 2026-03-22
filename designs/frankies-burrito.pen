@@ -1,0 +1,4226 @@
+{
+  "version": "2.9",
+  "children": [
+    {
+      "type": "frame",
+      "id": "Qf5OC",
+      "x": 900,
+      "y": 0,
+      "name": "Frankie's Breakfast Burritos - Desktop Homepage",
+      "width": 1440,
+      "fill": "#F6E8D3",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "G2hKx",
+          "name": "Announcement Bar",
+          "width": "fill_container",
+          "fill": "#6A2D1F",
+          "padding": [
+            12,
+            64
+          ],
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "KELnc",
+              "name": "announceText",
+              "fill": "#FFF8EF",
+              "content": "Fresh breakfast burritos made daily in Agoura Hills. Order online for pickup.",
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 15,
+              "fontWeight": "500"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "h7a5C",
+          "name": "Hero",
+          "metadata": {
+            "type": "unsplash",
+            "username": "thejourneyofframes",
+            "link": "https://unsplash.com/@thejourneyofframes",
+            "author": "Khanh Nguyen"
+          },
+          "width": "fill_container",
+          "height": 760,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "https://images.unsplash.com/photo-1740362867098-f05db24f6bf9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzQxMDk3OTF8&ixlib=rb-4.1.0&q=80&w=1080",
+            "mode": "fill"
+          },
+          "layout": "vertical",
+          "gap": 110,
+          "padding": [
+            0,
+            64,
+            56,
+            64
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "2rPu4",
+              "name": "Header",
+              "width": "fill_container",
+              "fill": "#FFFFFF00",
+              "padding": [
+                24,
+                64
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "GhL9s",
+                  "name": "brandWrap",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "QI4xU",
+                      "name": "brandKicker",
+                      "fill": "#FFFFFF",
+                      "content": "Frankie's Breakfast Burritos",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 18,
+                      "fontWeight": "700",
+                      "letterSpacing": -0.4
+                    },
+                    {
+                      "type": "text",
+                      "id": "SMq05",
+                      "name": "brandSub",
+                      "fill": "#F7EBD7",
+                      "content": "Fire-grilled breakfast burritos with big morning energy",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "B7rDU",
+                  "name": "nav",
+                  "gap": 24,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "YcmwV",
+                      "name": "navHome",
+                      "fill": "#FFFFFF",
+                      "content": "Home",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 15,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "7zMjn",
+                      "name": "navMenu",
+                      "fill": "#FFFFFF",
+                      "content": "Menu",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 15,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "TCJRs",
+                      "name": "navFeatured",
+                      "fill": "#FFFFFF",
+                      "content": "Featured",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 15,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "OnTt2",
+                      "name": "navAbout",
+                      "fill": "#FFFFFF",
+                      "content": "About",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 15,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "IAA0i",
+                      "name": "navLocation",
+                      "fill": "#FFFFFF",
+                      "content": "Location",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 15,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "vJJQU",
+                      "name": "orderBtn",
+                      "fill": "#B9312F",
+                      "cornerRadius": 999,
+                      "padding": [
+                        16,
+                        24
+                      ],
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "kAflN",
+                          "name": "orderBtnText",
+                          "fill": "#FFFFFF",
+                          "content": "Order Online",
+                          "fontFamily": "IBM Plex Sans",
+                          "fontSize": 16,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "zd441",
+              "name": "heroLeft",
+              "width": 820,
+              "fill": "#FFFFFF00",
+              "cornerRadius": 28,
+              "layout": "vertical",
+              "gap": 24,
+              "padding": 24,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Z0vnY",
+                  "name": "heroHeadline",
+                  "fill": "#FFF8EF",
+                  "textGrowth": "fixed-width",
+                  "width": 820,
+                  "content": "FRANKIES BREAKFAST BURRITOS",
+                  "lineHeight": 0.98,
+                  "textAlign": "center",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 72,
+                  "fontWeight": "700",
+                  "letterSpacing": -1.2
+                },
+                {
+                  "type": "frame",
+                  "id": "JeJU9",
+                  "name": "heroButtons",
+                  "gap": 16,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "4xbm3",
+                      "name": "heroPrimary",
+                      "fill": "#B9312F",
+                      "cornerRadius": 999,
+                      "padding": [
+                        18,
+                        28
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "XeOiw",
+                          "name": "heroPrimaryText",
+                          "fill": "#FFFFFF",
+                          "content": "Order Online",
+                          "fontFamily": "IBM Plex Sans",
+                          "fontSize": 17,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "LeN5g",
+                      "name": "heroSecondary",
+                      "fill": "#FAF4E8",
+                      "cornerRadius": 999,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "#B9312F"
+                      },
+                      "padding": [
+                        18,
+                        28
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Udz1D",
+                          "name": "heroSecondaryText",
+                          "fill": "#B9312F",
+                          "content": "View Menu",
+                          "fontFamily": "IBM Plex Sans",
+                          "fontSize": 17,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "FszfA",
+          "name": "Featured Burritos",
+          "width": "fill_container",
+          "fill": "#FBF2E4",
+          "layout": "vertical",
+          "gap": 32,
+          "padding": [
+            96,
+            64
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "Df3kw",
+              "name": "featIntro",
+              "width": "fill_container",
+              "gap": 24,
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "COJXO",
+                  "name": "featCopy",
+                  "width": 760,
+                  "layout": "vertical",
+                  "gap": 12,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "JwLkL",
+                      "name": "featEyebrow",
+                      "fill": "#B9312F",
+                      "content": "FEATURED BURRITOS",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 14,
+                      "fontWeight": "600",
+                      "letterSpacing": 1.1
+                    },
+                    {
+                      "type": "text",
+                      "id": "9iDO2",
+                      "name": "featTitle",
+                      "fill": "#1F1F1F",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "The burritos people will open the site for.",
+                      "lineHeight": 1.08,
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 46,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "yNBZ2",
+                  "name": "featAction",
+                  "fill": "#D96B27",
+                  "cornerRadius": 999,
+                  "padding": [
+                    16,
+                    24
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "UIQOR",
+                      "name": "featActionText",
+                      "fill": "#FFFFFF",
+                      "content": "See Full Menu",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "erx9C",
+              "name": "featGrid",
+              "width": "fill_container",
+              "gap": 24,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "LXLJx",
+                  "name": "card1",
+                  "width": "fill_container",
+                  "fill": "#FFF9F1",
+                  "cornerRadius": 24,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#C9A27C"
+                  },
+                  "layout": "vertical",
+                  "gap": 18,
+                  "padding": [
+                    18,
+                    18,
+                    20,
+                    18
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "Dhz5h",
+                      "name": "img1",
+                      "metadata": {
+                        "type": "unsplash",
+                        "username": "devinnn_b",
+                        "link": "https://unsplash.com/@devinnn_b",
+                        "author": "Devin Berko"
+                      },
+                      "width": "fill_container",
+                      "height": 240,
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "https://images.unsplash.com/photo-1597960194573-feae92871ee4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzQxMDc2MTF8&ixlib=rb-4.1.0&q=80&w=1080",
+                        "mode": "fill"
+                      },
+                      "cornerRadius": 20
+                    },
+                    {
+                      "type": "text",
+                      "id": "lTP1U",
+                      "name": "name1",
+                      "fill": "#1F1F1F",
+                      "content": "The Sunrise",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 26,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "6MCmj",
+                      "name": "desc1",
+                      "fill": "#5A4D42",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Cage-free soft scrambled eggs, smoked Niman Ranch bacon, crack tater tots, cheddar queso, and chipotle aioli in a fire-grilled flour tortilla.",
+                      "lineHeight": 1.55,
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "tkoZA",
+                      "name": "price1",
+                      "fill": "#B9312F",
+                      "content": "$15.50",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 22,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "YOTi8",
+                      "name": "btn1",
+                      "width": "fill_container",
+                      "fill": "#F7EBD7",
+                      "cornerRadius": 18,
+                      "padding": [
+                        16,
+                        18
+                      ],
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "xnuBn",
+                          "name": "btn1Text",
+                          "fill": "#1F1F1F",
+                          "content": "Order The Sunrise",
+                          "fontFamily": "IBM Plex Sans",
+                          "fontSize": 15,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "5gXwO",
+                  "name": "card2",
+                  "width": "fill_container",
+                  "fill": "#FFF9F1",
+                  "cornerRadius": 24,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#C9A27C"
+                  },
+                  "layout": "vertical",
+                  "gap": 18,
+                  "padding": [
+                    18,
+                    18,
+                    20,
+                    18
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "osGbV",
+                      "name": "img2",
+                      "metadata": {
+                        "type": "unsplash",
+                        "username": "aka_opex",
+                        "link": "https://unsplash.com/@aka_opex",
+                        "author": "Mitya Ivanov"
+                      },
+                      "width": "fill_container",
+                      "height": 240,
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "https://images.unsplash.com/photo-1585763525599-f57c14522ca1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzQxMDc2MTJ8&ixlib=rb-4.1.0&q=80&w=1080",
+                        "mode": "fill"
+                      },
+                      "cornerRadius": 20
+                    },
+                    {
+                      "type": "text",
+                      "id": "DyHNo",
+                      "name": "name2",
+                      "fill": "#1F1F1F",
+                      "content": "The Piggyback Delight",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 26,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "BijSv",
+                      "name": "desc2",
+                      "fill": "#5A4D42",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Soft eggs, confit pulled pork, crispy jalapeños, crack tater tots, white cheddar queso, and salsa verde for a rich-savory bite with lift.",
+                      "lineHeight": 1.55,
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "tvxgc",
+                      "name": "price2",
+                      "fill": "#B9312F",
+                      "content": "$16.50",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 22,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "DxXzG",
+                      "name": "btn2",
+                      "width": "fill_container",
+                      "fill": "#F7EBD7",
+                      "cornerRadius": 18,
+                      "padding": [
+                        16,
+                        18
+                      ],
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "9HrYw",
+                          "name": "btn2Text",
+                          "fill": "#1F1F1F",
+                          "content": "Order Piggyback",
+                          "fontFamily": "IBM Plex Sans",
+                          "fontSize": 15,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "pNmjm",
+                  "name": "card3",
+                  "width": "fill_container",
+                  "fill": "#3B2A21",
+                  "cornerRadius": 24,
+                  "layout": "vertical",
+                  "gap": 18,
+                  "padding": [
+                    18,
+                    18,
+                    20,
+                    18
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "IMQsb",
+                      "name": "img3",
+                      "metadata": {
+                        "type": "unsplash",
+                        "username": "roniherdyanzah",
+                        "link": "https://unsplash.com/@roniherdyanzah",
+                        "author": "Roni Herdyanzah"
+                      },
+                      "width": "fill_container",
+                      "height": 240,
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "https://images.unsplash.com/photo-1571808569431-f1ce259a7f77?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzQxMDc2MTN8&ixlib=rb-4.1.0&q=80&w=1080",
+                        "mode": "fill"
+                      },
+                      "cornerRadius": 20
+                    },
+                    {
+                      "type": "text",
+                      "id": "PnMpQ",
+                      "name": "name3",
+                      "fill": "#F8EBDD",
+                      "content": "The Sol Verde",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 26,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "QJa7b",
+                      "name": "desc3",
+                      "fill": "#E6D2BE",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Vegan chorizo, turmeric scramble, crispy potatoes, cashew queso, avocado, chile aioli, salsa, and cilantro in a vegan tortilla that still eats indulgent.",
+                      "lineHeight": 1.55,
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "JAmH5",
+                      "name": "price3",
+                      "fill": "#D9A21B",
+                      "content": "$18.50",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 22,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "ml3pz",
+                      "name": "btn3",
+                      "width": "fill_container",
+                      "fill": "#F7EBD7",
+                      "cornerRadius": 18,
+                      "padding": [
+                        16,
+                        18
+                      ],
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "tWEYN",
+                          "name": "btn3Text",
+                          "fill": "#1F1F1F",
+                          "content": "Order Sol Verde",
+                          "fontFamily": "IBM Plex Sans",
+                          "fontSize": 15,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "BPmnx",
+          "name": "Why People Love Frankie's",
+          "width": "fill_container",
+          "fill": "#EED7BA",
+          "layout": "vertical",
+          "gap": 32,
+          "padding": [
+            96,
+            64
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "yZfqK",
+              "name": "whyIntro",
+              "width": 760,
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Bv89N",
+                  "name": "whyEyebrow",
+                  "fill": "#B9312F",
+                  "content": "WHY PEOPLE LOVE FRANKIE'S",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 14,
+                  "fontWeight": "600",
+                  "letterSpacing": 1.1
+                },
+                {
+                  "type": "text",
+                  "id": "GrKzl",
+                  "name": "whyTitle",
+                  "fill": "#1F1F1F",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Built like a neighborhood favorite, presented like a premium fast-casual brand.",
+                  "lineHeight": 1.1,
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 44,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "pN2TL",
+                  "name": "whyBody",
+                  "fill": "#5A4D42",
+                  "textGrowth": "fixed-width",
+                  "width": 640,
+                  "content": "Every highlight below reinforces appetite, trust, and speed so the site feels handcrafted without slowing down the order path.",
+                  "lineHeight": 1.6,
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 18,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "lbrvL",
+              "name": "whyGrid",
+              "width": "fill_container",
+              "gap": 20,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "pvsB6",
+                  "name": "why1",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 24,
+                  "layout": "vertical",
+                  "gap": 14,
+                  "padding": [
+                    24,
+                    22
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "lbiSB",
+                      "name": "why1Num",
+                      "fill": "#D96B27",
+                      "content": "01",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Z2HnZ",
+                      "name": "why1Title",
+                      "fill": "#1F1F1F",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Fresh ingredients, layered with intention",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 24,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "GgcGO",
+                      "name": "why1Body",
+                      "fill": "#5A4D42",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Cage-free eggs, premium proteins, bright salsas, and queso-driven richness create a strong first impression before the first bite even lands.",
+                      "lineHeight": 1.6,
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "AlICD",
+                  "name": "why2",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 24,
+                  "layout": "vertical",
+                  "gap": 14,
+                  "padding": [
+                    24,
+                    22
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Jcy9o",
+                      "name": "why2Num",
+                      "fill": "#D96B27",
+                      "content": "02",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "IvBs2",
+                      "name": "why2Title",
+                      "fill": "#1F1F1F",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Fast pickup without boring food",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 24,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "cTSSC",
+                      "name": "why2Body",
+                      "fill": "#5A4D42",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "The UX prioritizes order buttons, visible prices, and clean menu browsing so the path from homepage to checkout stays friction-light.",
+                      "lineHeight": 1.6,
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "4lbLD",
+                  "name": "why3",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 24,
+                  "layout": "vertical",
+                  "gap": 14,
+                  "padding": [
+                    24,
+                    22
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "EzFLg",
+                      "name": "why3Num",
+                      "fill": "#D96B27",
+                      "content": "03",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "FmXfW",
+                      "name": "why3Title",
+                      "fill": "#1F1F1F",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Comfort food with personality",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 24,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "rfjR9",
+                      "name": "why3Body",
+                      "fill": "#5A4D42",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Names like The Piggyback Delight and A-Town Charger make the menu memorable while still feeling grounded in bold, serious flavor.",
+                      "lineHeight": 1.6,
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "BZViw",
+                  "name": "why4",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 24,
+                  "layout": "vertical",
+                  "gap": 14,
+                  "padding": [
+                    24,
+                    22
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "UrGKC",
+                      "name": "why4Num",
+                      "fill": "#D96B27",
+                      "content": "04",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "bAj94",
+                      "name": "why4Title",
+                      "fill": "#1F1F1F",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Vegan-friendly and crowd-friendly",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 24,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "jj1u2",
+                      "name": "why4Body",
+                      "fill": "#5A4D42",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "House-made vegan and gluten-free tortilla notes, cashew queso, and flexible formats widen appeal without diluting the brand’s main crave factor.",
+                      "lineHeight": 1.6,
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "ZrrNA",
+          "name": "Full Menu",
+          "width": "fill_container",
+          "fill": "#F6E8D3",
+          "layout": "vertical",
+          "gap": 32,
+          "padding": [
+            96,
+            64
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "7i2sG",
+              "name": "menuShowcase",
+              "width": "fill_container",
+              "gap": 28,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "wD6Ha",
+                  "name": "menuInfo",
+                  "width": 360,
+                  "fill": "#F3E1C9",
+                  "cornerRadius": 28,
+                  "layout": "vertical",
+                  "gap": 16,
+                  "padding": [
+                    28,
+                    24
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "NSuBr",
+                      "name": "menuInfoEyebrow",
+                      "fill": "#B9312F",
+                      "content": "FULL MENU",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 14,
+                      "fontWeight": "600",
+                      "letterSpacing": 1.1
+                    },
+                    {
+                      "type": "text",
+                      "id": "VTqLc",
+                      "name": "menuInfoTitle",
+                      "fill": "#1F1F1F",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "The full spread, presented like a house menu board.",
+                      "lineHeight": 1.08,
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 38,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "hoRzb",
+                      "name": "menuInfoBody",
+                      "fill": "#5A4D42",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Instead of a long category rail, the menu now reads like an in-store board. The left side frames the story and ordering cues, while the right side shows the complete menu in one premium visual panel.",
+                      "lineHeight": 1.6,
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 17,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "YYgZ4",
+                      "name": "menuInfoNote",
+                      "fill": "#6A2D1F",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Best for desktop browsing. Mobile keeps the easier accordion version.",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "6Gon3",
+                      "name": "stickerRow",
+                      "gap": 14,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "ciwf4",
+                          "name": "leftSun",
+                          "width": 52,
+                          "height": 52,
+                          "fill": "#D9A21B",
+                          "cornerRadius": 999,
+                          "layout": "vertical",
+                          "padding": 10,
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "HjOhU",
+                              "name": "leftSunCore",
+                              "fill": "#FFF4D9",
+                              "width": 16,
+                              "height": 16
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "RdIFQ",
+                          "name": "leftCactus",
+                          "width": 46,
+                          "height": 66,
+                          "layout": "none",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "nimFD",
+                              "x": 16,
+                              "y": 14,
+                              "name": "leftCactusStem",
+                              "width": 14,
+                              "height": 42,
+                              "fill": "#3D6B35",
+                              "cornerRadius": 12
+                            },
+                            {
+                              "type": "frame",
+                              "id": "ga7uI",
+                              "x": 4,
+                              "y": 28,
+                              "name": "leftCactusArm1",
+                              "width": 12,
+                              "height": 10,
+                              "fill": "#3D6B35",
+                              "cornerRadius": 10
+                            },
+                            {
+                              "type": "frame",
+                              "id": "mOO31",
+                              "x": 30,
+                              "y": 22,
+                              "name": "leftCactusArm2",
+                              "width": 12,
+                              "height": 10,
+                              "fill": "#3D6B35",
+                              "cornerRadius": 10
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "h8jPG",
+                  "name": "menuPoster",
+                  "width": "fill_container",
+                  "fill": "#FFF9F1",
+                  "cornerRadius": 30,
+                  "layout": "vertical",
+                  "gap": 18,
+                  "padding": 30,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "YC9kf",
+                      "name": "posterTop",
+                      "width": "fill_container",
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "WjEvN",
+                          "name": "posterBrand",
+                          "layout": "vertical",
+                          "gap": 4,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "h0gyg",
+                              "name": "posterBrandName",
+                              "fill": "#1F1F1F",
+                              "content": "Frankies Breakfast Burritos",
+                              "fontFamily": "IBM Plex Sans",
+                              "fontSize": 28,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "rCuQR",
+                              "name": "posterBrandSub",
+                              "fill": "#6A2D1F",
+                              "content": "Agoura Hills menu board",
+                              "fontFamily": "IBM Plex Sans",
+                              "fontSize": 14,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "pjtX8",
+                          "name": "posterBadge",
+                          "fill": "#F3E1C9",
+                          "cornerRadius": 999,
+                          "gap": 8,
+                          "padding": [
+                            10,
+                            12
+                          ],
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "5DAXw",
+                              "name": "posterBadge1",
+                              "width": 22,
+                              "height": 22,
+                              "fill": "#B9312F",
+                              "cornerRadius": 7,
+                              "layout": "none"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "PUZHh",
+                              "name": "posterBadge2",
+                              "width": 22,
+                              "height": 22,
+                              "fill": "#D96B27",
+                              "cornerRadius": 7,
+                              "layout": "none"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "Uj8TV",
+                              "name": "posterBadge3",
+                              "width": 22,
+                              "height": 22,
+                              "fill": "#D9A21B",
+                              "cornerRadius": 7,
+                              "layout": "none"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "DlOIB",
+                              "name": "posterBadge4",
+                              "width": 22,
+                              "height": 22,
+                              "fill": "#3D6B35",
+                              "cornerRadius": 7,
+                              "layout": "none"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "qhZWU",
+                      "name": "posterColumns",
+                      "width": "fill_container",
+                      "gap": 24,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "wWICA",
+                          "name": "col1",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 18,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "SVEBN",
+                              "name": "col1Head",
+                              "fill": "#1F1F1F",
+                              "content": "Breakfast and More",
+                              "fontFamily": "IBM Plex Sans",
+                              "fontSize": 22,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "0p8ii",
+                              "name": "col1Line1",
+                              "fill": "#6A2D1F",
+                              "content": "The Sunrise - 15.50",
+                              "fontFamily": "IBM Plex Sans",
+                              "fontSize": 15,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "WeLYP",
+                              "name": "col1Line2",
+                              "fill": "#5A4D42",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Eggs, bacon, crack tots, cheddar queso, chipotle aioli.",
+                              "fontFamily": "IBM Plex Sans",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "z7PPP",
+                              "name": "col1Line3",
+                              "fill": "#6A2D1F",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "The Southwestern Supreme - 17.50",
+                              "fontFamily": "IBM Plex Sans",
+                              "fontSize": 15,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "Cxh63",
+                              "name": "col1Line4",
+                              "fill": "#5A4D42",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Eggs, chorizo, pepper jack queso, crispy tots, avocado.",
+                              "fontFamily": "IBM Plex Sans",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "FNI7C",
+                              "name": "col1Line5",
+                              "fill": "#6A2D1F",
+                              "content": "The Sol Verde - 18.50",
+                              "fontFamily": "IBM Plex Sans",
+                              "fontSize": 15,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "4Ohjs",
+                              "name": "col1Line6",
+                              "fill": "#5A4D42",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Vegan chorizo, turmeric scramble, crispy potatoes, cashew queso.",
+                              "fontFamily": "IBM Plex Sans",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "1VIkg",
+                              "name": "col1Line7",
+                              "fill": "#6A2D1F",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "The Piggyback Delight - 16.50",
+                              "fontFamily": "IBM Plex Sans",
+                              "fontSize": 15,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "PyODB",
+                              "name": "col1Line8",
+                              "fill": "#5A4D42",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Eggs, pulled pork, crispy jalapenos, white cheddar queso.",
+                              "fontFamily": "IBM Plex Sans",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "yqGtH",
+                          "name": "col2",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 18,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "cVWeX",
+                              "name": "col2Head",
+                              "fill": "#1F1F1F",
+                              "content": "Lunch and More",
+                              "fontFamily": "IBM Plex Sans",
+                              "fontSize": 22,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "jeyRb",
+                              "name": "col2Line1",
+                              "fill": "#6A2D1F",
+                              "content": "SW Supreme - 17.50",
+                              "fontFamily": "IBM Plex Sans",
+                              "fontSize": 15,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "y7V1M",
+                              "name": "col2Line2",
+                              "fill": "#5A4D42",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Chorizo, rice and beans, pepper jack queso, avocado salsa.",
+                              "fontFamily": "IBM Plex Sans",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "2Qdhq",
+                              "name": "col2Line3",
+                              "fill": "#6A2D1F",
+                              "content": "The Kanan Dume - 16.50",
+                              "fontFamily": "IBM Plex Sans",
+                              "fontSize": 15,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "rjxYr",
+                              "name": "col2Line4",
+                              "fill": "#5A4D42",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Pulled pork, rice, beans, cheddar queso, salsa verde.",
+                              "fontFamily": "IBM Plex Sans",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "Zaw7K",
+                              "name": "col2Line5",
+                              "fill": "#6A2D1F",
+                              "content": "The Hawk - 19.50",
+                              "fontFamily": "IBM Plex Sans",
+                              "fontSize": 15,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "dXETt",
+                              "name": "col2Line6",
+                              "fill": "#5A4D42",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Grass-fed flank steak, onions, rice, beans, cheddar queso.",
+                              "fontFamily": "IBM Plex Sans",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "J75pJ",
+                              "name": "col2Line7",
+                              "fill": "#6A2D1F",
+                              "content": "EL Grande - 21.50",
+                              "fontFamily": "IBM Plex Sans",
+                              "fontSize": 15,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "vyS0N",
+                              "name": "col2Line8",
+                              "fill": "#5A4D42",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Carne asada, chicken tinga, rice and beans, guacamole.",
+                              "fontFamily": "IBM Plex Sans",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "TEcG4",
+                          "name": "col3",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 18,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "6258f",
+                              "name": "col3Head",
+                              "fill": "#1F1F1F",
+                              "content": "Drinks, Sides, Desserts",
+                              "fontFamily": "IBM Plex Sans",
+                              "fontSize": 22,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "pWDFL",
+                              "name": "col3Line1",
+                              "fill": "#5A4D42",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Horchata, Jamaica, Watermelon, Pineapple Mango - 7.50",
+                              "fontFamily": "IBM Plex Sans",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "borUE",
+                              "name": "col3Line2",
+                              "fill": "#5A4D42",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Fresh Orange Juice - 6.00 | Mexican Coke - 4.00",
+                              "fontFamily": "IBM Plex Sans",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "AyowA",
+                              "name": "col3Line3",
+                              "fill": "#6A2D1F",
+                              "content": "Chips and Salsa - 4.50",
+                              "fontFamily": "IBM Plex Sans",
+                              "fontSize": 15,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "lBOzx",
+                              "name": "col3Line4",
+                              "fill": "#5A4D42",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Chips and Queso - 6.00 | Chips and Guacamole - 7.50",
+                              "fontFamily": "IBM Plex Sans",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "fLNfa",
+                              "name": "col3Line5",
+                              "fill": "#5A4D42",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Cracked Tots - 6.50 | Black Truffle Tots - 9.00",
+                              "fontFamily": "IBM Plex Sans",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "gIzi1",
+                              "name": "col3Line6",
+                              "fill": "#6A2D1F",
+                              "content": "Loaded Cracked Tots - 15.00",
+                              "fontFamily": "IBM Plex Sans",
+                              "fontSize": 15,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "xTQDC",
+                              "name": "col3Line7",
+                              "fill": "#5A4D42",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Cookies from 4.50 | Cinnamon Rolls from 8.00",
+                              "fontFamily": "IBM Plex Sans",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "MFr8w",
+                      "name": "posterBottom",
+                      "width": "fill_container",
+                      "fill": "#F3E1C9",
+                      "cornerRadius": 22,
+                      "padding": [
+                        18,
+                        22
+                      ],
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "FCiGv",
+                          "name": "posterBottomText",
+                          "fill": "#1F1F1F",
+                          "textGrowth": "fixed-width",
+                          "width": 520,
+                          "content": "Need every modifier, catering option, or gift card? Open the live ordering menu.",
+                          "fontFamily": "IBM Plex Sans",
+                          "fontSize": 15,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "i73GD",
+                          "name": "posterBottomBtn",
+                          "fill": "#B9312F",
+                          "cornerRadius": 999,
+                          "padding": [
+                            14,
+                            20
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "EdODl",
+                              "name": "posterBottomBtnText",
+                              "fill": "#FFFFFF",
+                              "content": "Open Ordering",
+                              "fontFamily": "IBM Plex Sans",
+                              "fontSize": 15,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "GadMe",
+          "name": "Brand Story",
+          "width": "fill_container",
+          "fill": "#EFDCC3",
+          "gap": 32,
+          "padding": [
+            96,
+            64
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "ALdaw",
+              "name": "aboutCopy",
+              "width": 620,
+              "layout": "vertical",
+              "gap": 16,
+              "padding": [
+                20,
+                0
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "yVIpM",
+                  "name": "aboutEyebrow",
+                  "fill": "#B9312F",
+                  "content": "ABOUT FRANKIE'S",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 14,
+                  "fontWeight": "600",
+                  "letterSpacing": 1.1
+                },
+                {
+                  "type": "text",
+                  "id": "Oxv1b",
+                  "name": "aboutTitle",
+                  "fill": "#1F1F1F",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "A neighborhood breakfast burrito spot with enough craft to feel worth the detour.",
+                  "lineHeight": 1.1,
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 44,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "ocJGo",
+                  "name": "aboutBody1",
+                  "fill": "#5A4D42",
+                  "textGrowth": "fixed-width",
+                  "width": 560,
+                  "content": "Frankie's in Agoura Hills positions itself around loyalty, love, and burritos. The site translates that into a warmer story: premium ingredients, house energy, and breakfast food that feels like a reward instead of a routine.",
+                  "lineHeight": 1.65,
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 18,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "NnQXw",
+                  "name": "aboutBody2",
+                  "fill": "#5A4D42",
+                  "textGrowth": "fixed-width",
+                  "width": 560,
+                  "content": "The menu already proves range, from bacon-and-queso classics to vegan cashew-queso builds and truffle tots. This section frames Frankie’s as a brand people trust for both indulgence and consistency.",
+                  "lineHeight": 1.65,
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 18,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "USdaL",
+                  "name": "aboutFacts",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "14HxD",
+                      "name": "aboutFact1",
+                      "width": 180,
+                      "fill": "#FFF8EF",
+                      "cornerRadius": 20,
+                      "layout": "vertical",
+                      "gap": 6,
+                      "padding": 18,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "YoJqx",
+                          "name": "aboutFact1a",
+                          "fill": "#B9312F",
+                          "content": "Open Daily",
+                          "fontFamily": "IBM Plex Sans",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "iol6Q",
+                          "name": "aboutFact1b",
+                          "fill": "#1F1F1F",
+                          "content": "8:00 AM to 3:00 PM",
+                          "fontFamily": "IBM Plex Sans",
+                          "fontSize": 16,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "yIulV",
+                      "name": "aboutFact2",
+                      "width": 180,
+                      "fill": "#FFF8EF",
+                      "cornerRadius": 20,
+                      "layout": "vertical",
+                      "gap": 6,
+                      "padding": 18,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "BisGR",
+                          "name": "aboutFact2a",
+                          "fill": "#B9312F",
+                          "content": "Pickup-Ready",
+                          "fontFamily": "IBM Plex Sans",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "u5LEd",
+                          "name": "aboutFact2b",
+                          "fill": "#1F1F1F",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Toast ordering and gift cards live",
+                          "fontFamily": "IBM Plex Sans",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Tnsnz",
+              "name": "aboutImageWrap",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "F298c",
+                  "name": "aboutImage",
+                  "metadata": {
+                    "type": "unsplash",
+                    "username": "alexgook",
+                    "link": "https://unsplash.com/@alexgook",
+                    "author": "Alex Gook"
+                  },
+                  "width": "fill_container",
+                  "height": 520,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1671049937852-c22b2396d5fe?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzQxMDc4Mzl8&ixlib=rb-4.1.0&q=80&w=1080",
+                    "mode": "fill"
+                  },
+                  "cornerRadius": 28
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Ri7Oy",
+          "name": "Testimonials",
+          "width": "fill_container",
+          "fill": "#FBF2E4",
+          "layout": "vertical",
+          "gap": 32,
+          "padding": [
+            96,
+            64
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "RLka1",
+              "name": "socialIntro",
+              "width": 760,
+              "layout": "vertical",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "G84F7",
+                  "name": "socialEyebrow",
+                  "fill": "#B9312F",
+                  "content": "SOCIAL PROOF",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 14,
+                  "fontWeight": "600",
+                  "letterSpacing": 1.1
+                },
+                {
+                  "type": "text",
+                  "id": "yTw1N",
+                  "name": "socialTitle",
+                  "fill": "#1F1F1F",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Trust cues that reassure people before they commit to breakfast.",
+                  "lineHeight": 1.1,
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 44,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "gICXg",
+                  "name": "socialBody",
+                  "fill": "#5A4D42",
+                  "textGrowth": "fixed-width",
+                  "width": 680,
+                  "content": "This section blends customer sentiment, platform proof, and operational clarity so the brand feels real, local, and dependable.",
+                  "lineHeight": 1.6,
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 18,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "5t08e",
+              "name": "socialGrid",
+              "width": "fill_container",
+              "gap": 20,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "6QoM0",
+                  "name": "soc1",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 24,
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": [
+                    24,
+                    22
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "odhq6",
+                      "name": "soc1Top",
+                      "fill": "#1F1F1F",
+                      "content": "4.6 / 5",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 40,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "orpIv",
+                      "name": "soc1Body",
+                      "fill": "#5A4D42",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "DoorDash currently shows Frankie’s at 4.6 with 20+ ratings, which is enough social proof to reduce hesitation near the CTA.",
+                      "lineHeight": 1.6,
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "dWuV8",
+                  "name": "soc2",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 24,
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": [
+                    24,
+                    22
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "SSqAg",
+                      "name": "soc2Quote",
+                      "fill": "#1F1F1F",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "\"The flavors are simple, pure, and balanced... the burrito is still light feeling and not greasy.\"",
+                      "lineHeight": 1.35,
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 22,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Tjxji",
+                      "name": "soc2Attr",
+                      "fill": "#B9312F",
+                      "content": "Recent DoorDash customer review",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 15,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "jmr0V",
+                  "name": "soc3",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 24,
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": [
+                    24,
+                    22
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "OF9b6",
+                      "name": "soc3Top",
+                      "fill": "#1F1F1F",
+                      "content": "Direct ordering matters",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 28,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "OoIOY",
+                      "name": "soc3Body",
+                      "fill": "#5A4D42",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Toast highlights that online orders go straight to the restaurant without commission. That message is surfaced here to create trust and support the brand at the same time.",
+                      "lineHeight": 1.6,
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "pqPi3",
+          "name": "Location and Hours",
+          "width": "fill_container",
+          "fill": "#EED7BA",
+          "gap": 32,
+          "padding": [
+            96,
+            64
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "RbB7f",
+              "name": "locLeft",
+              "width": 560,
+              "layout": "vertical",
+              "gap": 16,
+              "padding": [
+                20,
+                0
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "fuQ1J",
+                  "name": "locEyebrow",
+                  "fill": "#B9312F",
+                  "content": "LOCATION, HOURS, AND ORDERING",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 14,
+                  "fontWeight": "600",
+                  "letterSpacing": 1.1
+                },
+                {
+                  "type": "text",
+                  "id": "yUq21",
+                  "name": "locTitle",
+                  "fill": "#1F1F1F",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Easy to find. Easy to order. Easy to come back to.",
+                  "lineHeight": 1.1,
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 42,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "h0wDU",
+                  "name": "locAddress",
+                  "fill": "#1F1F1F",
+                  "content": "Frankies Breakfast Burritos",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 20,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "LsErp",
+                  "name": "locAddress2",
+                  "fill": "#5A4D42",
+                  "textGrowth": "fixed-width",
+                  "width": 420,
+                  "content": "28708 Roadside Drive, Agoura Hills, CA 91301",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 18,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "csQv5",
+                  "name": "locHours",
+                  "fill": "#5A4D42",
+                  "textGrowth": "fixed-width",
+                  "width": 420,
+                  "content": "Open daily from 8:00 AM to 3:00 PM",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 18,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "cCpqt",
+                  "name": "locOrderLine",
+                  "fill": "#5A4D42",
+                  "textGrowth": "fixed-width",
+                  "width": 420,
+                  "content": "Pickup, delivery, catering, and gift cards all route through Toast.",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 18,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "XkDbV",
+                  "name": "locButtons",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "4oqU1",
+                      "name": "locBtn1",
+                      "fill": "#B9312F",
+                      "cornerRadius": 999,
+                      "padding": [
+                        16,
+                        24
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "3FV7Y",
+                          "name": "locBtn1Text",
+                          "fill": "#FFFFFF",
+                          "content": "Get Directions",
+                          "fontFamily": "IBM Plex Sans",
+                          "fontSize": 16,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "XWOP6",
+                      "name": "locBtn2",
+                      "fill": "#F3E1C9",
+                      "cornerRadius": 999,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "#B9312F"
+                      },
+                      "padding": [
+                        16,
+                        24
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "iokI5",
+                          "name": "locBtn2Text",
+                          "fill": "#B9312F",
+                          "content": "Order Pickup",
+                          "fontFamily": "IBM Plex Sans",
+                          "fontSize": 16,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "LMm9P",
+              "name": "locRight",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 18,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "EDqBV",
+                  "name": "mapCard",
+                  "width": "fill_container",
+                  "height": 340,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 28,
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": 24,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "PYaQq",
+                      "name": "mapTitle",
+                      "fill": "#1F1F1F",
+                      "content": "Map and storefront panel",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 24,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "uBaOz",
+                      "name": "mapBody",
+                      "fill": "#5A4D42",
+                      "textGrowth": "fixed-width",
+                      "width": 360,
+                      "content": "Responsive embed area with parking, pickup, and landmark context. On mobile this becomes a compact card above the order CTA.",
+                      "lineHeight": 1.6,
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "1EPQv",
+                      "name": "mapAccent",
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "fill": "#E9D8BE",
+                      "cornerRadius": 22
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "OQhjF",
+                  "name": "orderInfo",
+                  "width": "fill_container",
+                  "fill": "#D96B27",
+                  "cornerRadius": 24,
+                  "padding": [
+                    22,
+                    24
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "MLIlH",
+                      "name": "orderInfoText",
+                      "fill": "#FFFFFF",
+                      "textGrowth": "fixed-width",
+                      "width": 420,
+                      "content": "Need breakfast for a crew? Catering packs feed up to 10 with 48 hours notice.",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 17,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "8Xloy",
+                      "name": "orderInfoBtn",
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 999,
+                      "padding": [
+                        14,
+                        22
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "684nc",
+                          "name": "orderInfoBtnText",
+                          "fill": "#D96B27",
+                          "content": "View Catering",
+                          "fontFamily": "IBM Plex Sans",
+                          "fontSize": 15,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "I2qdg",
+          "name": "Final CTA",
+          "width": "fill_container",
+          "fill": "#8E3425",
+          "layout": "vertical",
+          "gap": 24,
+          "padding": [
+            96,
+            64
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "RbxJC",
+              "name": "ctaKicker",
+              "fill": "#F7EBD7",
+              "content": "READY TO ORDER?",
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 14,
+              "fontWeight": "600",
+              "letterSpacing": 1.1
+            },
+            {
+              "type": "text",
+              "id": "j9ixW",
+              "name": "ctaTitle",
+              "fill": "#FFFFFF",
+              "textGrowth": "fixed-width",
+              "width": 900,
+              "content": "Start with a signature burrito. Add the tots. Make the morning better.",
+              "lineHeight": 1.05,
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 54,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "EkIyC",
+              "name": "ctaBody",
+              "fill": "#FDF4E8",
+              "textGrowth": "fixed-width",
+              "width": 760,
+              "content": "Frankies already has the menu and ordering engine. This homepage turns that into a polished and conversion-first experience.",
+              "lineHeight": 1.6,
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 20,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "q4Smd",
+              "name": "ctaButtons",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "OPir3",
+                  "name": "ctaBtn1",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 999,
+                  "padding": [
+                    18,
+                    28
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "2hNt4",
+                      "name": "ctaBtn1Text",
+                      "fill": "#B9312F",
+                      "content": "Order Now",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 17,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "4ilHE",
+                  "name": "ctaBtn2",
+                  "fill": "#B9312F",
+                  "cornerRadius": 999,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#FFFFFF"
+                  },
+                  "padding": [
+                    18,
+                    28
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "REtL4",
+                      "name": "ctaBtn2Text",
+                      "fill": "#FFFFFF",
+                      "content": "View Menu",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 17,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "oh6US",
+              "name": "sigCTA",
+              "fill": "#F3E1C9",
+              "cornerRadius": 999,
+              "gap": 8,
+              "padding": [
+                10,
+                12
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "rHaMx",
+                  "name": "sig1a",
+                  "width": 24,
+                  "height": 24,
+                  "fill": "#B9312F",
+                  "cornerRadius": 8,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "kohz2",
+                      "x": 7,
+                      "y": 7,
+                      "name": "sig1aCore",
+                      "rotation": 45,
+                      "width": 10,
+                      "height": 10,
+                      "fill": "#F7EBD7",
+                      "cornerRadius": 2
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "93p37",
+                  "name": "sig1b",
+                  "width": 24,
+                  "height": 24,
+                  "fill": "#D96B27",
+                  "cornerRadius": 8,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "QtFgM",
+                      "x": 7,
+                      "y": 7,
+                      "name": "sig1bCore",
+                      "rotation": 45,
+                      "width": 10,
+                      "height": 10,
+                      "fill": "#F7EBD7",
+                      "cornerRadius": 2
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Pxd3f",
+                  "name": "sig1c",
+                  "width": 24,
+                  "height": 24,
+                  "fill": "#D9A21B",
+                  "cornerRadius": 8,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "IigrS",
+                      "x": 7,
+                      "y": 7,
+                      "name": "sig1cCore",
+                      "rotation": 45,
+                      "width": 10,
+                      "height": 10,
+                      "fill": "#F7EBD7",
+                      "cornerRadius": 2
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "43HL1",
+                  "name": "sig1d",
+                  "width": 24,
+                  "height": 24,
+                  "fill": "#3D6B35",
+                  "cornerRadius": 8,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "yLTTz",
+                      "x": 7,
+                      "y": 7,
+                      "name": "sig1dCore",
+                      "rotation": 45,
+                      "width": 10,
+                      "height": 10,
+                      "fill": "#F7EBD7",
+                      "cornerRadius": 2
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "k2gNC",
+                  "name": "sig1Label",
+                  "fill": "#6A2D1F",
+                  "content": "Mercado tile band",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 13,
+                  "fontWeight": "600"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "KxLuY",
+          "name": "Footer",
+          "width": "fill_container",
+          "fill": "#2B211B",
+          "gap": 48,
+          "padding": [
+            56,
+            64
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "F2xJ9",
+              "name": "footBrand",
+              "width": 360,
+              "layout": "vertical",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "IqA7M",
+                  "name": "footBrandName",
+                  "fill": "#FFFFFF",
+                  "content": "Frankies Breakfast Burritos",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 24,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "3uHh2",
+                  "name": "footBrandBody",
+                  "fill": "#E9D8BE",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Breakfast burritos, frescas, and loaded sides served daily in Agoura Hills.",
+                  "lineHeight": 1.6,
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "pbVL3",
+              "name": "footLinks",
+              "width": 220,
+              "layout": "vertical",
+              "gap": 10,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Mzonu",
+                  "name": "footLinksTitle",
+                  "fill": "#FFFFFF",
+                  "content": "Navigate",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 16,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "jNvJw",
+                  "name": "footLinksBody",
+                  "fill": "#E9D8BE",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Home\nMenu\nFeatured\nAbout\nLocation\nOrder Now",
+                  "lineHeight": 1.9,
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "5HbF6",
+              "name": "footInfo",
+              "width": 260,
+              "layout": "vertical",
+              "gap": 10,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "UTCHE",
+                  "name": "footInfoTitle",
+                  "fill": "#FFFFFF",
+                  "content": "Visit",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 16,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "Bzf6Z",
+                  "name": "footInfoBody",
+                  "fill": "#E9D8BE",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "28708 Roadside Drive\nAgoura Hills, CA 91301\n\nOpen daily\n8:00 AM - 3:00 PM",
+                  "lineHeight": 1.8,
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "jOzZF",
+              "name": "footMeta",
+              "width": 260,
+              "layout": "vertical",
+              "gap": 10,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "svQ5z",
+                  "name": "footMetaTitle",
+                  "fill": "#FFFFFF",
+                  "content": "Order and Social",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 16,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "oLbxG",
+                  "name": "footMetaLine1",
+                  "fill": "#E9D8BE",
+                  "content": "Toast online ordering",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "OnM6o",
+                  "name": "footMetaLine2",
+                  "fill": "#E9D8BE",
+                  "content": "Gift cards",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "t65EO",
+                  "name": "footMetaLine3",
+                  "fill": "#E9D8BE",
+                  "content": "Delivery",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "R4Lst",
+                  "name": "footMetaLine4",
+                  "fill": "#E9D8BE",
+                  "content": "Catering",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "LFFYG",
+                  "name": "footMetaLine5",
+                  "fill": "#E9D8BE",
+                  "content": "Instagram",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "ugyYM",
+      "x": 2400,
+      "y": 0,
+      "name": "Frankies Mobile Homepage",
+      "width": 390,
+      "fill": "#F6E8D3",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "rfQsh",
+          "name": "mTop",
+          "width": "fill_container",
+          "fill": "#6A2D1F",
+          "padding": [
+            10,
+            20
+          ],
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "3BoWi",
+              "name": "mTopText",
+              "fill": "#FFF5EA",
+              "content": "Fresh burritos daily. Pickup is fast.",
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 13,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Y5CuP",
+          "name": "mHero",
+          "metadata": {
+            "type": "unsplash",
+            "username": "alichoubin",
+            "link": "https://unsplash.com/@alichoubin",
+            "author": "Ali Choubin"
+          },
+          "width": "fill_container",
+          "height": 893,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "https://images.unsplash.com/photo-1687555584911-1f79eeac89d0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzQxMTAyNTV8&ixlib=rb-4.1.0&q=80&w=1080",
+            "mode": "fill"
+          },
+          "layout": "none",
+          "children": [
+            {
+              "type": "frame",
+              "id": "KuTII",
+              "x": 20,
+              "y": 18,
+              "name": "mHeader",
+              "width": 350,
+              "fill": "#FFFFFF00",
+              "padding": [
+                18,
+                20
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "vsIjW",
+                  "name": "mBrand",
+                  "width": 220,
+                  "layout": "vertical",
+                  "gap": 4,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "A5Taj",
+                      "name": "mBrandName",
+                      "fill": "#FFFFFF",
+                      "content": "Frankies",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 26,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "oRX5X",
+                      "name": "mBrandSub",
+                      "fill": "#F7EBD7",
+                      "content": "Breakfast Burritos",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 12,
+                      "fontWeight": "500",
+                      "letterSpacing": 0.8
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "kBXh3",
+                  "name": "mBurger",
+                  "width": 48,
+                  "height": 48,
+                  "fill": "#FFFFFF00",
+                  "cornerRadius": 14,
+                  "layout": "vertical",
+                  "gap": 4,
+                  "padding": 12,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "PYDa6",
+                      "name": "line1",
+                      "width": 20,
+                      "height": 2,
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 999
+                    },
+                    {
+                      "type": "frame",
+                      "id": "V3Pt0",
+                      "name": "line2",
+                      "width": 20,
+                      "height": 2,
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 999
+                    },
+                    {
+                      "type": "frame",
+                      "id": "R9gpU",
+                      "name": "line3",
+                      "width": 20,
+                      "height": 2,
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 999
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "vJG1f",
+              "x": 20,
+              "y": 8,
+              "name": "mHeroTag",
+              "enabled": false,
+              "fill": "#F7EBD7",
+              "content": "AGOURA OUTPOST BREAKFAST",
+              "textAlign": "center",
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 12,
+              "fontWeight": "600",
+              "letterSpacing": 1.1
+            },
+            {
+              "type": "text",
+              "id": "Rb607",
+              "x": 35,
+              "y": 110,
+              "name": "mHeroTitle",
+              "fill": "#FFF8EF",
+              "textGrowth": "fixed-width",
+              "width": 320,
+              "content": "FRANKIES BREAKFAST BURRITOS",
+              "lineHeight": 0.98,
+              "textAlign": "center",
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 40,
+              "fontWeight": "700",
+              "letterSpacing": -0.8
+            },
+            {
+              "type": "text",
+              "id": "Xk2Ws",
+              "x": 20,
+              "y": 180,
+              "name": "mHeroBody",
+              "enabled": false,
+              "fill": "#FFF8EF",
+              "textGrowth": "fixed-width",
+              "width": 320,
+              "content": "Fire grilled burritos with eggs, crispy potatoes, premium proteins, bright salsas, and the kind of desert roadside energy that feels rugged but polished.",
+              "lineHeight": 1.6,
+              "textAlign": "center",
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 16,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "ay5GP",
+              "x": 45,
+              "y": 270,
+              "name": "mHeroButtons",
+              "width": 300,
+              "layout": "vertical",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "1DbMo",
+                  "name": "mHeroBtn1",
+                  "width": "fill_container",
+                  "height": 52,
+                  "fill": "#B9312F",
+                  "cornerRadius": 999,
+                  "padding": [
+                    16,
+                    20
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "xYVwj",
+                      "name": "mHeroBtn1Text",
+                      "fill": "#FFFFFF",
+                      "content": "Order Online",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "zzgl8",
+                  "name": "mHeroBtn2",
+                  "width": "fill_container",
+                  "height": 52,
+                  "fill": "#F6E8D3",
+                  "cornerRadius": 999,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#B9312F"
+                  },
+                  "padding": [
+                    16,
+                    20
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "yYXYv",
+                      "name": "mHeroBtn2Text",
+                      "fill": "#B9312F",
+                      "content": "View Menu",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "6TgB6",
+              "x": 20,
+              "y": 436,
+              "name": "mHeroCard",
+              "enabled": false,
+              "width": 320,
+              "fill": "#FFFFFF00",
+              "cornerRadius": 24,
+              "layout": "vertical",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "qxjP6",
+                  "name": "mHeroImage",
+                  "metadata": {
+                    "type": "unsplash",
+                    "username": "anissabbagh",
+                    "link": "https://unsplash.com/@anissabbagh",
+                    "author": "Anis Sabbagh"
+                  },
+                  "width": "fill_container",
+                  "height": 220,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1680457759690-40d8b670c295?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzQxMDg0NzN8&ixlib=rb-4.1.0&q=80&w=1080",
+                    "mode": "fill"
+                  },
+                  "cornerRadius": 20
+                },
+                {
+                  "type": "text",
+                  "id": "rrMjL",
+                  "name": "mHeroAccent",
+                  "fill": "#F7EBD7",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Sun fired tortillas. Saddle brown contrast. Fast counter pickup.",
+                  "textAlign": "center",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "ng9Ln",
+              "x": 284,
+              "y": 732,
+              "name": "cactus",
+              "enabled": false,
+              "width": 86,
+              "height": 120,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "6vBF8",
+                  "x": 30,
+                  "y": 20,
+                  "name": "cactusStem",
+                  "width": 26,
+                  "height": 86,
+                  "fill": "#3D6B35",
+                  "cornerRadius": 20
+                },
+                {
+                  "type": "frame",
+                  "id": "3Jrgu",
+                  "x": 8,
+                  "y": 42,
+                  "name": "cactusLeftArm",
+                  "width": 22,
+                  "height": 18,
+                  "fill": "#3D6B35",
+                  "cornerRadius": 14
+                },
+                {
+                  "type": "frame",
+                  "id": "PQlZd",
+                  "x": 8,
+                  "y": 24,
+                  "name": "cactusLeftUp",
+                  "width": 18,
+                  "height": 36,
+                  "fill": "#3D6B35",
+                  "cornerRadius": 14
+                },
+                {
+                  "type": "frame",
+                  "id": "qbLyg",
+                  "x": 56,
+                  "y": 34,
+                  "name": "cactusRightArm",
+                  "width": 22,
+                  "height": 18,
+                  "fill": "#3D6B35",
+                  "cornerRadius": 14
+                },
+                {
+                  "type": "frame",
+                  "id": "Vnd3K",
+                  "x": 60,
+                  "y": 12,
+                  "name": "cactusRightUp",
+                  "width": 18,
+                  "height": 40,
+                  "fill": "#3D6B35",
+                  "cornerRadius": 14
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "xmFso",
+              "x": 20,
+              "y": 758,
+              "name": "mBadgeRow",
+              "enabled": false,
+              "width": 197,
+              "height": 90,
+              "layout": "vertical",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "gg6Km",
+                  "name": "mBadge1",
+                  "fill": "#E7C9A4",
+                  "cornerRadius": 999,
+                  "padding": [
+                    10,
+                    14
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "K46ez",
+                      "name": "mBadge1Text",
+                      "fill": "#6A2D1F",
+                      "content": "Open Range Flavor",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "VKyYk",
+                  "name": "mBadge2",
+                  "fill": "#D7B18A",
+                  "cornerRadius": 999,
+                  "padding": [
+                    10,
+                    14
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "sAsdB",
+                      "name": "mBadge2Text",
+                      "fill": "#4B2E22",
+                      "content": "Leather and adobe tones",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "dAhEA",
+          "name": "mFeatured",
+          "width": "fill_container",
+          "fill": "#FBF2E4",
+          "layout": "vertical",
+          "gap": 20,
+          "padding": [
+            56,
+            20
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "a2iZc",
+              "name": "mfEyebrow",
+              "fill": "#B34A2E",
+              "content": "FEATURED",
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 12,
+              "fontWeight": "600",
+              "letterSpacing": 1.1
+            },
+            {
+              "type": "text",
+              "id": "U4hzm",
+              "name": "mfTitle",
+              "fill": "#211915",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Top picks for a fast hungry morning.",
+              "lineHeight": 1.1,
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 30,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "jLXHj",
+              "name": "mfCard1",
+              "width": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 22,
+              "layout": "vertical",
+              "gap": 12,
+              "padding": [
+                14,
+                14,
+                16,
+                14
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "9T0wO",
+                  "name": "mfName1",
+                  "fill": "#211915",
+                  "content": "The Sunrise",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 22,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "R2h0w",
+                  "name": "mfDesc1",
+                  "fill": "#5F5145",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Eggs, Niman Ranch bacon, crack tots, cheddar queso, and chipotle aioli.",
+                  "lineHeight": 1.6,
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "PoMto",
+                  "name": "mfPrice1",
+                  "fill": "#B9312F",
+                  "content": "$15.50",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 18,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "PNZV1",
+              "name": "mfCard2",
+              "width": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 22,
+              "layout": "vertical",
+              "gap": 12,
+              "padding": [
+                14,
+                14,
+                16,
+                14
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Ad99K",
+                  "name": "mfName2",
+                  "fill": "#211915",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "The Piggyback Delight",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 22,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "tZ8Rr",
+                  "name": "mfDesc2",
+                  "fill": "#5F5145",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Pulled pork, eggs, crispy jalapenos, white cheddar queso, and salsa verde.",
+                  "lineHeight": 1.6,
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "bOsAF",
+                  "name": "mfPrice2",
+                  "fill": "#B9312F",
+                  "content": "$16.50",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 18,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "QiNMn",
+              "name": "mfCard3",
+              "width": "fill_container",
+              "fill": "#3B2A21",
+              "cornerRadius": 22,
+              "layout": "vertical",
+              "gap": 12,
+              "padding": [
+                14,
+                14,
+                16,
+                14
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "yGNYg",
+                  "name": "mfName3",
+                  "fill": "#F8EBDD",
+                  "content": "The Sol Verde",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 22,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "lCxew",
+                  "name": "mfDesc3",
+                  "fill": "#EBD9C2",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Vegan chorizo, turmeric scramble, crispy potatoes, cashew queso, and avocado.",
+                  "lineHeight": 1.6,
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "AaqpI",
+                  "name": "mfPrice3",
+                  "fill": "#D9A21B",
+                  "content": "$18.50",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 18,
+                  "fontWeight": "600"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "msw1H",
+          "name": "mWhy",
+          "width": "fill_container",
+          "fill": "#EED7BA",
+          "layout": "vertical",
+          "gap": 18,
+          "padding": [
+            56,
+            20
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "ed96M",
+              "name": "mwEyebrow",
+              "fill": "#B34A2E",
+              "content": "WHY THE OUTPOST FEELS DIFFERENT",
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 12,
+              "fontWeight": "600",
+              "letterSpacing": 1.1
+            },
+            {
+              "type": "text",
+              "id": "uVQX4",
+              "name": "mwTitle",
+              "fill": "#211915",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "More western grit. Still clean and premium.",
+              "lineHeight": 1.1,
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 30,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "hb7oJ",
+              "name": "mw1",
+              "width": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 20,
+              "layout": "vertical",
+              "gap": 8,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "AiSxD",
+                  "name": "mw1Title",
+                  "fill": "#211915",
+                  "content": "Fresh and made with care",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 20,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "Ffpgo",
+                  "name": "mw1Body",
+                  "fill": "#5F5145",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Cage-free eggs, premium meats, vegan options, and bright house flavors keep the menu handcrafted without feeling precious.",
+                  "lineHeight": 1.6,
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "RYtNF",
+              "name": "mw2",
+              "width": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 20,
+              "layout": "vertical",
+              "gap": 8,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "gSwzT",
+                  "name": "mw2Title",
+                  "fill": "#211915",
+                  "content": "Built for mobile ordering",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 20,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "sGFQV",
+                  "name": "mw2Body",
+                  "fill": "#5F5145",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Big tap targets, one clear path to order, and category browsing that collapses cleanly on small screens.",
+                  "lineHeight": 1.6,
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "GSIOo",
+              "name": "mw3",
+              "width": "fill_container",
+              "fill": "#2B211B",
+              "cornerRadius": 20,
+              "layout": "vertical",
+              "gap": 8,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "tDTP3",
+                  "name": "mw3Title",
+                  "fill": "#F8EBDD",
+                  "content": "Desert street food identity",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 20,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "X9tjQ",
+                  "name": "mw3Body",
+                  "fill": "#EBD9C2",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Sun-baked neutrals, chili reds, western grit, and light Mexican pattern accents create warmth without becoming theme-park branding.",
+                  "lineHeight": 1.6,
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "MPUPH",
+          "name": "mMenu",
+          "width": "fill_container",
+          "fill": "#F6E8D3",
+          "layout": "vertical",
+          "gap": 18,
+          "padding": [
+            56,
+            20
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "bGlYz",
+              "name": "mMenuIntro",
+              "width": "fill_container",
+              "fill": "#F3E1C9",
+              "cornerRadius": 22,
+              "layout": "vertical",
+              "gap": 14,
+              "padding": [
+                18,
+                16
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "J5qYf",
+                  "name": "mMenuIntroEyebrow",
+                  "fill": "#B34A2E",
+                  "content": "FULL MENU",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 12,
+                  "fontWeight": "600",
+                  "letterSpacing": 1.1
+                },
+                {
+                  "type": "text",
+                  "id": "haSGq",
+                  "name": "mMenuIntroTitle",
+                  "fill": "#211915",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "The full spread in one easy menu board.",
+                  "lineHeight": 1.1,
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 28,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "27iyN",
+                  "name": "mMenuIntroBody",
+                  "fill": "#5F5145",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Mobile keeps the complete menu in a single visual card so it feels closer to a real counter board and avoids awkward empty space.",
+                  "lineHeight": 1.6,
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "rrF0Y",
+                  "name": "mMenuSticker",
+                  "gap": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "hfcZ6",
+                      "name": "mMenuSun",
+                      "width": 42,
+                      "height": 42,
+                      "fill": "#D9A21B",
+                      "cornerRadius": 999,
+                      "layout": "vertical",
+                      "padding": 8,
+                      "children": [
+                        {
+                          "type": "ellipse",
+                          "id": "oJ2ZU",
+                          "name": "mMenuSunCore",
+                          "fill": "#FFF4D9",
+                          "width": 14,
+                          "height": 14
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "LE9bC",
+                      "name": "mMenuCactus",
+                      "width": 36,
+                      "height": 54,
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "F85UH",
+                          "x": 12,
+                          "y": 12,
+                          "name": "mMenuCactusStem",
+                          "width": 12,
+                          "height": 34,
+                          "fill": "#3D6B35",
+                          "cornerRadius": 10
+                        },
+                        {
+                          "type": "frame",
+                          "id": "tDckN",
+                          "x": 2,
+                          "y": 24,
+                          "name": "mMenuCactusArm1",
+                          "width": 10,
+                          "height": 8,
+                          "fill": "#3D6B35",
+                          "cornerRadius": 8
+                        },
+                        {
+                          "type": "frame",
+                          "id": "5kF4U",
+                          "x": 24,
+                          "y": 18,
+                          "name": "mMenuCactusArm2",
+                          "width": 10,
+                          "height": 8,
+                          "fill": "#3D6B35",
+                          "cornerRadius": 8
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "2mhJa",
+              "name": "mMenuBoard",
+              "width": "fill_container",
+              "fill": "#FFF9F1",
+              "cornerRadius": 24,
+              "layout": "vertical",
+              "gap": 14,
+              "padding": 18,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "wlTrN",
+                  "name": "mMenuBoardTitle",
+                  "fill": "#211915",
+                  "content": "Frankies Breakfast Burritos",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 22,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "thSQP",
+                  "name": "mMenuBoardSub",
+                  "fill": "#6A2D1F",
+                  "content": "Agoura Hills menu board",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 13,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "aAJF8",
+                  "name": "mBoardSec1",
+                  "fill": "#211915",
+                  "content": "Breakfast and More",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 18,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "mzpkQ",
+                  "name": "mBoardSec1a",
+                  "fill": "#6A2D1F",
+                  "content": "The Sunrise - 15.50",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "rtJyq",
+                  "name": "mBoardSec1b",
+                  "fill": "#6A2D1F",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "The Southwestern Supreme - 17.50",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "IShde",
+                  "name": "mBoardSec1c",
+                  "fill": "#6A2D1F",
+                  "content": "The Sol Verde - 18.50",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "Tno4Q",
+                  "name": "mBoardSec1d",
+                  "fill": "#6A2D1F",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "The Piggyback Delight - 16.50",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "EaRRw",
+                  "name": "mBoardSec2",
+                  "fill": "#211915",
+                  "content": "Lunch and More",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 18,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "Rn9iQ",
+                  "name": "mBoardSec2a",
+                  "fill": "#6A2D1F",
+                  "content": "SW Supreme - 17.50",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "6dRNg",
+                  "name": "mBoardSec2b",
+                  "fill": "#6A2D1F",
+                  "content": "The Kanan Dume - 16.50",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "4Eoz0",
+                  "name": "mBoardSec2c",
+                  "fill": "#6A2D1F",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "The Hawk - 19.50 | EL Grande - 21.50",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "34JDX",
+                  "name": "mBoardSec3",
+                  "fill": "#211915",
+                  "content": "Drinks, Sides, Desserts",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 18,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "dU9S4",
+                  "name": "mBoardSec3a",
+                  "fill": "#5F5145",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Frescas from 7.50 | Chips and Salsa 4.50",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "wdCVd",
+                  "name": "mBoardSec3b",
+                  "fill": "#5F5145",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Cracked Tots 6.50 | Truffle Tots 9.00",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "Bdiek",
+                  "name": "mBoardSec3c",
+                  "fill": "#5F5145",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Cookies from 4.50 | Cinnamon Rolls from 8.00",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "jjSPH",
+                  "name": "mBoardCta",
+                  "width": "fill_container",
+                  "fill": "#F3E1C9",
+                  "cornerRadius": 18,
+                  "padding": [
+                    14,
+                    16
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "NAtCL",
+                      "name": "mBoardCtaText",
+                      "fill": "#211915",
+                      "textGrowth": "fixed-width",
+                      "width": 170,
+                      "content": "Open live ordering for modifiers and full details.",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "1HADK",
+                      "name": "mBoardCtaBtn",
+                      "fill": "#B9312F",
+                      "cornerRadius": 999,
+                      "padding": [
+                        12,
+                        16
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "yDTkB",
+                          "name": "mBoardCtaBtnText",
+                          "fill": "#FFFFFF",
+                          "content": "Open",
+                          "fontFamily": "IBM Plex Sans",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "7YYgW",
+          "name": "mAbout",
+          "width": "fill_container",
+          "fill": "#EFDCC3",
+          "layout": "vertical",
+          "gap": 18,
+          "padding": [
+            56,
+            20
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "ZPVmJ",
+              "name": "maEyebrow",
+              "fill": "#B34A2E",
+              "content": "ABOUT",
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 12,
+              "fontWeight": "600",
+              "letterSpacing": 1.1
+            },
+            {
+              "type": "text",
+              "id": "CsRQK",
+              "name": "maTitle",
+              "fill": "#211915",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Neighborhood heart with a more premium finish.",
+              "lineHeight": 1.1,
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 30,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "kJbpi",
+              "name": "maBody",
+              "fill": "#5F5145",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Frankies feels like a local favorite with enough craft to earn repeat cravings. The mobile version keeps that tone warm, direct, and order focused.",
+              "lineHeight": 1.6,
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 16,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "tSmy3",
+              "name": "maFact",
+              "width": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 20,
+              "layout": "vertical",
+              "gap": 8,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Nz1jS",
+                  "name": "maFact1",
+                  "fill": "#211915",
+                  "content": "Open daily 8 AM to 3 PM",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 18,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "KWhCI",
+                  "name": "maFact2",
+                  "fill": "#5F5145",
+                  "content": "28708 Roadside Drive, Agoura Hills",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "dUQSV",
+          "name": "mProof",
+          "width": "fill_container",
+          "fill": "#FBF2E4",
+          "layout": "vertical",
+          "gap": 18,
+          "padding": [
+            56,
+            20
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "Q0cy9",
+              "name": "mpEyebrow",
+              "fill": "#B34A2E",
+              "content": "SOCIAL PROOF",
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 12,
+              "fontWeight": "600",
+              "letterSpacing": 1.1
+            },
+            {
+              "type": "text",
+              "id": "K48DA",
+              "name": "mpTitle",
+              "fill": "#211915",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Trust cues before the tap.",
+              "lineHeight": 1.1,
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 30,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "JNbeG",
+              "name": "mpCard1",
+              "width": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 20,
+              "layout": "vertical",
+              "gap": 8,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "sOynv",
+                  "name": "mpCard1t",
+                  "fill": "#211915",
+                  "content": "4.6 out of 5",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 28,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "8yAgY",
+                  "name": "mpCard1b",
+                  "fill": "#5F5145",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "DoorDash currently shows 20 plus ratings. Enough proof to support a direct order CTA on mobile.",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "8UyG6",
+              "name": "mpCard2",
+              "width": "fill_container",
+              "fill": "#2B211B",
+              "cornerRadius": 20,
+              "layout": "vertical",
+              "gap": 8,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "nKuhc",
+                  "name": "mpCard2t",
+                  "fill": "#F8EBDD",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Simple, pure, balanced, not greasy.",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 22,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "pYKRP",
+                  "name": "mpCard2b",
+                  "fill": "#EBD9C2",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Representative customer sentiment surfaced as quick reassurance, not a bulky carousel.",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "pCCSN",
+          "name": "mLocation",
+          "width": "fill_container",
+          "fill": "#EED7BA",
+          "layout": "vertical",
+          "gap": 18,
+          "padding": [
+            56,
+            20,
+            120,
+            20
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "dx54s",
+              "name": "mlEyebrow",
+              "fill": "#B34A2E",
+              "content": "LOCATION AND HOURS",
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 12,
+              "fontWeight": "600",
+              "letterSpacing": 1.1
+            },
+            {
+              "type": "text",
+              "id": "X9MkS",
+              "name": "mlTitle",
+              "fill": "#211915",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Easy to find and open every day.",
+              "lineHeight": 1.1,
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 30,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "mVrdg",
+              "name": "mlCard",
+              "width": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 20,
+              "layout": "vertical",
+              "gap": 10,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "DX3IP",
+                  "name": "mlLine1",
+                  "fill": "#211915",
+                  "content": "28708 Roadside Drive",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 18,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "lPOe5",
+                  "name": "mlLine2",
+                  "fill": "#5F5145",
+                  "content": "Agoura Hills, CA 91301",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "nM46G",
+                  "name": "mlLine3",
+                  "fill": "#5F5145",
+                  "content": "Open daily 8 AM to 3 PM",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "6tsf6",
+                  "name": "mlLine4",
+                  "fill": "#5F5145",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Pickup, delivery, catering, and gift cards available",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "08rL0",
+          "name": "mFooter",
+          "width": "fill_container",
+          "fill": "#2B211B",
+          "layout": "vertical",
+          "gap": 16,
+          "padding": [
+            40,
+            20,
+            120,
+            20
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "DQinm",
+              "name": "mfBrand",
+              "fill": "#FFFFFF",
+              "content": "Frankies Breakfast Burritos",
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 24,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "8oDaG",
+              "name": "mfBody",
+              "fill": "#E8D7C0",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Fire grilled breakfast burritos with desert warmth, handcrafted flavor, and a cleaner path to order.",
+              "lineHeight": 1.6,
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "wJbhA",
+              "name": "mfNav1",
+              "fill": "#E8D7C0",
+              "content": "Menu",
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "Mrc7l",
+              "name": "mfNav2",
+              "fill": "#E8D7C0",
+              "content": "Featured",
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "mH0aE",
+              "name": "mfNav3",
+              "fill": "#E8D7C0",
+              "content": "About",
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "uCTCO",
+              "name": "mfNav4",
+              "fill": "#E8D7C0",
+              "content": "Location",
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "kaGT6",
+              "name": "mfNav5",
+              "fill": "#E8D7C0",
+              "content": "Order Now",
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Abs7f",
+          "name": "sticky",
+          "width": "fill_container",
+          "height": 84,
+          "fill": "#F6E8D3",
+          "padding": [
+            14,
+            20,
+            20,
+            20
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "wEepW",
+              "name": "stickyInner",
+              "width": "fill_container",
+              "height": 50,
+              "fill": "#B9312F",
+              "cornerRadius": 999,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "9t8qe",
+                  "name": "stickyText",
+                  "fill": "#FFFFFF",
+                  "content": "Order Now",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 17,
+                  "fontWeight": "600"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
