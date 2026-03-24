@@ -263,6 +263,7 @@ function createHtmlDocument({ seo, rootMarkup }) {
     seo.schema && typeof seo.schema === 'object' && JSON.stringify(seo.schema).includes('BlogPosting')
       ? 'article'
       : 'website'
+  const canonicalUrl = /^https?:\/\//i.test(seo.canonicalUrl || '') ? seo.canonicalUrl : ''
 
   return `<!doctype html>
 <html lang="en">
@@ -281,18 +282,18 @@ function createHtmlDocument({ seo, rootMarkup }) {
     <meta property="og:title" content="${escapeHtml(seo.title)}" />
     <meta property="og:description" content="${escapeHtml(seo.description)}" />
     <meta property="og:type" content="${escapeHtml(ogType)}" />
-    <meta property="og:url" content="${escapeHtml(seo.canonicalUrl)}" />
+    ${canonicalUrl ? `<meta property="og:url" content="${escapeHtml(canonicalUrl)}" />` : ''}
     <meta property="og:image" content="${escapeHtml(seo.ogImage || '')}" />
     <meta name="twitter:card" content="${escapeHtml(seo.twitterCard || 'summary_large_image')}" />
     <meta name="twitter:title" content="${escapeHtml(seo.title)}" />
     <meta name="twitter:description" content="${escapeHtml(seo.description)}" />
     <meta name="twitter:image" content="${escapeHtml(seo.ogImage || '')}" />
-    <link rel="canonical" href="${escapeHtml(seo.canonicalUrl)}" />
+    ${canonicalUrl ? `<link rel="canonical" href="${escapeHtml(canonicalUrl)}" />` : ''}
     ${seo.schema ? `<script type="application/ld+json">${JSON.stringify(seo.schema)}</script>` : ''}
   </head>
   <body>
     <div id="root">${rootMarkup}</div>
-    <script type="module" src="%BASE_URL%src/main.tsx"></script>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
 `
@@ -307,7 +308,7 @@ async function writeRouteHtml(routePath, html) {
 export async function buildStaticSite({ bootstrap, posts = [], pages = [], entries = [] }) {
   const homepageHtml = createHtmlDocument({
     seo: bootstrap.seo,
-    rootMarkup: renderHomepageMarkup(bootstrap),
+    rootMarkup: '',
   })
 
   await fs.mkdir(publicDir, { recursive: true })
@@ -325,7 +326,7 @@ export async function buildStaticSite({ bootstrap, posts = [], pages = [], entri
     '/blog',
     createHtmlDocument({
       seo: blogSeo,
-      rootMarkup: renderBlogIndexMarkup(bootstrap, posts),
+      rootMarkup: '',
     }),
   )
 
@@ -342,7 +343,7 @@ export async function buildStaticSite({ bootstrap, posts = [], pages = [], entri
           ...entry.seo,
           description: descriptionFallback,
         },
-        rootMarkup: renderEntryMarkup(bootstrap, entry),
+        rootMarkup: '',
       }),
     )
   }

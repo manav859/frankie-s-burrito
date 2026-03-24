@@ -34,6 +34,7 @@ export type SiteContent = {
   siteName: string
   siteTagline: string
   siteLogo?: string
+  siteLogoLight?: string
   siteLogoAlt?: string
   hero: {
     title: string
@@ -241,6 +242,7 @@ export type SettingsPayload = {
     siteName: string
     siteTagline: string
     logoUrl?: string
+    logoLightUrl?: string
     logoAlt?: string
   }
   hero: SiteContent['hero']

@@ -10,8 +10,8 @@ import type {
 } from '../types'
 
 const ENV_WORDPRESS_BASE = import.meta.env.VITE_WORDPRESS_BASE_URL?.replace(/\/$/, '')
-const MEMORY_CACHE = new Map<string, { expiresAt: number; data: unknown }>()
-const REQUEST_CACHE_PREFIX = 'frankies-wp-cache:'
+const MEMORY_CACHE = new Map<string, { etag: string; data: unknown }>()
+const REQUEST_CACHE_PREFIX = 'frankies-wp-cache:v2:'
 
 type PreviewState = {
   enabled: boolean
@@ -117,16 +117,22 @@ function getWordPressBase() {
   return ''
 }
 
-function resolveDefaultTtl(route: string) {
-  if (route.includes('/bootstrap')) {
-    return 0
+function getPreviewState(): PreviewState {
+  if (typeof window === 'undefined') {
+    return { enabled: false, token: '' }
   }
 
-  if (route.includes('/posts/') || route.includes('/pages/')) {
-    return 300_000
+  const params = new URLSearchParams(window.location.search)
+  return {
+    enabled: params.get('preview') === '1',
+    token: params.get('token') || '',
   }
+}
 
-  return 120_000
+function createHeaders(previewState: PreviewState): Record<string, string> {
+  return previewState.enabled && previewState.token
+    ? { 'x-frankies-preview-token': previewState.token }
+    : {}
 }
 
 function buildRequestCacheKey(route: string, query?: Record<string, QueryValue>, previewState?: PreviewState) {
@@ -157,11 +163,10 @@ function getStorage() {
   }
 }
 
-function readCachedValue<T>(key: string): T | null {
-  const now = Date.now()
+function readCachedValue<T>(key: string): { etag: string; data: T } | null {
   const inMemory = MEMORY_CACHE.get(key)
-  if (inMemory && inMemory.expiresAt > now) {
-    return inMemory.data as T
+  if (inMemory) {
+    return inMemory as { etag: string; data: T }
   }
 
   const storage = getStorage()
@@ -175,25 +180,15 @@ function readCachedValue<T>(key: string): T | null {
       return null
     }
 
-    const parsed = JSON.parse(raw) as { expiresAt: number; data: T }
-    if (parsed.expiresAt <= now) {
-      storage.removeItem(`${REQUEST_CACHE_PREFIX}${key}`)
-      return null
-    }
-
+    const parsed = JSON.parse(raw) as { etag: string; data: T }
     MEMORY_CACHE.set(key, parsed)
-    return parsed.data
+    return parsed
   } catch {
     return null
   }
 }
 
-function writeCachedValue<T>(key: string, data: T, ttlMs: number) {
-  const entry = {
-    expiresAt: Date.now() + ttlMs,
-    data,
-  }
-
+function writeCachedValue<T>(key: string, entry: { etag: string; data: T }) {
   MEMORY_CACHE.set(key, entry)
 
   const storage = getStorage()
@@ -206,37 +201,6 @@ function writeCachedValue<T>(key: string, data: T, ttlMs: number) {
   } catch {
     // Ignore storage quota issues and keep the in-memory cache.
   }
-}
-
-function parseCacheControlMaxAge(cacheControl: string | null, route: string) {
-  if (!cacheControl) {
-    return resolveDefaultTtl(route)
-  }
-
-  const match = cacheControl.match(/max-age=(\d+)/i)
-  if (!match) {
-    return resolveDefaultTtl(route)
-  }
-
-  return Number(match[1]) * 1000
-}
-
-function getPreviewState(): PreviewState {
-  if (typeof window === 'undefined') {
-    return { enabled: false, token: '' }
-  }
-
-  const params = new URLSearchParams(window.location.search)
-  return {
-    enabled: params.get('preview') === '1',
-    token: params.get('token') || '',
-  }
-}
-
-function createHeaders(previewState: PreviewState): Record<string, string> {
-  return previewState.enabled && previewState.token
-    ? { 'x-frankies-preview-token': previewState.token }
-    : {}
 }
 
 function buildEndpointCandidates(route: string, query?: Record<string, QueryValue>) {
@@ -278,23 +242,23 @@ async function fetchWordPressJson<T>(
 
   const previewState = getPreviewState()
   const cacheKey = buildRequestCacheKey(route, options?.query, previewState)
-  const cacheable = !previewState.enabled && !route.includes('/bootstrap') && !route.includes('/settings') && !route.includes('/navigation')
-
-  if (cacheable) {
-    const cached = readCachedValue<T>(cacheKey)
-    if (cached) {
-      return cached
-    }
-  }
-
+  const cachedEntry = previewState.enabled ? null : readCachedValue<T>(cacheKey)
   const headers = createHeaders(previewState)
+
+  if (cachedEntry?.etag) {
+    headers['If-None-Match'] = cachedEntry.etag
+  }
 
   for (const endpoint of buildEndpointCandidates(route, options?.query)) {
     const response = await fetch(`${wordpressBase}${endpoint}`, {
       signal: options?.signal,
       headers,
-      cache: cacheable ? 'default' : 'no-store',
+      cache: previewState.enabled ? 'no-store' : 'no-cache',
     })
+
+    if (response.status === 304 && cachedEntry) {
+      return normalizeWordPressPayload(cachedEntry.data)
+    }
 
     if (!response.ok) {
       continue
@@ -302,8 +266,11 @@ async function fetchWordPressJson<T>(
 
     const payload = normalizeWordPressPayload((await response.json()) as T)
 
-    if (cacheable) {
-      writeCachedValue(cacheKey, payload, parseCacheControlMaxAge(response.headers.get('cache-control'), route))
+    if (!previewState.enabled) {
+      const etag = response.headers.get('etag')
+      if (etag) {
+        writeCachedValue(cacheKey, { etag, data: payload })
+      }
     }
 
     return payload
@@ -316,16 +283,20 @@ export function getGeneratedBootstrap(): SiteBootstrap {
   return normalizeWordPressPayload(generatedBootstrap as unknown as SiteBootstrap)
 }
 
+export function getCachedBootstrap(): SiteBootstrap | null {
+  const cached = readCachedValue<SiteBootstrap>(
+    buildRequestCacheKey('/frankies/v1/bootstrap', undefined, { enabled: false, token: '' }),
+  )
+
+  return cached ? normalizeWordPressPayload(cached.data) : null
+}
+
 export async function getSiteBootstrap(signal?: AbortSignal): Promise<SiteBootstrap> {
   if (!getWordPressBase()) {
     return getGeneratedBootstrap()
   }
 
-  try {
-    return await fetchWordPressJson<SiteBootstrap>('/frankies/v1/bootstrap', { signal })
-  } catch {
-    return getGeneratedBootstrap()
-  }
+  return fetchWordPressJson<SiteBootstrap>('/frankies/v1/bootstrap', { signal })
 }
 
 export async function getSettings(signal?: AbortSignal): Promise<SettingsPayload | null> {

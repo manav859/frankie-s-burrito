@@ -57,7 +57,14 @@ final class Frankies_Headless_Plugin {
 		add_action( 'update_option_' . self::OPTION_KEY, array( $this, 'trigger_frontend_revalidation' ), 10, 2 );
 		add_action( 'save_post_menu_item', array( $this, 'trigger_frontend_revalidation' ), 20, 0 );
 		add_action( 'save_post_testimonial', array( $this, 'trigger_frontend_revalidation' ), 20, 0 );
+		add_action( 'save_post_post', array( $this, 'trigger_frontend_revalidation' ), 20, 0 );
+		add_action( 'save_post_page', array( $this, 'trigger_frontend_revalidation' ), 20, 0 );
 		add_action( 'edited_menu_category', array( $this, 'trigger_frontend_revalidation' ), 20, 0 );
+		add_action( 'created_menu_category', array( $this, 'trigger_frontend_revalidation' ), 20, 0 );
+		add_action( 'wp_update_nav_menu', array( $this, 'trigger_frontend_revalidation' ), 20, 0 );
+		add_action( 'updated_option', array( $this, 'handle_option_content_change' ), 20, 3 );
+		add_action( 'added_option', array( $this, 'handle_option_content_change' ), 20, 2 );
+		add_action( 'deleted_option', array( $this, 'handle_option_content_change' ), 20, 1 );
 		add_action( 'update_option_' . self::OPTION_KEY, array( $this, 'purge_public_cache' ), 20, 2 );
 		add_action( 'save_post_menu_item', array( $this, 'purge_public_cache' ), 30, 0 );
 		add_action( 'save_post_testimonial', array( $this, 'purge_public_cache' ), 30, 0 );
@@ -66,6 +73,7 @@ final class Frankies_Headless_Plugin {
 		add_action( 'edited_menu_category', array( $this, 'purge_public_cache' ), 30, 0 );
 		add_action( 'created_menu_category', array( $this, 'purge_public_cache' ), 30, 0 );
 		add_action( 'wp_update_nav_menu', array( $this, 'purge_public_cache' ), 30, 0 );
+		add_action( 'acf/save_post', array( $this, 'handle_acf_content_change' ), 30, 1 );
 		add_filter( 'xmlrpc_enabled', '__return_false' );
 		add_filter( 'the_generator', '__return_empty_string' );
 		add_filter( 'rest_endpoints', array( $this, 'filter_rest_endpoints' ) );
@@ -515,6 +523,38 @@ final class Frankies_Headless_Plugin {
 		update_option( self::CACHE_VERSION_KEY, $this->get_cache_version() + 1, false );
 	}
 
+	public function handle_acf_content_change( $post_id ) {
+		if ( empty( $post_id ) ) {
+			return;
+		}
+
+		$this->purge_public_cache();
+		$this->trigger_frontend_revalidation();
+	}
+
+	public function handle_option_content_change( $option_name ) {
+		if ( ! $this->should_invalidate_for_option( $option_name ) ) {
+			return;
+		}
+
+		$this->purge_public_cache();
+		$this->trigger_frontend_revalidation();
+	}
+
+	private function should_invalidate_for_option( $option_name ) {
+		$option_name = (string) $option_name;
+
+		if ( '' === $option_name ) {
+			return false;
+		}
+
+		if ( self::OPTION_KEY === $option_name || self::CACHE_VERSION_KEY === $option_name ) {
+			return false;
+		}
+
+		return 0 === strpos( $option_name, 'options_' ) || 0 === strpos( $option_name, self::OPTION_KEY );
+	}
+
 	private function finalize_rest_response( $data, $preview = false ) {
 		$response = rest_ensure_response( $data );
 
@@ -528,7 +568,7 @@ final class Frankies_Headless_Plugin {
 		$etag = '"' . md5( (string) $payload ) . '"';
 		$if_none_match = isset( $_SERVER['HTTP_IF_NONE_MATCH'] ) ? trim( sanitize_text_field( wp_unslash( $_SERVER['HTTP_IF_NONE_MATCH'] ) ) ) : '';
 
-		$response->header( 'Cache-Control', 'public, max-age=60, s-maxage=' . self::PUBLIC_CACHE_TTL . ', stale-while-revalidate=600' );
+		$response->header( 'Cache-Control', 'public, max-age=0, must-revalidate, s-maxage=' . self::PUBLIC_CACHE_TTL . ', stale-while-revalidate=30' );
 		$response->header( 'ETag', $etag );
 
 		if ( $if_none_match && $if_none_match === $etag ) {
@@ -926,6 +966,8 @@ final class Frankies_Headless_Plugin {
 		$settings['finalCta']['primaryCta'] = $this->resolve_order_cta_url( $settings['finalCta']['primaryCta'], $order_url );
 		$location['mapEmbedUrl'] = $this->resolve_map_embed_url( $location );
 		$seo_og_image = $this->normalize_public_url( $settings['seo']['ogImage'], $site_url );
+		$featured_items = $this->get_featured_items( $preview );
+		$menu_sections = $this->get_menu_sections( $preview );
 
 		return array(
 			'content' => array(
@@ -933,11 +975,12 @@ final class Frankies_Headless_Plugin {
 				'siteName'      => $settings['site']['siteName'],
 				'siteTagline'   => $settings['site']['siteTagline'],
 				'siteLogo'      => $this->normalize_public_url( $settings['site']['logoUrl'], $site_url ),
+				'siteLogoLight' => $this->normalize_public_url( $settings['site']['logoLightUrl'], $site_url ),
 				'siteLogoAlt'   => (string) $settings['site']['logoAlt'],
 				'hero'          => $hero,
 				'navigation'    => ! empty( $navigation ) ? $navigation : $settings['navigation'],
 				'featuredIntro' => $settings['featuredIntro'],
-				'featuredItems' => array(),
+				'featuredItems' => $featured_items,
 				'reasons'       => $settings['reasons'],
 				'menu'          => array(
 					'eyebrow'    => $settings['menu']['eyebrow'],
@@ -949,8 +992,26 @@ final class Frankies_Headless_Plugin {
 					'itemCtaLabel'       => $settings['menu']['itemCtaLabel'],
 					'image'      => $this->resolve_menu_image_url( $settings['menu'], $site_url ),
 					'imageAlt'   => (string) ( $settings['menu']['imageAlt'] ?: $settings['site']['siteName'] . ' menu' ),
-					'ctas'       => array(),
-					'sections'   => array(),
+					'ctas'       => array_values(
+						array_filter(
+							array_map(
+								function( $section ) {
+									return isset( $section['ctaLabel'] ) ? (string) $section['ctaLabel'] : '';
+								},
+								$menu_sections
+							)
+						)
+					),
+					'sections'   => array_map(
+						function( $section ) {
+							return array(
+								'title' => (string) $section['title'],
+								'image' => (string) $section['image'],
+								'items' => array_values( array_map( 'strval', $section['items'] ?? array() ) ),
+							);
+						},
+						$menu_sections
+					),
 					'footerNote' => $settings['menu']['footerNote'],
 					'footerCta'  => $settings['menu']['footerCta'],
 				),
@@ -989,6 +1050,7 @@ final class Frankies_Headless_Plugin {
 		$site_url = $this->get_public_site_url();
 		$site = $settings['site'];
 		$site['logoUrl'] = $this->normalize_public_url( $site['logoUrl'], $site_url );
+		$site['logoLightUrl'] = $this->normalize_public_url( $site['logoLightUrl'], $site_url );
 		$hero = $settings['hero'];
 		$hero['backgroundImage'] = $this->normalize_public_url( $hero['backgroundImage'], $site_url );
 		$hero['mobileImage'] = $this->normalize_public_url( $hero['mobileImage'], $site_url );
@@ -1673,6 +1735,7 @@ final class Frankies_Headless_Plugin {
 				'siteName'     => "Frankie's Breakfast Burritos",
 				'siteTagline'  => 'Fire-grilled breakfast burritos with big morning energy',
 				'logoUrl'      => '',
+				'logoLightUrl' => '',
 				'logoAlt'      => "Frankie's Breakfast Burritos",
 			),
 			'navigation'    => array(
@@ -1824,7 +1887,8 @@ final class Frankies_Headless_Plugin {
 			'site.announcement'                 => array( 'label' => 'Announcement', 'type' => 'textarea' ),
 			'site.siteName'                     => array( 'label' => 'Site name', 'type' => 'text' ),
 			'site.siteTagline'                  => array( 'label' => 'Site tagline', 'type' => 'text' ),
-			'site.logoUrl'                      => array( 'label' => 'Site logo image URL', 'type' => 'url' ),
+			'site.logoUrl'                      => array( 'label' => 'Site logo image URL for white/light navbar', 'type' => 'url' ),
+			'site.logoLightUrl'                 => array( 'label' => 'Site logo image URL for transparent/dark navbar', 'type' => 'url' ),
 			'site.logoAlt'                      => array( 'label' => 'Site logo alt text', 'type' => 'text' ),
 			'navigation'                        => array( 'label' => 'Navigation JSON fallback', 'type' => 'json', 'help' => 'Used only if no Primary Navigation menu is assigned under Appearance > Menus.' ),
 			'hero.title'                        => array( 'label' => 'Hero title', 'type' => 'textarea' ),

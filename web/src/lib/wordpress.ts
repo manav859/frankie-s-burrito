@@ -1,4 +1,5 @@
 export {
+  getCachedBootstrap,
   getGeneratedBootstrap,
   getNavigation,
   getPageBySlug,
