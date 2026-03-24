@@ -1,17 +1,22 @@
 import generatedBootstrap from '../generated/site-bootstrap.json'
 import type {
+  BlogArchiveMeta,
+  EntryAuthor,
   NavigationPayload,
   PageArchiveResponse,
   PageEntry,
   PostArchiveResponse,
+  PostArchiveItem,
   PostEntry,
   SettingsPayload,
   SiteBootstrap,
+  TaxonomyTerm,
 } from '../types'
 
 const ENV_WORDPRESS_BASE = import.meta.env.VITE_WORDPRESS_BASE_URL?.replace(/\/$/, '')
-const MEMORY_CACHE = new Map<string, { etag: string; data: unknown }>()
-const REQUEST_CACHE_PREFIX = 'frankies-wp-cache:v2:'
+const MEMORY_CACHE = new Map<string, { etag: string; data: unknown; cachedAt: number }>()
+const REQUEST_CACHE_PREFIX = 'frankies-wp-cache:v3:'
+const BROWSER_CACHE_HARD_TTL_MS = 15 * 60 * 1000
 
 type PreviewState = {
   enabled: boolean
@@ -19,6 +24,15 @@ type PreviewState = {
 }
 
 type QueryValue = string | number | boolean | undefined
+
+export function isAbortError(error: unknown) {
+  if (!error || typeof error !== 'object') {
+    return false
+  }
+
+  const candidate = error as { name?: string; message?: string }
+  return candidate.name === 'AbortError' || candidate.message === 'signal is aborted without reason'
+}
 
 function getBrowserOrigin() {
   if (typeof window === 'undefined' || !/^https?:$/i.test(window.location.protocol)) {
@@ -48,6 +62,19 @@ function isProxyingWordPressThroughFrontend() {
 
 function normalizeWordPressUrl(value: string) {
   const browserOrigin = getBrowserOrigin()
+  const wordpressBase =
+    ENV_WORDPRESS_BASE ||
+    (isProxyingWordPressThroughFrontend() ? browserOrigin : '') ||
+    getLocalWordPressOrigin()
+
+  if (/^\/wp-(content|includes)\//i.test(value)) {
+    if (!wordpressBase) {
+      return value
+    }
+
+    return `${wordpressBase.replace(/\/$/, '')}${value}`
+  }
+
   if (!browserOrigin || !isProxyingWordPressThroughFrontend()) {
     return value
   }
@@ -94,6 +121,132 @@ function normalizeWordPressPayload<T>(value: T): T {
   return value
 }
 
+function normalizeTerm(term: Partial<TaxonomyTerm> | undefined): TaxonomyTerm | null {
+  if (!term?.slug || !term?.name) {
+    return null
+  }
+
+  return {
+    id: typeof term.id === 'number' ? term.id : 0,
+    name: term.name,
+    slug: term.slug,
+  }
+}
+
+function normalizeAuthor(author: Partial<EntryAuthor> | undefined): EntryAuthor | undefined {
+  if (!author?.name) {
+    return undefined
+  }
+
+  const fallbackSlug = author.name
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+
+  return {
+    id: typeof author.id === 'number' ? author.id : undefined,
+    name: author.name,
+    slug: author.slug?.trim() || fallbackSlug || 'author',
+  }
+}
+
+function normalizeArchiveMeta(archive: Partial<BlogArchiveMeta> | undefined): BlogArchiveMeta {
+  const title = archive?.title?.trim() || 'Blog'
+  const slug = archive?.slug?.trim() || 'blog'
+  const url = archive?.url?.trim() || '/blog'
+  const permalink = archive?.permalink?.trim() || url
+
+  return {
+    id: typeof archive?.id === 'number' ? archive.id : 0,
+    title,
+    slug,
+    excerpt: archive?.excerpt?.trim() || '',
+    url,
+    permalink,
+    featuredImage: archive?.featuredImage?.trim() || '',
+    featuredImageAlt: archive?.featuredImageAlt?.trim() || title,
+    pageForPostsId: typeof archive?.pageForPostsId === 'number' ? archive.pageForPostsId : 0,
+    isAssigned: Boolean(archive?.isAssigned),
+    showOnFront: archive?.showOnFront?.trim() || 'posts',
+    seo: archive?.seo || {
+      title,
+      description: archive?.excerpt?.trim() || '',
+      canonicalUrl: permalink,
+      ogImage: archive?.featuredImage?.trim() || '',
+      noindex: false,
+    },
+  }
+}
+
+function normalizeArchiveItem(item: Partial<PostArchiveItem>): PostArchiveItem {
+  const title = item.title?.trim() || 'Untitled post'
+  const slug = item.slug?.trim() || ''
+  const url = item.url?.trim() || (slug ? `/blog/${slug}` : '/blog')
+  const permalink = item.permalink?.trim() || url
+
+  return {
+    title,
+    slug,
+    status: item.status?.trim() || undefined,
+    url,
+    permalink,
+    excerpt: item.excerpt?.trim() || '',
+    featuredImage: item.featuredImage?.trim() || '',
+    featuredImageAlt: item.featuredImageAlt?.trim() || title,
+    publishedAt: item.publishedAt?.trim() || '',
+    modifiedAt: item.modifiedAt?.trim() || undefined,
+    author: normalizeAuthor(item.author),
+    readingTimeMinutes:
+      typeof item.readingTimeMinutes === 'number' && item.readingTimeMinutes > 0
+        ? Math.round(item.readingTimeMinutes)
+        : undefined,
+    categories: (item.categories || []).map(normalizeTerm).filter(Boolean) as TaxonomyTerm[],
+    tags: (item.tags || []).map(normalizeTerm).filter(Boolean) as TaxonomyTerm[],
+    seo: item.seo || {
+      title,
+      description: item.excerpt?.trim() || '',
+      canonicalUrl: permalink,
+      ogImage: item.featuredImage?.trim() || '',
+      noindex: false,
+    },
+  }
+}
+
+function normalizeArchiveResponse(payload: PostArchiveResponse): PostArchiveResponse {
+  return {
+    ...payload,
+    archive: normalizeArchiveMeta(payload.archive),
+    items: (payload.items || []).map(normalizeArchiveItem),
+    categories: (payload.categories || []).map(normalizeTerm).filter(Boolean) as TaxonomyTerm[],
+    tags: (payload.tags || []).map(normalizeTerm).filter(Boolean) as TaxonomyTerm[],
+    filters: {
+      category: payload.filters?.category || '',
+      tag: payload.filters?.tag || '',
+      search: payload.filters?.search || '',
+    },
+    pagination: {
+      page: payload.pagination?.page || 1,
+      perPage: payload.pagination?.perPage || Math.max(1, payload.items?.length || 0),
+      totalItems: payload.pagination?.totalItems || payload.items?.length || 0,
+      totalPages: payload.pagination?.totalPages || (payload.items?.length ? 1 : 0),
+    },
+  }
+}
+
+function normalizePostEntry(payload: PostEntry): PostEntry {
+  const normalized = normalizeArchiveItem(payload)
+
+  return {
+    ...payload,
+    ...normalized,
+    type: 'post',
+    content: payload.content || '',
+    archive: normalizeArchiveMeta(payload.archive),
+    related: (payload.related || []).map(normalizeArchiveItem),
+  }
+}
+
 function getWordPressBase() {
   if (isProxyingWordPressThroughFrontend()) {
     return getBrowserOrigin()
@@ -104,14 +257,11 @@ function getWordPressBase() {
   }
 
   if (typeof window !== 'undefined' && /^https?:$/i.test(window.location.protocol)) {
-    const { protocol, hostname, port, origin } = window.location
-    const normalizedOrigin = origin.replace(/\/$/, '')
+    const { protocol, hostname, port } = window.location
 
     if ((hostname === 'localhost' || hostname === '127.0.0.1') && port !== '8080') {
       return `${protocol}//${hostname}:8080`
     }
-
-    return normalizedOrigin
   }
 
   return ''
@@ -157,16 +307,44 @@ function getStorage() {
   }
 
   try {
-    return window.sessionStorage
+    return window.localStorage
   } catch {
     return null
   }
 }
 
-function readCachedValue<T>(key: string): { etag: string; data: T } | null {
+function clearCachedValue(key: string) {
+  MEMORY_CACHE.delete(key)
+
+  const storage = getStorage()
+  if (!storage) {
+    return
+  }
+
+  try {
+    storage.removeItem(`${REQUEST_CACHE_PREFIX}${key}`)
+  } catch {
+    // Ignore storage issues while clearing stale cache entries.
+  }
+}
+
+function isExpiredCacheEntry(entry: { cachedAt?: number }) {
+  if (!entry.cachedAt) {
+    return true
+  }
+
+  return Date.now() - entry.cachedAt > BROWSER_CACHE_HARD_TTL_MS
+}
+
+function readCachedValue<T>(key: string): { etag: string; data: T; cachedAt: number } | null {
   const inMemory = MEMORY_CACHE.get(key)
   if (inMemory) {
-    return inMemory as { etag: string; data: T }
+    if (isExpiredCacheEntry(inMemory)) {
+      clearCachedValue(key)
+      return null
+    }
+
+    return inMemory as { etag: string; data: T; cachedAt: number }
   }
 
   const storage = getStorage()
@@ -180,16 +358,23 @@ function readCachedValue<T>(key: string): { etag: string; data: T } | null {
       return null
     }
 
-    const parsed = JSON.parse(raw) as { etag: string; data: T }
+    const parsed = JSON.parse(raw) as { etag: string; data: T; cachedAt: number }
+    if (isExpiredCacheEntry(parsed)) {
+      clearCachedValue(key)
+      return null
+    }
+
     MEMORY_CACHE.set(key, parsed)
     return parsed
   } catch {
+    clearCachedValue(key)
     return null
   }
 }
 
 function writeCachedValue<T>(key: string, entry: { etag: string; data: T }) {
-  MEMORY_CACHE.set(key, entry)
+  const cacheEntry = { ...entry, cachedAt: Date.now() }
+  MEMORY_CACHE.set(key, cacheEntry)
 
   const storage = getStorage()
   if (!storage) {
@@ -197,7 +382,7 @@ function writeCachedValue<T>(key: string, entry: { etag: string; data: T }) {
   }
 
   try {
-    storage.setItem(`${REQUEST_CACHE_PREFIX}${key}`, JSON.stringify(entry))
+    storage.setItem(`${REQUEST_CACHE_PREFIX}${key}`, JSON.stringify(cacheEntry))
   } catch {
     // Ignore storage quota issues and keep the in-memory cache.
   }
@@ -220,11 +405,22 @@ function buildEndpointCandidates(route: string, query?: Record<string, QueryValu
   const prettyParams = params.toString()
   const pretty = `/wp-json${normalizedRoute}${prettyParams ? `?${prettyParams}` : ''}`
 
+  // When the frontend dev server proxies WordPress, `/?rest_route=...` resolves
+  // against the app origin and can return the SPA shell HTML instead of JSON.
+  if (isProxyingWordPressThroughFrontend()) {
+    return [pretty]
+  }
+
   const fallbackParams = new URLSearchParams(params)
   fallbackParams.set('rest_route', normalizedRoute)
   const fallback = `/?${fallbackParams.toString()}`
 
   return [pretty, fallback]
+}
+
+function isJsonResponse(response: Response) {
+  const contentType = response.headers.get('content-type') || ''
+  return /\bapplication\/([\w.+-]*json)\b/i.test(contentType)
 }
 
 async function fetchWordPressJson<T>(
@@ -237,7 +433,7 @@ async function fetchWordPressJson<T>(
   const wordpressBase = getWordPressBase()
 
   if (!wordpressBase) {
-    throw new Error('Missing VITE_WORDPRESS_BASE_URL')
+    throw new Error('Missing VITE_WORDPRESS_BASE_URL or reachable local WordPress backend')
   }
 
   const previewState = getPreviewState()
@@ -250,17 +446,31 @@ async function fetchWordPressJson<T>(
   }
 
   for (const endpoint of buildEndpointCandidates(route, options?.query)) {
-    const response = await fetch(`${wordpressBase}${endpoint}`, {
-      signal: options?.signal,
-      headers,
-      cache: previewState.enabled ? 'no-store' : 'no-cache',
-    })
+    let response: Response
+
+    try {
+      response = await fetch(`${wordpressBase}${endpoint}`, {
+        signal: options?.signal,
+        headers,
+        cache: previewState.enabled ? 'no-store' : 'no-cache',
+      })
+    } catch (error) {
+      if (isAbortError(error)) {
+        throw error
+      }
+
+      continue
+    }
 
     if (response.status === 304 && cachedEntry) {
       return normalizeWordPressPayload(cachedEntry.data)
     }
 
     if (!response.ok) {
+      continue
+    }
+
+    if (!isJsonResponse(response)) {
       continue
     }
 
@@ -289,6 +499,10 @@ export function getCachedBootstrap(): SiteBootstrap | null {
   )
 
   return cached ? normalizeWordPressPayload(cached.data) : null
+}
+
+export function getInitialBootstrap(): SiteBootstrap {
+  return getCachedBootstrap() ?? getGeneratedBootstrap()
 }
 
 export async function getSiteBootstrap(signal?: AbortSignal): Promise<SiteBootstrap> {
@@ -327,11 +541,13 @@ export async function getPosts(
   query?: Record<string, QueryValue>,
   signal?: AbortSignal,
 ): Promise<PostArchiveResponse> {
-  return fetchWordPressJson<PostArchiveResponse>('/frankies/v1/posts', { signal, query })
+  const payload = await fetchWordPressJson<PostArchiveResponse>('/frankies/v1/blog', { signal, query })
+  return normalizeArchiveResponse(payload)
 }
 
 export async function getPostBySlug(slug: string, signal?: AbortSignal): Promise<PostEntry> {
-  return fetchWordPressJson<PostEntry>(`/frankies/v1/posts/${encodeURIComponent(slug)}`, { signal })
+  const payload = await fetchWordPressJson<PostEntry>(`/frankies/v1/blog/${encodeURIComponent(slug)}`, { signal })
+  return normalizePostEntry(payload)
 }
 
 export async function getPages(signal?: AbortSignal): Promise<PageArchiveResponse> {

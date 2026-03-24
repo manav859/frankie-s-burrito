@@ -166,20 +166,47 @@ export type TaxonomyTerm = {
   slug: string
 }
 
+export type EntryAuthor = {
+  id?: number
+  name: string
+  slug: string
+}
+
+export type BlogArchiveMeta = {
+  id: number
+  title: string
+  slug: string
+  excerpt?: string
+  url: string
+  permalink: string
+  featuredImage?: string
+  featuredImageAlt?: string
+  pageForPostsId: number
+  isAssigned: boolean
+  showOnFront: string
+  seo: EntrySeo
+}
+
 export type PostArchiveItem = {
   title: string
   slug: string
+  status?: string
+  url: string
+  permalink: string
   excerpt: string
   featuredImage: string
   featuredImageAlt?: string
   publishedAt: string
   modifiedAt?: string
+  author?: EntryAuthor
+  readingTimeMinutes?: number
   categories: TaxonomyTerm[]
   tags: TaxonomyTerm[]
   seo: EntrySeo
 }
 
 export type PostArchiveResponse = {
+  archive: BlogArchiveMeta
   items: PostArchiveItem[]
   pagination: {
     page: number
@@ -200,15 +227,21 @@ export type PostEntry = {
   type: 'post'
   title: string
   slug: string
+  status?: string
+  url: string
+  permalink: string
   excerpt: string
   content: string
   featuredImage: string
   featuredImageAlt?: string
   publishedAt: string
   modifiedAt?: string
+  author?: EntryAuthor
+  readingTimeMinutes?: number
   categories: TaxonomyTerm[]
   tags: TaxonomyTerm[]
   seo: EntrySeo
+  archive: BlogArchiveMeta
   related: PostArchiveItem[]
 }
 

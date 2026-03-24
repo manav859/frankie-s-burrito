@@ -1,6 +1,7 @@
 export {
   getCachedBootstrap,
   getGeneratedBootstrap,
+  getInitialBootstrap,
   getNavigation,
   getPageBySlug,
   getPages,
@@ -9,4 +10,5 @@ export {
   getSettings,
   getSiteBootstrap,
   hasWordPressBase,
+  isAbortError,
 } from './wordpress-api'

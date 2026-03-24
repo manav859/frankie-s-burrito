@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { SiteContent } from '../../types'
+import { withBase } from '../../lib/base-path'
 import { BrandMark } from '../ui/BrandMark'
 import { Button } from '../ui/Button'
 import { MobileMenu } from './MobileMenu'
@@ -14,6 +15,10 @@ export function SiteHeader({
   prefersReducedMotion: boolean
 }) {
   const [menuOpen, setMenuOpen] = useState(false)
+  const blogNavItem = { label: 'Journal', href: withBase('/blog') }
+  const navigationItems = content.navigation.some((item) => item.href === blogNavItem.href || item.label === blogNavItem.label)
+    ? content.navigation
+    : [...content.navigation, blogNavItem]
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : ''
@@ -32,19 +37,16 @@ export function SiteHeader({
         ].join(' ')}
       >
         <div className="mx-auto flex w-full max-w-[1440px] items-center justify-between px-8 py-4 md:px-16">
-          <a href="/" className="block">
+          <a href={withBase('/')} className="block">
             <BrandMark content={content} className="max-h-14 w-auto object-contain" />
           </a>
 
           <nav className="hidden items-center gap-6 text-[15px] font-medium text-[var(--ink)] md:flex">
-            {content.navigation.map((item) => (
+            {navigationItems.map((item) => (
               <a key={item.label} href={item.href} className="nav-link transition hover:text-[var(--gold)]">
                 {item.label}
               </a>
             ))}
-            <a href="/blog" className="nav-link transition hover:text-[var(--gold)]">
-              Journal
-            </a>
             <Button cta={content.hero.primaryCta} />
           </nav>
 
@@ -62,7 +64,7 @@ export function SiteHeader({
       </header>
 
       <MobileMenu
-        content={{ ...content, navigation: [...content.navigation, { label: 'Journal', href: '/blog' }] }}
+        content={{ ...content, navigation: navigationItems }}
         open={menuOpen}
         onClose={() => setMenuOpen(false)}
         prefersReducedMotion={prefersReducedMotion}

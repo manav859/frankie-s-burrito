@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { startTransition, useEffect, useState } from 'react'
 import { Footer } from './components/site/Footer'
 import { SiteHeader } from './components/site/SiteHeader'
 import { Button } from './components/ui/Button'
@@ -8,20 +8,21 @@ import { withBase } from './lib/base-path'
 import { useCurrentRoute } from './lib/hooks'
 import { useSeo } from './lib/seo'
 import {
-  getCachedBootstrap,
   getGeneratedBootstrap,
+  getInitialBootstrap,
   getPageBySlug,
-  getPages,
   getPostBySlug,
   getPosts,
   getSiteBootstrap,
   hasWordPressBase,
+  isAbortError,
 } from './lib/wordpress'
+import { BlogIndexPage } from './pages/BlogIndexPage'
+import { BlogPostPage } from './pages/BlogPostPage'
 import { HomePage } from './pages/HomePage'
 import type {
-  PageArchiveItem,
   PageEntry,
-  PostArchiveItem,
+  PostArchiveResponse,
   PostEntry,
   SiteBootstrap,
   SiteContent,
@@ -57,22 +58,25 @@ function buildBlogRouteSeo(content: SiteContent, seo: SiteBootstrap['seo']) {
   }
 }
 
+function buildBlogArchiveSeo(content: SiteContent, archive: PostArchiveResponse | null, seo: SiteBootstrap['seo']) {
+  if (archive?.archive?.seo) {
+    return archive.archive.seo
+  }
+
+  return buildBlogRouteSeo(content, seo)
+}
+
 function App() {
   const liveCmsEnabled = hasWordPressBase()
-  const [bootstrap, setBootstrap] = useState<SiteBootstrap | null>(() =>
-    liveCmsEnabled ? getCachedBootstrap() : getGeneratedBootstrap(),
-  )
-  const [posts, setPosts] = useState<PostArchiveItem[]>([])
-  const [pages, setPages] = useState<PageArchiveItem[]>([])
+  const [bootstrap, setBootstrap] = useState<SiteBootstrap>(() => (liveCmsEnabled ? getInitialBootstrap() : getGeneratedBootstrap()))
+  const [postArchive, setPostArchive] = useState<PostArchiveResponse | null>(null)
   const [entry, setEntry] = useState<PostEntry | PageEntry | null>(null)
   const [loading, setLoading] = useState(false)
   const [loadError, setLoadError] = useState<string | null>(null)
-  const [bootstrapError, setBootstrapError] = useState<string | null>(null)
   const [isScrolled, setIsScrolled] = useState(false)
-  const hadInitialBootstrap = useRef(bootstrap !== null)
   const prefersReducedMotion = usePrefersReducedMotion()
   const route = useCurrentRoute()
-  const currentBootstrap = bootstrap ?? getGeneratedBootstrap()
+  const currentBootstrap = bootstrap
   const content: SiteContent = currentBootstrap.content
   const shellContent: SiteContent =
     route.kind === 'home'
@@ -110,11 +114,16 @@ function App() {
 
       try {
         const nextBootstrap = await getSiteBootstrap(controller.signal)
-        setBootstrap(nextBootstrap)
-        setBootstrapError(null)
+        startTransition(() => {
+          setBootstrap(nextBootstrap)
+        })
       } catch (error) {
-        if (!controller.signal.aborted && !hadInitialBootstrap.current) {
-          setBootstrapError(error instanceof Error ? error.message : 'Unable to load CMS content.')
+        if (isAbortError(error)) {
+          return
+        }
+
+        if (!controller.signal.aborted) {
+          console.warn('Unable to refresh homepage CMS content.', error)
         }
       }
     }
@@ -123,7 +132,7 @@ function App() {
 
     const intervalId = window.setInterval(() => {
       void refreshBootstrap()
-    }, 30000)
+    }, 15000)
 
     const handleFocus = () => {
       void refreshBootstrap()
@@ -158,10 +167,7 @@ function App() {
     if (!hasWordPressBase() || route.kind === 'home') {
       setLoading(false)
       setLoadError(null)
-      if (route.kind !== 'blog') {
-        setPosts([])
-        setPages([])
-      }
+      setPostArchive(null)
       if (route.kind === 'home') {
         setEntry(null)
       }
@@ -175,15 +181,14 @@ function App() {
     const loadRouteData = async () => {
       try {
         if (route.kind === 'blog') {
-          const [postArchive, pageArchive] = await Promise.all([
-            getPosts(undefined, controller.signal),
-            getPages(controller.signal),
-          ])
-          setPosts(postArchive.items)
-          setPages(pageArchive.items)
+          const nextArchive = await getPosts(undefined, controller.signal)
+          setPostArchive(nextArchive)
           setEntry(null)
           return
         }
+
+        setPostArchive(null)
+        setEntry(null)
 
         if (route.kind === 'post') {
           const post = await getPostBySlug(route.slug, controller.signal)
@@ -196,9 +201,15 @@ function App() {
           setEntry(page)
         }
       } catch (error) {
+        if (isAbortError(error) || controller.signal.aborted) {
+          return
+        }
+
         setLoadError(error instanceof Error ? error.message : 'Unable to load CMS content.')
       } finally {
-        setLoading(false)
+        if (!controller.signal.aborted) {
+          setLoading(false)
+        }
       }
     }
 
@@ -211,17 +222,13 @@ function App() {
     route.kind === 'post' || route.kind === 'page'
       ? entry?.seo ?? currentBootstrap.seo
       : route.kind === 'blog'
-        ? buildBlogRouteSeo(content, currentBootstrap.seo)
+        ? buildBlogArchiveSeo(content, postArchive, currentBootstrap.seo)
         : currentBootstrap.seo
 
   useSeo({
     ...currentBootstrap,
     seo: routeSeo,
   })
-
-  if (bootstrap === null) {
-    return bootstrapError ? <ErrorState message={bootstrapError} /> : <LoadingState />
-  }
 
   if (route.kind === 'home') {
     return <HomePage bootstrap={bootstrap} isScrolled={isScrolled} prefersReducedMotion={prefersReducedMotion} />
@@ -232,92 +239,15 @@ function App() {
       <SiteHeader content={shellContent} isScrolled={isScrolled} prefersReducedMotion={prefersReducedMotion} />
       <main className="px-8 pb-20 pt-28 md:px-16 md:pt-36">
         {route.kind === 'blog' ? (
-          <BlogIndexPage content={shellContent} posts={posts} pages={pages} loading={loading} loadError={loadError} />
+          <BlogIndexPage content={shellContent} archive={postArchive} loading={loading} loadError={loadError} />
+        ) : route.kind === 'post' ? (
+          <BlogPostPage content={shellContent} entry={entry as PostEntry | null} loading={loading} loadError={loadError} />
         ) : (
           <EntryPage content={shellContent} entry={entry} loading={loading} loadError={loadError} />
         )}
       </main>
       <Footer content={shellContent} prefersReducedMotion={prefersReducedMotion} />
     </div>
-  )
-}
-
-function BlogIndexPage({
-  content,
-  posts,
-  pages,
-  loading,
-  loadError,
-}: {
-  content: SiteContent
-  posts: PostArchiveItem[]
-  pages: PageArchiveItem[]
-  loading: boolean
-  loadError: string | null
-}) {
-  return (
-    <section className="mx-auto max-w-[1312px]">
-      <div className="max-w-[860px]">
-        <p className="section-eyebrow">JOURNAL</p>
-        <h1 className="section-title mt-1.5 md:text-[52px]">News, updates, and pages from the CMS.</h1>
-        <p className="mt-4 max-w-[640px] text-[var(--muted)]">
-          This route is now powered by WordPress content and uses the same headless API layer as the homepage.
-        </p>
-      </div>
-
-      {loading ? <LoadingState /> : null}
-      {loadError ? <ErrorState message={loadError} /> : null}
-
-      {!loading && !loadError ? (
-        <>
-          <div className="mt-10 grid gap-5 md:grid-cols-2">
-            {posts.map((post) => (
-              <article key={post.slug} className="rounded-[28px] bg-[var(--card)] p-6 shadow-[0_14px_28px_rgba(31,31,31,0.06)]">
-                {post.featuredImage ? (
-                  <div className="mb-5 overflow-hidden rounded-[20px]">
-                    <CmsImage
-                      src={post.featuredImage}
-                      alt={post.featuredImageAlt || post.title}
-                      className="h-56 w-full object-cover"
-                      sizes="(min-width: 768px) 50vw, 100vw"
-                    />
-                  </div>
-                ) : null}
-                <div className="text-xs font-semibold uppercase tracking-[0.1em] text-[var(--brick)]">
-                  {formatDate(post.publishedAt)}
-                </div>
-                <h2 className="mt-2 text-[28px] font-semibold leading-[1.1] text-[var(--ink)]">
-                  <a href={withBase(`/blog/${post.slug}`)}>{post.title}</a>
-                </h2>
-                <p className="mt-3 text-[15px] leading-[1.7] text-[var(--muted)]">{post.excerpt}</p>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {post.categories.map((category) => (
-                    <span key={category.slug} className="rounded-full bg-[var(--cream-soft)] px-3 py-1 text-xs font-semibold text-[var(--brick)]">
-                      {category.name}
-                    </span>
-                  ))}
-                </div>
-              </article>
-            ))}
-          </div>
-
-          {pages.length ? (
-            <div className="mt-14">
-              <div className="text-sm font-semibold uppercase tracking-[0.1em] text-[var(--brick)]">Standalone pages</div>
-              <div className="mt-4 flex flex-wrap gap-3">
-                {pages.map((page) => (
-                  <a key={page.slug} href={`/${page.slug}`} className="rounded-full bg-white px-4 py-3 text-sm font-semibold text-[var(--ink)] shadow-sm">
-                    {page.title}
-                  </a>
-                ))}
-              </div>
-            </div>
-          ) : null}
-
-          {!posts.length && !pages.length ? <EmptyState body={`WordPress is connected, but there is no article or page content published yet for ${content.siteName}.`} /> : null}
-        </>
-      ) : null}
-    </section>
   )
 }
 
@@ -358,7 +288,7 @@ function EntryPage({
             <CmsImage
               src={entry.featuredImage}
               alt={entry.featuredImageAlt || entry.title}
-              className="max-h-[520px] w-full object-cover"
+              className="h-[280px] w-full object-cover md:h-[520px]"
               sizes="100vw"
               priority
             />

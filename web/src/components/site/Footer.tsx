@@ -1,4 +1,5 @@
 import type { SiteContent } from '../../types'
+import { withBase } from '../../lib/base-path'
 import { BrandMark } from '../ui/BrandMark'
 import { Reveal, useReveal } from '../ui/Reveal'
 
@@ -10,6 +11,10 @@ export function Footer({
   prefersReducedMotion: boolean
 }) {
   const reveal = useReveal<HTMLElement>()
+  const blogNavItem = { label: 'Journal', href: withBase('/blog') }
+  const navigationItems = content.navigation.some((item) => item.href === blogNavItem.href || item.label === blogNavItem.label)
+    ? content.navigation
+    : [...content.navigation, blogNavItem]
 
   return (
     <footer ref={reveal.ref} className="deferred-section bg-[var(--footer)] px-8 py-10 pb-28 text-[var(--cream-dim)] md:px-16 md:py-14">
@@ -24,7 +29,7 @@ export function Footer({
           <div>
             <div className="text-base font-semibold text-white">{content.footer.navigateHeading || 'Navigate'}</div>
             <div className="mt-1.5 space-y-2 text-[15px]">
-              {content.navigation.map((item) => (
+              {navigationItems.map((item) => (
                 <div key={item.label}>
                   <a href={item.href}>{item.label}</a>
                 </div>
