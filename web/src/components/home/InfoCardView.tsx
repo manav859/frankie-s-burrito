@@ -5,16 +5,18 @@ import type { InfoCard } from '../../types'
 export function InfoCardView({
   item,
   prefersReducedMotion,
+  className = '',
 }: {
   item: InfoCard
   prefersReducedMotion: boolean
+  className?: string
 }) {
   const tiltRef = useTilt3D(4, 8)
 
   return (
     <article
       ref={prefersReducedMotion ? undefined : (tiltRef as RefObject<HTMLElement>)}
-      className="interactive-card leather-stitch rounded-[24px] bg-white p-5 text-[var(--ink)]"
+      className={`interactive-card leather-stitch rounded-[24px] bg-white p-5 text-[var(--ink)] ${className}`.trim()}
     >
       {item.number ? <div className="text-sm font-semibold text-[var(--orange)]">{item.number}</div> : null}
       <h3 className="mt-1 text-xl font-semibold leading-[1.2] md:text-2xl">{item.title}</h3>

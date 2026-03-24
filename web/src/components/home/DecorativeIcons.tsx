@@ -1,5 +1,5 @@
 export const CowboyRider = () => (
-  <svg viewBox="0 0 100 100" className="h-[90px] w-[90px] fill-[var(--ink)]">
+  <svg viewBox="0 0 100 100" className="h-[120px] w-[120px] fill-[var(--cocoa)]">
     <ellipse cx="50" cy="65" rx="22" ry="14" />
     <path d="M 68 60 Q 85 45 85 40 L 78 40 Q 73 55 60 60 Z" />
     <path d="M 35 65 Q 20 70 15 90 L 22 90 Q 28 80 32 75 Z" />

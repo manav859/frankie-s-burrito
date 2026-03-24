@@ -17,7 +17,8 @@ Core content structures:
 - `menu_item` custom post type
 - `menu_category` custom taxonomy
 - `testimonial` custom post type
-- native WordPress `post` and `page` remain available for future editorial routes
+- native WordPress `post` powers the `Blogs` admin section and the `/blog` archive
+- native WordPress `page` remains available for standalone editorial routes
 - `Headless Settings` admin screen for singleton homepage sections, SEO metadata, preview token, and deployment hooks
 
 Public API:
@@ -26,8 +27,8 @@ Public API:
 - `GET /wp-json/frankies/v1/navigation`
 - `GET /wp-json/frankies/v1/preview` with header `x-frankies-preview-token`
 - `POST /wp-json/frankies/v1/revalidate` with header `x-frankies-revalidate-secret`
-- `GET /wp-json/frankies/v1/posts`
-- `GET /wp-json/frankies/v1/posts/<slug>`
+- `GET /wp-json/frankies/v1/blog`
+- `GET /wp-json/frankies/v1/blog/<slug>`
 - `GET /wp-json/frankies/v1/pages`
 - `GET /wp-json/frankies/v1/pages/<slug>`
 
@@ -60,7 +61,7 @@ The frontend build is now CMS-aware without depending on live runtime fetches in
 Build pipeline:
 1. `npm run sync:wordpress`
 2. fetch the bootstrap payload from WordPress when `WORDPRESS_BASE_URL` or `VITE_WORDPRESS_BASE_URL` is set
-3. fetch posts and native pages for route generation when a WordPress base URL is set
+3. fetch blog posts and native pages for route generation when a WordPress base URL is set
 4. write `web/src/generated/site-bootstrap.json`
 5. regenerate `web/index.html`, route HTML files, `web/public/robots.txt`, and `web/public/sitemap.xml`
 6. run `vite build`
@@ -68,6 +69,7 @@ Build pipeline:
 At runtime:
 - the app hydrates from generated bootstrap data first
 - if a WordPress base URL is configured, it refreshes from the live CMS
+- production frontend fetches should use `VITE_WORDPRESS_BASE_URL` pointing at the WordPress host; do not rely on the browser origin for blog API requests
 - if `?preview=1&token=...` is present, it calls the preview endpoint
 
 ## Local setup
@@ -79,26 +81,28 @@ Local infrastructure:
 Backend:
 1. Configure WordPress environment variables from [backend/.env.example](/D:/work/frankie's%20burrito/backend/.env.example).
 2. Assign `Primary Navigation` under Appearance > Menus if you want native menu-driven nav.
-3. Use the CMS admin to create `menu_category`, `menu_item`, and `testimonial` entries.
-4. Fill singleton sections in `Headless Settings`.
-5. Switch to the `Frankies Headless` theme if your environment needs a minimal active theme.
-6. For SEO:
+3. Confirm a real WordPress page named `Blog` exists and is assigned as the posts page.
+4. Use the CMS admin to create `menu_category`, `menu_item`, `testimonial`, and `blog` entries.
+5. Fill singleton sections in `Headless Settings`.
+6. Switch to the `Frankies Headless` theme if your environment needs a minimal active theme.
+7. For SEO:
    - fill homepage defaults in `Headless Settings`
    - use the SEO meta box on native posts/pages for entry-specific overrides
    - keep featured images and image alt text populated for posts/pages/menu items
 
 Frontend:
 1. Copy `web/.env.example` to `web/.env`.
-2. Set `VITE_WORDPRESS_BASE_URL` to the CMS origin.
+2. Set `VITE_WORDPRESS_BASE_URL` to the CMS origin, for example `https://cms.example.com`.
 3. Run `npm install` only if dependencies are missing.
 4. Run `npm run build` in `web/`.
 
 ## Deployment
 
 Frontend:
-1. Set `WORDPRESS_BASE_URL` or `VITE_WORDPRESS_BASE_URL` to the production CMS origin.
-2. Run `npm run build` inside `web/`.
-3. Publish `web/dist/` to the frontend host.
+1. Set `VITE_WORDPRESS_BASE_URL` to the production CMS origin.
+2. Optionally set `WORDPRESS_BASE_URL` for build-time sync jobs outside Vite.
+3. Run `npm run build` inside `web/`.
+4. Publish `web/dist/` to the frontend host.
 
 WordPress:
 1. Set values from [backend/.env.example](/D:/work/frankie's%20burrito/backend/.env.example), especially salts, `FORCE_SSL_ADMIN`, `DISALLOW_FILE_MODS`, `WP_HOME`, and `WP_SITEURL`.
@@ -109,6 +113,7 @@ WordPress:
 ## Troubleshooting
 
 - If `/wp-json/frankies/v1/bootstrap` fails, check WordPress permalinks and [backend/.htaccess](/D:/work/frankie's%20burrito/backend/.htaccess).
+- If blog data fails to load, confirm `VITE_WORDPRESS_BASE_URL` points to the WordPress host and that `/wp-json/frankies/v1/blog` responds there.
 - If the frontend shows stale CMS content, check the revalidate webhook target and CDN cache behavior.
 - If preview content does not load, confirm `x-frankies-preview-token` matches the WordPress setting and that preview URLs include `?preview=1&token=...`.
 - If canonical or sitemap URLs are wrong, update `seo.siteUrl` in `Headless Settings` and rebuild the frontend.

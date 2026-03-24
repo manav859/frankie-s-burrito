@@ -99,12 +99,12 @@ async function fetchContentSnapshot() {
 
   const [bootstrap, postsResponse, pagesResponse] = await Promise.all([
     fetchJson(baseUrl, '/frankies/v1/bootstrap'),
-    fetchJson(baseUrl, '/frankies/v1/posts'),
+    fetchJson(baseUrl, '/frankies/v1/blog'),
     fetchJson(baseUrl, '/frankies/v1/pages'),
   ])
 
   const postEntries = await Promise.all(
-    (postsResponse.items || []).map((post) => fetchJson(baseUrl, `/frankies/v1/posts/${post.slug}`)),
+    (postsResponse.items || []).map((post) => fetchJson(baseUrl, `/frankies/v1/blog/${post.slug}`)),
   )
 
   const pageEntries = await Promise.all(

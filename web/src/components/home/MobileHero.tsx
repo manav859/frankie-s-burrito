@@ -4,6 +4,7 @@ import { Reveal } from '../ui/Reveal'
 import { BrandMark } from '../ui/BrandMark'
 import { Button } from '../ui/Button'
 import { MobileMenu } from '../site/MobileMenu'
+import { CowboyRider } from './DecorativeIcons'
 
 export function MobileHero({
   content,
@@ -31,6 +32,14 @@ export function MobileHero({
         backgroundImage: `linear-gradient(rgba(27, 19, 13, 0.2), rgba(27, 19, 13, 0.28)), url(${content.hero.mobileImage})`,
       }}
     >
+      {!prefersReducedMotion ? (
+        <div className="cowboy-wrapper mobile-cowboy-wrapper">
+          <div className="cowboy-inner mobile-cowboy-inner">
+            <CowboyRider />
+          </div>
+        </div>
+      ) : null}
+
       <header
         className={[
           'fixed inset-x-0 top-0 z-50 flex items-start justify-between px-8 py-[18px] transition-all duration-300',

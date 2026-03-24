@@ -106,6 +106,21 @@ function buildBlogIndexSchema(bootstrap) {
   }
 }
 
+function buildBlogArchiveSeo(bootstrap, posts) {
+  const archive = posts?.archive
+  if (archive?.seo) {
+    return archive.seo
+  }
+
+  return {
+    ...bootstrap.seo,
+    title: `Journal | ${bootstrap.content.siteName}`,
+    description: `Stories, updates, and announcements from ${bootstrap.content.siteName}.`,
+    canonicalUrl: `${bootstrap.seo.canonicalUrl.replace(/\/$/, '')}/blog/`,
+    schema: buildBlogIndexSchema(bootstrap),
+  }
+}
+
 function renderHomepageMarkup(bootstrap) {
   const { content } = bootstrap
   const featured = content.featuredItems
@@ -314,13 +329,7 @@ export async function buildStaticSite({ bootstrap, posts = [], pages = [], entri
   await fs.mkdir(publicDir, { recursive: true })
   await writeRouteHtml('/', homepageHtml)
 
-  const blogSeo = {
-    ...bootstrap.seo,
-    title: `Journal | ${bootstrap.content.siteName}`,
-    description: `Stories, updates, and announcements from ${bootstrap.content.siteName}.`,
-    canonicalUrl: `${bootstrap.seo.canonicalUrl.replace(/\/$/, '')}/blog/`,
-    schema: buildBlogIndexSchema(bootstrap),
-  }
+  const blogSeo = buildBlogArchiveSeo(bootstrap, posts)
 
   await writeRouteHtml(
     '/blog',

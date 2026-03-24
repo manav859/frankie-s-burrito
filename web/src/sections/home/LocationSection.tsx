@@ -13,14 +13,14 @@ export function LocationSection({
   const reveal = useReveal<HTMLDivElement>()
 
   return (
-    <section id="location" className="section-divider deferred-section relative overflow-hidden bg-[var(--tan)] px-8 py-14 md:px-16 md:py-24">
+    <section id="location" className="section-divider deferred-section relative overflow-hidden bg-[var(--tan)] px-5 py-14 md:px-16 md:py-24">
       {!prefersReducedMotion && (
         <div className="cactus-idle">
           <CactusSVG />
         </div>
       )}
       <div ref={reveal.ref} className="mx-auto flex max-w-[900px] flex-col items-center text-center">
-        <Reveal visible={reveal.visible} reducedMotion={prefersReducedMotion} direction="up" className="w-full">
+        <Reveal visible={reveal.visible} reducedMotion={prefersReducedMotion} direction="up" className="mobile-section-gutter w-full">
           <p className="section-eyebrow">{content.location.eyebrow}</p>
           <h2 className="section-title mt-1.5 text-[30px] md:text-[48px]">{content.location.title}</h2>
           <div className="mt-8 flex flex-col items-center gap-4 text-[16px] md:text-[20px]">

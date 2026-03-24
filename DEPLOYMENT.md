@@ -26,7 +26,8 @@ Post-deploy checks:
 ## Frontend deployment
 
 Required environment variables:
-- `WORDPRESS_BASE_URL` or `VITE_WORDPRESS_BASE_URL`
+- `VITE_WORDPRESS_BASE_URL`
+- optionally `WORDPRESS_BASE_URL` for build-time sync jobs that run outside Vite
 
 Build command:
 ```bash
@@ -41,11 +42,13 @@ web/dist
 Release steps:
 1. Update content in WordPress.
 2. Confirm `seo.siteUrl` matches the target environment.
-3. Trigger the frontend rebuild via the revalidate webhook or deployment pipeline.
-4. Run the frontend build with production env vars.
-5. Publish `web/dist`.
-6. Purge or refresh CDN cache if your host does not do this atomically.
-7. Run the checks in [QA_CHECKLIST.md](/D:/work/frankie's%20burrito/QA_CHECKLIST.md).
+3. Confirm the real WordPress `Blog` page is assigned as the posts page.
+4. Confirm `VITE_WORDPRESS_BASE_URL` points to the WordPress host that serves `/wp-json/frankies/v1/blog`.
+5. Trigger the frontend rebuild via the revalidate webhook or deployment pipeline.
+6. Run the frontend build with production env vars.
+7. Publish `web/dist`.
+8. Purge or refresh CDN cache if your host does not do this atomically.
+9. Run the checks in [QA_CHECKLIST.md](/D:/work/frankie's%20burrito/QA_CHECKLIST.md).
 
 ## Revalidation workflow
 

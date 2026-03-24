@@ -10,10 +10,11 @@
    - assign a `Primary Navigation` menu under Appearance > Menus
    - optionally assign `Footer Navigation`
    - fill `Headless Settings`
+   - confirm a real `Blog` page exists and is assigned as the posts page
    - create `Menu Categories`
    - create `Menu Items`
    - create `Testimonials`
-   - optionally create native `Posts` and `Pages` for future editorial routes
+   - create native `Blogs` and `Pages` for editorial routes
 
 ## Data Flow
 
@@ -21,7 +22,7 @@
 2. Repeatable menu content lives in `Menu Items` and `Menu Categories`.
 3. Social proof lives in `Testimonials`.
 4. Native WordPress menus drive frontend navigation when assigned.
-5. Native posts/pages can be consumed from the custom REST endpoints for future routes.
+5. Native blog posts/pages are consumed from the custom REST endpoints for editorial routes.
 6. The React frontend consumes the shaped headless endpoints, not raw core REST resources.
 7. The frontend build syncs the bootstrap payload into `web/src/generated/site-bootstrap.json`.
 
@@ -43,11 +44,11 @@
 - `GET /wp-json/frankies/v1/navigation`
   - `primary` and `footer` menu arrays.
 
-### Future editorial endpoints
+### Editorial endpoints
 
-- `GET /wp-json/frankies/v1/posts`
+- `GET /wp-json/frankies/v1/blog`
   - Archive/list endpoint with pagination and optional `category`, `tag`, `search`, `page`, `per_page`.
-- `GET /wp-json/frankies/v1/posts/<slug>`
+- `GET /wp-json/frankies/v1/blog/<slug>`
   - Single article payload with related posts.
 - `GET /wp-json/frankies/v1/pages`
   - Published native page list for route generation and frontend navigation surfaces.
@@ -62,12 +63,13 @@
 - The `navigation` array now prefers native WordPress menus and falls back to settings JSON.
 - `menu.categoryFocusTitle`, `menu.categoryFocusBody`, `menu.itemCtaLabel`, and footer headings are now CMS-driven.
 - Build-time CMS route generation for `/blog/*` and `/<page-slug>` requires `WORDPRESS_BASE_URL` or `VITE_WORDPRESS_BASE_URL`.
+- Runtime frontend CMS fetches for blog routes should use `VITE_WORDPRESS_BASE_URL` pointing at the WordPress origin.
 - The frontend build also generates `robots.txt`, `sitemap.xml`, and per-route HTML with SEO metadata and JSON-LD before hydration.
 
-### Future post or page routes
+### Blog and page routes
 
-- Use `posts` for archive/list pages.
-- Use `posts/<slug>` for article detail pages.
+- Use `blog` for archive/list pages.
+- Use `blog/<slug>` for article detail pages.
 - Use `pages/<slug>` for standalone CMS pages.
 - Keep normalization at the fetch layer in `web/src/lib/`.
 - Post canonicals are intentionally public-facing `/blog/<slug>/`.
@@ -110,7 +112,7 @@
 - Watch:
   - LCP on the homepage hero
   - CLS on article and CMS-image surfaces
-  - TTFB for `bootstrap` and `posts` endpoints
+  - TTFB for `bootstrap` and `blog` endpoints
   - cache hit rate at the CDN layer
 
 ## SEO Field Management In WordPress

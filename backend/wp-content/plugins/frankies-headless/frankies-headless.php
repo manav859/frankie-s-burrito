@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Frankies Headless
  * Description: Headless CMS models, REST bootstrap API, preview flow, and hardening for Frankie's Breakfast Burritos.
- * Version: 1.0.3
+ * Version: 1.1.0
  * Author: Codex
  */
 
@@ -15,8 +15,9 @@ final class Frankies_Headless_Plugin {
 	const PREVIEW_HEADER = 'x_frankies_preview_token';
 	const REVALIDATE_HEADER = 'x_frankies_revalidate_secret';
 	const CACHE_VERSION_KEY = 'frankies_headless_cache_version';
-	const PUBLIC_CACHE_TTL = 300;
-	const PLUGIN_VERSION = '1.0.3';
+	const SETUP_VERSION_KEY = 'frankies_headless_setup_version';
+	const PUBLIC_CACHE_TTL = 30;
+	const PLUGIN_VERSION = '1.1.0';
 
 	/**
 	 * @var Frankies_Headless_Plugin|null
@@ -38,10 +39,13 @@ final class Frankies_Headless_Plugin {
 
 		add_action( 'after_setup_theme', array( $this, 'register_theme_support' ) );
 		add_action( 'init', array( $this, 'register_content_models' ) );
+		add_action( 'init', array( $this, 'ensure_blog_setup' ), 20 );
+		add_action( 'init', array( $this, 'customize_blog_labels' ), 30 );
 		add_action( 'init', array( $this, 'register_navigation_menus' ) );
 		add_action( 'init', array( $this, 'register_meta' ) );
 		add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );
 		add_action( 'admin_menu', array( $this, 'register_admin_page' ) );
+		add_action( 'admin_menu', array( $this, 'rename_posts_admin_menu' ), 20 );
 		add_action( 'admin_menu', array( $this, 'cleanup_admin_menu' ), 99 );
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 		add_action( 'admin_init', array( $this, 'configure_headless_runtime' ) );
@@ -50,6 +54,7 @@ final class Frankies_Headless_Plugin {
 		add_action( 'save_post_testimonial', array( $this, 'save_testimonial_meta' ) );
 		add_action( 'save_post_post', array( $this, 'save_seo_meta_box' ) );
 		add_action( 'save_post_page', array( $this, 'save_seo_meta_box' ) );
+		add_action( 'manage_post_posts_custom_column', array( $this, 'render_blog_admin_columns' ), 10, 2 );
 		add_action( 'menu_category_add_form_fields', array( $this, 'render_menu_category_add_fields' ) );
 		add_action( 'menu_category_edit_form_fields', array( $this, 'render_menu_category_edit_fields' ) );
 		add_action( 'created_menu_category', array( $this, 'save_menu_category_meta' ) );
@@ -78,6 +83,9 @@ final class Frankies_Headless_Plugin {
 		add_filter( 'the_generator', '__return_empty_string' );
 		add_filter( 'rest_endpoints', array( $this, 'filter_rest_endpoints' ) );
 		add_filter( 'use_block_editor_for_post_type', array( $this, 'use_block_editor_for_post_type' ), 10, 2 );
+		add_filter( 'manage_post_posts_columns', array( $this, 'add_blog_admin_columns' ) );
+		add_filter( 'display_post_states', array( $this, 'add_blog_page_state' ), 10, 2 );
+		add_filter( 'enter_title_here', array( $this, 'filter_blog_title_placeholder' ), 10, 2 );
 		add_filter( 'comments_open', '__return_false', 20, 2 );
 		add_filter( 'pings_open', '__return_false', 20, 2 );
 		add_filter( 'wp_robots', array( $this, 'filter_wp_robots' ) );
@@ -87,7 +95,10 @@ final class Frankies_Headless_Plugin {
 		$instance = self::instance();
 		$instance->register_theme_support();
 		$instance->register_content_models();
+		$instance->ensure_post_editor_support();
+		$instance->customize_blog_labels();
 		$instance->register_navigation_menus();
+		$instance->maybe_create_or_assign_blog_page();
 
 		if ( ! get_option( self::OPTION_KEY ) ) {
 			add_option( self::OPTION_KEY, $instance->default_settings() );
@@ -96,6 +107,8 @@ final class Frankies_Headless_Plugin {
 		if ( ! get_option( self::CACHE_VERSION_KEY ) ) {
 			add_option( self::CACHE_VERSION_KEY, 1, '', false );
 		}
+
+		update_option( self::SETUP_VERSION_KEY, self::PLUGIN_VERSION, false );
 
 		if ( ! get_option( 'permalink_structure' ) ) {
 			update_option( 'permalink_structure', '/%postname%/' );
@@ -127,9 +140,84 @@ final class Frankies_Headless_Plugin {
 		);
 	}
 
+	public function ensure_blog_setup() {
+		$current_version = (string) get_option( self::SETUP_VERSION_KEY, '' );
+
+		$this->ensure_post_editor_support();
+		$this->maybe_create_or_assign_blog_page();
+
+		if ( self::PLUGIN_VERSION !== $current_version ) {
+			update_option( self::SETUP_VERSION_KEY, self::PLUGIN_VERSION, false );
+		}
+	}
+
 	public function register_theme_support() {
 		add_theme_support( 'post-thumbnails' );
 		add_theme_support( 'menus' );
+	}
+
+	public function customize_blog_labels() {
+		global $wp_post_types, $wp_taxonomies;
+
+		if ( isset( $wp_post_types['post'] ) ) {
+			$labels = &$wp_post_types['post']->labels;
+			$labels->name = 'Blogs';
+			$labels->singular_name = 'Blog';
+			$labels->add_new = 'Add New';
+			$labels->add_new_item = 'Add New Blog';
+			$labels->edit_item = 'Edit Blog';
+			$labels->new_item = 'New Blog';
+			$labels->view_item = 'View Blog';
+			$labels->view_items = 'View Blogs';
+			$labels->search_items = 'Search Blogs';
+			$labels->not_found = 'No blogs found.';
+			$labels->not_found_in_trash = 'No blogs found in Trash.';
+			$labels->all_items = 'All Blogs';
+			$labels->archives = 'Blog Archives';
+			$labels->attributes = 'Blog Attributes';
+			$labels->insert_into_item = 'Insert into blog';
+			$labels->uploaded_to_this_item = 'Uploaded to this blog';
+			$labels->featured_image = 'Featured image';
+			$labels->set_featured_image = 'Set featured image';
+			$labels->remove_featured_image = 'Remove featured image';
+			$labels->use_featured_image = 'Use as featured image';
+			$labels->item_published = 'Blog published.';
+			$labels->item_published_privately = 'Blog published privately.';
+			$labels->item_reverted_to_draft = 'Blog reverted to draft.';
+			$labels->item_scheduled = 'Blog scheduled.';
+			$labels->item_updated = 'Blog updated.';
+			$wp_post_types['post']->label = 'Blogs';
+			$wp_post_types['post']->menu_name = 'Blogs';
+			$wp_post_types['post']->menu_icon = 'dashicons-welcome-write-blog';
+		}
+
+		if ( isset( $wp_taxonomies['category'] ) ) {
+			$labels = &$wp_taxonomies['category']->labels;
+			$labels->name = 'Blog Categories';
+			$labels->singular_name = 'Blog Category';
+			$labels->menu_name = 'Categories';
+			$labels->all_items = 'All Categories';
+			$labels->edit_item = 'Edit Category';
+			$labels->view_item = 'View Category';
+			$labels->update_item = 'Update Category';
+			$labels->add_new_item = 'Add New Category';
+			$labels->new_item_name = 'New Category Name';
+			$labels->search_items = 'Search Categories';
+		}
+
+		if ( isset( $wp_taxonomies['post_tag'] ) ) {
+			$labels = &$wp_taxonomies['post_tag']->labels;
+			$labels->name = 'Blog Tags';
+			$labels->singular_name = 'Blog Tag';
+			$labels->menu_name = 'Tags';
+			$labels->all_items = 'All Tags';
+			$labels->edit_item = 'Edit Tag';
+			$labels->view_item = 'View Tag';
+			$labels->update_item = 'Update Tag';
+			$labels->add_new_item = 'Add New Tag';
+			$labels->new_item_name = 'New Tag Name';
+			$labels->search_items = 'Search Tags';
+		}
 	}
 
 	public function register_navigation_menus() {
@@ -139,6 +227,59 @@ final class Frankies_Headless_Plugin {
 				'footer_navigation'  => 'Footer Navigation',
 			)
 		);
+	}
+
+	private function ensure_post_editor_support() {
+		foreach ( array( 'title', 'editor', 'excerpt', 'thumbnail', 'author', 'revisions' ) as $feature ) {
+			add_post_type_support( 'post', $feature );
+		}
+
+		register_taxonomy_for_object_type( 'category', 'post' );
+		register_taxonomy_for_object_type( 'post_tag', 'post' );
+	}
+
+	private function maybe_create_or_assign_blog_page() {
+		$blog_page_id = (int) get_option( 'page_for_posts', 0 );
+		if ( $blog_page_id > 0 && 'page' === get_post_type( $blog_page_id ) ) {
+			return $blog_page_id;
+		}
+
+		$existing_page = get_page_by_path( 'blog', OBJECT, 'page' );
+		if ( $existing_page instanceof WP_Post && 'trash' !== $existing_page->post_status ) {
+			$blog_page_id = (int) $existing_page->ID;
+
+			if ( 'publish' !== $existing_page->post_status ) {
+				wp_update_post(
+					array(
+						'ID'          => $blog_page_id,
+						'post_status' => 'publish',
+					)
+				);
+			}
+		} else {
+			$blog_page_id = (int) wp_insert_post(
+				array(
+					'post_type'      => 'page',
+					'post_title'     => 'Blog',
+					'post_name'      => 'blog',
+					'post_status'    => 'publish',
+					'post_content'   => '',
+					'comment_status' => 'closed',
+					'ping_status'    => 'closed',
+				),
+				true
+			);
+
+			if ( is_wp_error( $blog_page_id ) ) {
+				return 0;
+			}
+		}
+
+		if ( $blog_page_id > 0 ) {
+			update_option( 'page_for_posts', $blog_page_id, false );
+		}
+
+		return $blog_page_id;
 	}
 
 	public function register_meta() {
@@ -256,6 +397,26 @@ final class Frankies_Headless_Plugin {
 				'methods'             => 'POST',
 				'callback'            => array( $this, 'rest_revalidate' ),
 				'permission_callback' => array( $this, 'can_revalidate' ),
+			)
+		);
+
+		register_rest_route(
+			'frankies/v1',
+			'/blog',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'rest_posts' ),
+				'permission_callback' => '__return_true',
+			)
+		);
+
+		register_rest_route(
+			'frankies/v1',
+			'/blog/(?P<slug>[a-zA-Z0-9-_]+)',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'rest_post' ),
+				'permission_callback' => '__return_true',
 			)
 		);
 
@@ -411,8 +572,10 @@ final class Frankies_Headless_Plugin {
 
 	private function build_posts_archive_payload( $args, $page, $per_page, $category, $tag, $search ) {
 		$query = new WP_Query( $args );
+		$archive_page = $this->get_blog_archive_page_payload();
 
 		return array(
+			'archive'     => $archive_page,
 			'items'       => array_map( array( $this, 'map_post_to_archive_item' ), $query->posts ),
 			'pagination'  => array(
 				'page'       => $page,
@@ -483,12 +646,14 @@ final class Frankies_Headless_Plugin {
 	}
 
 	private function build_pages_archive_payload( $preview ) {
+		$blog_page_id = (int) get_option( 'page_for_posts', 0 );
 		$pages = get_posts(
 			array(
 				'post_type'      => 'page',
 				'post_status'    => $this->get_public_post_statuses( $preview ),
 				'posts_per_page' => -1,
 				'post_parent'    => 0,
+				'post__not_in'   => $blog_page_id > 0 ? array( $blog_page_id ) : array(),
 				'orderby'        => array(
 					'menu_order' => 'ASC',
 					'title'      => 'ASC',
@@ -568,7 +733,7 @@ final class Frankies_Headless_Plugin {
 		$etag = '"' . md5( (string) $payload ) . '"';
 		$if_none_match = isset( $_SERVER['HTTP_IF_NONE_MATCH'] ) ? trim( sanitize_text_field( wp_unslash( $_SERVER['HTTP_IF_NONE_MATCH'] ) ) ) : '';
 
-		$response->header( 'Cache-Control', 'public, max-age=0, must-revalidate, s-maxage=' . self::PUBLIC_CACHE_TTL . ', stale-while-revalidate=30' );
+		$response->header( 'Cache-Control', 'public, max-age=0, must-revalidate, s-maxage=' . self::PUBLIC_CACHE_TTL . ', stale-while-revalidate=15' );
 		$response->header( 'ETag', $etag );
 
 		if ( $if_none_match && $if_none_match === $etag ) {
@@ -619,8 +784,75 @@ final class Frankies_Headless_Plugin {
 		remove_menu_page( 'edit-comments.php' );
 	}
 
+	public function rename_posts_admin_menu() {
+		global $menu, $submenu;
+
+		if ( isset( $menu[5][0] ) ) {
+			$menu[5][0] = 'Blogs';
+		}
+
+		if ( isset( $submenu['edit.php'][5][0] ) ) {
+			$submenu['edit.php'][5][0] = 'All Blogs';
+		}
+
+		if ( isset( $submenu['edit.php'][10][0] ) ) {
+			$submenu['edit.php'][10][0] = 'Add New Blog';
+		}
+
+		if ( isset( $submenu['edit.php'][15][0] ) ) {
+			$submenu['edit.php'][15][0] = 'Categories';
+		}
+
+		if ( isset( $submenu['edit.php'][16][0] ) ) {
+			$submenu['edit.php'][16][0] = 'Tags';
+		}
+	}
+
+	public function add_blog_admin_columns( $columns ) {
+		$updated = array();
+
+		foreach ( $columns as $key => $label ) {
+			if ( 'title' === $key ) {
+				$updated['frankies_featured_image'] = 'Image';
+			}
+
+			$updated[ $key ] = $label;
+		}
+
+		return $updated;
+	}
+
+	public function render_blog_admin_columns( $column, $post_id ) {
+		if ( 'frankies_featured_image' !== $column ) {
+			return;
+		}
+
+		$thumbnail = get_the_post_thumbnail( $post_id, array( 60, 60 ), array( 'style' => 'width:60px;height:60px;object-fit:cover;border-radius:6px;' ) );
+		echo $thumbnail ? wp_kses_post( $thumbnail ) : '<span style="color:#646970;">No image</span>';
+	}
+
+	public function add_blog_page_state( $states, $post ) {
+		if ( 'page' !== $post->post_type ) {
+			return $states;
+		}
+
+		if ( (int) $post->ID === (int) get_option( 'page_for_posts', 0 ) ) {
+			$states['frankies_blog_archive'] = 'Blog archive';
+		}
+
+		return $states;
+	}
+
+	public function filter_blog_title_placeholder( $title, $post ) {
+		if ( 'post' !== $post->post_type ) {
+			return $title;
+		}
+
+		return 'Add blog title';
+	}
+
 	public function use_block_editor_for_post_type( $use_block_editor, $post_type ) {
-		if ( in_array( $post_type, array( 'menu_item', 'testimonial' ), true ) ) {
+		if ( in_array( $post_type, array( 'menu_item', 'testimonial', 'post' ), true ) ) {
 			return false;
 		}
 
@@ -968,6 +1200,7 @@ final class Frankies_Headless_Plugin {
 		$seo_og_image = $this->normalize_public_url( $settings['seo']['ogImage'], $site_url );
 		$featured_items = $this->get_featured_items( $preview );
 		$menu_sections = $this->get_menu_sections( $preview );
+		$resolved_navigation = ! empty( $navigation ) ? $navigation : $this->normalize_navigation_collection( $settings['navigation'] );
 
 		return array(
 			'content' => array(
@@ -978,7 +1211,7 @@ final class Frankies_Headless_Plugin {
 				'siteLogoLight' => $this->normalize_public_url( $settings['site']['logoLightUrl'], $site_url ),
 				'siteLogoAlt'   => (string) $settings['site']['logoAlt'],
 				'hero'          => $hero,
-				'navigation'    => ! empty( $navigation ) ? $navigation : $settings['navigation'],
+				'navigation'    => $resolved_navigation,
 				'featuredIntro' => $settings['featuredIntro'],
 				'featuredItems' => $featured_items,
 				'reasons'       => $settings['reasons'],
@@ -1127,38 +1360,77 @@ final class Frankies_Headless_Plugin {
 			}
 		);
 
-		$sections = array();
-		foreach ( $terms as $term ) {
-			$posts = get_posts(
+		$items = get_posts(
+			array(
+				'post_type'      => 'menu_item',
+				'post_status'    => $preview ? array( 'publish', 'draft', 'future', 'pending', 'private' ) : 'publish',
+				'posts_per_page' => -1,
+				'orderby'        => array(
+					'menu_order' => 'ASC',
+					'title'      => 'ASC',
+				),
+				'tax_query'      => array(
+					array(
+						'taxonomy' => 'menu_category',
+						'field'    => 'term_id',
+						'terms'    => wp_list_pluck( $terms, 'term_id' ),
+					),
+				),
+			)
+		);
+		$item_ids = wp_list_pluck( $items, 'ID' );
+		$item_terms = empty( $item_ids )
+			? array()
+			: wp_get_object_terms(
+				$item_ids,
+				'menu_category',
 				array(
-					'post_type'      => 'menu_item',
-					'post_status'    => $preview ? array( 'publish', 'draft', 'future', 'pending', 'private' ) : 'publish',
-					'posts_per_page' => -1,
-					'orderby'        => array(
-						'menu_order' => 'ASC',
-						'title'      => 'ASC',
-					),
-					'tax_query'      => array(
-						array(
-							'taxonomy' => 'menu_category',
-							'field'    => 'term_id',
-							'terms'    => $term->term_id,
-						),
-					),
+					'fields' => 'all_with_object_id',
 				)
 			);
+		$known_term_ids = array_flip( wp_list_pluck( $terms, 'term_id' ) );
+		$item_ids_by_term = array();
 
+		if ( ! is_wp_error( $item_terms ) ) {
+			foreach ( $item_terms as $item_term ) {
+				$term_id = (int) $item_term->term_id;
+				if ( ! isset( $known_term_ids[ $term_id ] ) ) {
+					continue;
+				}
+
+				if ( ! isset( $item_ids_by_term[ $term_id ] ) ) {
+					$item_ids_by_term[ $term_id ] = array();
+				}
+
+				$item_ids_by_term[ $term_id ][ (int) $item_term->object_id ] = true;
+			}
+		}
+
+		$labels_by_term = array();
+		foreach ( $items as $post ) {
+			$price = (string) get_post_meta( $post->ID, '_frankies_price', true );
+			$label = trim( $post->post_title . ( $price ? ' - ' . $price : '' ) );
+
+			foreach ( $item_ids_by_term as $term_id => $post_ids ) {
+				if ( empty( $post_ids[ $post->ID ] ) ) {
+					continue;
+				}
+
+				if ( ! isset( $labels_by_term[ $term_id ] ) ) {
+					$labels_by_term[ $term_id ] = array();
+				}
+
+				$labels_by_term[ $term_id ][] = $label;
+			}
+		}
+
+		$sections = array();
+		foreach ( $terms as $term ) {
 			$sections[] = array(
 				'title'    => $term->name,
 				'image'    => $this->normalize_public_url( (string) get_term_meta( $term->term_id, '_frankies_image', true ), $this->get_public_site_url() ),
 				'ctaLabel' => get_term_meta( $term->term_id, '_frankies_cta_label', true ) ?: $term->name,
-				'items'    => array_map(
-					function( $post ) {
-						$price = (string) get_post_meta( $post->ID, '_frankies_price', true );
-						return trim( $post->post_title . ( $price ? ' - ' . $price : '' ) );
-					},
-					$posts
-				),
+				'items'    => $labels_by_term[ $term->term_id ] ?? array(),
 			);
 		}
 
@@ -1227,12 +1499,125 @@ final class Frankies_Headless_Plugin {
 				function( $item ) {
 					return array(
 						'label' => $item->title,
-						'href'  => $item->url,
+						'href'  => $this->normalize_navigation_href( $item ),
 					);
 				},
 				$items
 			)
 		);
+	}
+
+	private function normalize_navigation_href( $item ) {
+		if ( ! $item instanceof WP_Post ) {
+			return '/';
+		}
+
+		if ( 'post_type' === $item->type && ! empty( $item->object_id ) ) {
+			$linked_post = get_post( (int) $item->object_id );
+			if ( $linked_post instanceof WP_Post ) {
+				$front_page_id = (int) get_option( 'page_on_front', 0 );
+				$posts_page_id = (int) get_option( 'page_for_posts', 0 );
+
+				if ( 'page' === $linked_post->post_type && $front_page_id > 0 && (int) $linked_post->ID === $front_page_id ) {
+					return '/';
+				}
+
+				if ( 'page' === $linked_post->post_type && $posts_page_id > 0 && (int) $linked_post->ID === $posts_page_id ) {
+					return '/blog/';
+				}
+
+				return $this->get_public_route( $linked_post );
+			}
+		}
+
+		$url = trim( (string) $item->url );
+		if ( '' === $url ) {
+			return '/';
+		}
+
+		if ( 0 === strpos( $url, '#' ) ) {
+			return $url;
+		}
+
+		$site_hosts = array();
+		foreach ( array( home_url(), site_url(), $this->get_public_site_url() ) as $candidate_url ) {
+			$host = wp_parse_url( $candidate_url, PHP_URL_HOST );
+			if ( $host ) {
+				$site_hosts[] = strtolower( (string) $host );
+			}
+		}
+
+		$parsed_url = wp_parse_url( $url );
+		if ( empty( $parsed_url['host'] ) ) {
+			$path = isset( $parsed_url['path'] ) ? (string) $parsed_url['path'] : '';
+			$query = isset( $parsed_url['query'] ) ? '?' . $parsed_url['query'] : '';
+			$fragment = isset( $parsed_url['fragment'] ) ? '#' . $parsed_url['fragment'] : '';
+			return ( $path ?: '/' ) . $query . $fragment;
+		}
+
+		$host = strtolower( (string) $parsed_url['host'] );
+		if ( in_array( $host, array_unique( $site_hosts ), true ) ) {
+			$path = isset( $parsed_url['path'] ) ? (string) $parsed_url['path'] : '';
+			$query = isset( $parsed_url['query'] ) ? '?' . $parsed_url['query'] : '';
+			$fragment = isset( $parsed_url['fragment'] ) ? '#' . $parsed_url['fragment'] : '';
+			return ( $path ?: '/' ) . $query . $fragment;
+		}
+
+		return esc_url_raw( $url );
+	}
+
+	private function normalize_navigation_collection( $items ) {
+		if ( ! is_array( $items ) ) {
+			return array();
+		}
+
+		return array_values(
+			array_filter(
+				array_map(
+					function( $item ) {
+						if ( ! is_array( $item ) ) {
+							return null;
+						}
+
+						$label = isset( $item['label'] ) ? trim( (string) $item['label'] ) : '';
+						$href = isset( $item['href'] ) ? trim( (string) $item['href'] ) : '';
+
+						if ( '' === $label || '' === $href ) {
+							return null;
+						}
+
+						return array(
+							'label' => $label,
+							'href'  => $this->normalize_navigation_href_value( $label, $href ),
+						);
+					},
+					$items
+				)
+			)
+		);
+	}
+
+	private function normalize_navigation_href_value( $label, $href ) {
+		$normalized_label = strtolower( trim( (string) $label ) );
+		$normalized_href = trim( (string) $href );
+
+		if ( 'blog' === $normalized_label || 'journal' === $normalized_label || '#blog' === $normalized_href || '/#blog' === $normalized_href ) {
+			return '/blog/';
+		}
+
+		if ( '#top' === $normalized_href || '/#top' === $normalized_href ) {
+			return '#top';
+		}
+
+		if ( 0 === strpos( $normalized_href, '#' ) ) {
+			return $normalized_href;
+		}
+
+		if ( preg_match( '#^https?://#i', $normalized_href ) ) {
+			return esc_url_raw( $normalized_href );
+		}
+
+		return $normalized_href;
 	}
 
 	private function request_allows_preview( WP_REST_Request $request ) {
@@ -1265,16 +1650,23 @@ final class Frankies_Headless_Plugin {
 		$media = $this->get_featured_media_payload( $post->ID, 'large' );
 
 		return array(
-			'title'         => get_the_title( $post ),
-			'slug'          => $post->post_name,
-			'excerpt'       => has_excerpt( $post ) ? get_the_excerpt( $post ) : wp_trim_words( wp_strip_all_tags( (string) $post->post_content ), 32 ),
-			'featuredImage' => $media['url'],
+			'id'               => (int) $post->ID,
+			'type'             => 'post',
+			'title'            => get_the_title( $post ),
+			'slug'             => $post->post_name,
+			'status'           => $post->post_status,
+			'url'              => $this->get_public_route( $post ),
+			'permalink'        => $this->get_public_permalink( $post ),
+			'excerpt'          => has_excerpt( $post ) ? get_the_excerpt( $post ) : wp_trim_words( wp_strip_all_tags( (string) $post->post_content ), 32 ),
+			'featuredImage'    => $media['url'],
 			'featuredImageAlt' => $media['alt'],
-			'publishedAt'   => get_post_time( DATE_ATOM, true, $post ),
-			'modifiedAt'    => get_post_modified_time( DATE_ATOM, true, $post ),
-			'categories'    => $this->map_term_collection( get_the_terms( $post, 'category' ) ),
-			'tags'          => $this->map_term_collection( get_the_terms( $post, 'post_tag' ) ),
-			'seo'           => $this->build_entry_seo_payload( $post ),
+			'publishedAt'      => get_post_time( DATE_ATOM, true, $post ),
+			'modifiedAt'       => get_post_modified_time( DATE_ATOM, true, $post ),
+			'author'           => $this->map_post_author( $post ),
+			'readingTimeMinutes' => $this->estimate_reading_time_minutes( $post ),
+			'categories'       => $this->map_term_collection( get_the_terms( $post, 'category' ) ),
+			'tags'             => $this->map_term_collection( get_the_terms( $post, 'post_tag' ) ),
+			'seo'              => $this->build_entry_seo_payload( $post ),
 		);
 	}
 
@@ -1283,20 +1675,44 @@ final class Frankies_Headless_Plugin {
 		$media = $this->get_featured_media_payload( $post->ID, 'large' );
 
 		return array(
-			'type'          => 'post',
-			'title'         => get_the_title( $post ),
-			'slug'          => $post->post_name,
-			'excerpt'       => has_excerpt( $post ) ? get_the_excerpt( $post ) : '',
-			'content'       => apply_filters( 'the_content', $post->post_content ),
-			'featuredImage' => $media['url'],
+			'id'               => (int) $post->ID,
+			'type'             => 'post',
+			'title'            => get_the_title( $post ),
+			'slug'             => $post->post_name,
+			'status'           => $post->post_status,
+			'url'              => $this->get_public_route( $post ),
+			'permalink'        => $this->get_public_permalink( $post ),
+			'excerpt'          => has_excerpt( $post ) ? get_the_excerpt( $post ) : wp_trim_words( wp_strip_all_tags( (string) $post->post_content ), 32 ),
+			'content'          => apply_filters( 'the_content', $post->post_content ),
+			'featuredImage'    => $media['url'],
 			'featuredImageAlt' => $media['alt'],
-			'publishedAt'   => get_post_time( DATE_ATOM, true, $post ),
-			'modifiedAt'    => get_post_modified_time( DATE_ATOM, true, $post ),
-			'categories'    => $this->map_term_collection( get_the_terms( $post, 'category' ) ),
-			'tags'          => $this->map_term_collection( get_the_terms( $post, 'post_tag' ) ),
-			'seo'           => $this->build_entry_seo_payload( $post ),
-			'related'       => array_map( array( $this, 'map_post_to_archive_item' ), $related_posts ),
+			'publishedAt'      => get_post_time( DATE_ATOM, true, $post ),
+			'modifiedAt'       => get_post_modified_time( DATE_ATOM, true, $post ),
+			'author'           => $this->map_post_author( $post ),
+			'readingTimeMinutes' => $this->estimate_reading_time_minutes( $post ),
+			'categories'       => $this->map_term_collection( get_the_terms( $post, 'category' ) ),
+			'tags'             => $this->map_term_collection( get_the_terms( $post, 'post_tag' ) ),
+			'seo'              => $this->build_entry_seo_payload( $post ),
+			'archive'          => $this->get_blog_archive_page_payload(),
+			'related'          => array_map( array( $this, 'map_post_to_archive_item' ), $related_posts ),
 		);
+	}
+
+	private function map_post_author( WP_Post $post ) {
+		$author_id = (int) $post->post_author;
+		$display_name = get_the_author_meta( 'display_name', $author_id ) ?: $this->get_settings()['site']['siteName'];
+		$author_slug = get_the_author_meta( 'user_nicename', $author_id );
+
+		return array(
+			'id'   => $author_id,
+			'name' => $display_name,
+			'slug' => $author_slug ?: sanitize_title( $display_name ),
+		);
+	}
+
+	private function estimate_reading_time_minutes( WP_Post $post ) {
+		$word_count = str_word_count( wp_strip_all_tags( (string) $post->post_content ) );
+		return max( 1, (int) ceil( $word_count / 200 ) );
 	}
 
 	private function map_page_to_item( WP_Post $page ) {
@@ -1547,6 +1963,54 @@ final class Frankies_Headless_Plugin {
 		}
 
 		return trailingslashit( $site_url . $post->post_name );
+	}
+
+	private function get_public_route( WP_Post $post ) {
+		if ( 'post' === $post->post_type ) {
+			return '/blog/' . $post->post_name . '/';
+		}
+
+		return '/' . $post->post_name . '/';
+	}
+
+	private function get_blog_archive_page_payload() {
+		$blog_page_id = $this->maybe_create_or_assign_blog_page();
+		$blog_page = $blog_page_id ? get_post( $blog_page_id ) : null;
+		$site_url = $this->get_public_site_url();
+		$featured_media = $blog_page instanceof WP_Post ? $this->get_featured_media_payload( $blog_page->ID, 'large' ) : array(
+			'url' => '',
+			'alt' => '',
+		);
+		$seo = $blog_page instanceof WP_Post
+			? $this->build_entry_seo_payload( $blog_page )
+			: array(
+				'title'        => 'Blog',
+				'description'  => $this->get_settings()['seo']['description'],
+				'canonicalUrl' => trailingslashit( $site_url . 'blog' ),
+				'ogImage'      => $this->normalize_public_url( $this->get_settings()['seo']['ogImage'], $site_url ),
+				'keywords'     => $this->get_settings()['seo']['keywords'],
+				'noindex'      => false,
+				'twitterCard'  => 'summary_large_image',
+				'schema'       => array(),
+			);
+		$excerpt = $blog_page instanceof WP_Post
+			? ( has_excerpt( $blog_page ) ? get_the_excerpt( $blog_page ) : wp_trim_words( wp_strip_all_tags( (string) $blog_page->post_content ), 32 ) )
+			: '';
+
+		return array(
+			'id'              => $blog_page instanceof WP_Post ? (int) $blog_page->ID : 0,
+			'title'           => $blog_page instanceof WP_Post ? get_the_title( $blog_page ) : 'Blog',
+			'slug'            => 'blog',
+			'excerpt'         => $excerpt,
+			'url'             => '/blog/',
+			'permalink'       => trailingslashit( $site_url . 'blog' ),
+			'featuredImage'   => $featured_media['url'],
+			'featuredImageAlt' => $featured_media['alt'],
+			'pageForPostsId'  => $blog_page instanceof WP_Post ? (int) $blog_page->ID : 0,
+			'isAssigned'      => (int) get_option( 'page_for_posts', 0 ) === ( $blog_page instanceof WP_Post ? (int) $blog_page->ID : 0 ),
+			'showOnFront'     => (string) get_option( 'show_on_front', 'posts' ),
+			'seo'             => $seo,
+		);
 	}
 
 	private function build_post_keywords( WP_Post $post, $fallback_keywords ) {
