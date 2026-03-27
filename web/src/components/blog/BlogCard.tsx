@@ -23,6 +23,7 @@ export function BlogCard({
             {post.featuredImage ? (
               <CmsImage
                 src={post.featuredImage}
+                media={post.featuredImageMedia}
                 alt={post.featuredImageAlt || post.title}
                 className="h-[260px] w-full object-cover md:h-full md:min-h-[420px]"
                 sizes="(min-width: 768px) 60vw, 100vw"
@@ -66,6 +67,7 @@ export function BlogCard({
         {post.featuredImage ? (
           <CmsImage
             src={post.featuredImage}
+            media={post.featuredImageMedia}
             alt={post.featuredImageAlt || post.title}
             className="image-zoom aspect-[1.18/1] w-full object-cover"
             sizes="(min-width: 1280px) 30vw, (min-width: 768px) 45vw, 100vw"

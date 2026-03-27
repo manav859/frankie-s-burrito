@@ -1,4 +1,6 @@
 import { startTransition, useEffect, useState } from 'react'
+import { CartPage } from './pages/CartPage'
+import { CheckoutPage } from './pages/CheckoutPage'
 import { Footer } from './components/site/Footer'
 import { SiteHeader } from './components/site/SiteHeader'
 import { Button } from './components/ui/Button'
@@ -20,6 +22,9 @@ import {
 import { BlogIndexPage } from './pages/BlogIndexPage'
 import { BlogPostPage } from './pages/BlogPostPage'
 import { HomePage } from './pages/HomePage'
+import { MenuItemPage } from './pages/MenuItemPage'
+import { MenuPage } from './pages/MenuPage'
+import { OrderSuccessPage } from './pages/OrderSuccessPage'
 import type {
   PageEntry,
   PostArchiveResponse,
@@ -27,6 +32,17 @@ import type {
   SiteBootstrap,
   SiteContent,
 } from './types'
+
+function isOrderingRoute(route: ReturnType<typeof useCurrentRoute>) {
+  return (
+    route.kind === 'menu' ||
+    route.kind === 'order' ||
+    route.kind === 'menu-item' ||
+    route.kind === 'cart' ||
+    route.kind === 'checkout' ||
+    route.kind === 'order-success'
+  )
+}
 
 function buildBlogRouteSeo(content: SiteContent, seo: SiteBootstrap['seo']) {
   const siteUrl = seo.canonicalUrl.replace(/\/$/, '')
@@ -66,6 +82,47 @@ function buildBlogArchiveSeo(content: SiteContent, archive: PostArchiveResponse 
   return buildBlogRouteSeo(content, seo)
 }
 
+function buildOrderingSeo(content: SiteContent, seo: SiteBootstrap['seo'], route: ReturnType<typeof useCurrentRoute>) {
+  const siteUrl = seo.canonicalUrl.replace(/\/$/, '')
+
+  if (route.kind === 'menu' || route.kind === 'order' || route.kind === 'menu-item') {
+    return {
+      ...seo,
+      title: `Order Online | ${content.siteName}`,
+      description: `Browse the live menu and place an order with ${content.siteName}.`,
+      canonicalUrl: `${siteUrl}/order`,
+    }
+  }
+
+  if (route.kind === 'cart') {
+    return {
+      ...seo,
+      title: `Your Cart | ${content.siteName}`,
+      description: `Review your order before checkout.`,
+      canonicalUrl: `${siteUrl}/cart`,
+      noindex: true,
+    }
+  }
+
+  if (route.kind === 'checkout') {
+    return {
+      ...seo,
+      title: `Checkout | ${content.siteName}`,
+      description: `Complete your Frankie's order.`,
+      canonicalUrl: `${siteUrl}/checkout`,
+      noindex: true,
+    }
+  }
+
+  return {
+    ...seo,
+    title: `Order Confirmed | ${content.siteName}`,
+    description: `Your Frankie's order has been confirmed.`,
+    canonicalUrl: `${siteUrl}/order-success`,
+    noindex: true,
+  }
+}
+
 function App() {
   const liveCmsEnabled = hasWordPressBase()
   const [bootstrap, setBootstrap] = useState<SiteBootstrap>(() => (liveCmsEnabled ? getInitialBootstrap() : getGeneratedBootstrap()))
@@ -76,6 +133,7 @@ function App() {
   const [isScrolled, setIsScrolled] = useState(false)
   const prefersReducedMotion = usePrefersReducedMotion()
   const route = useCurrentRoute()
+  const orderingRoute = isOrderingRoute(route)
   const currentBootstrap = bootstrap
   const content: SiteContent = currentBootstrap.content
   const shellContent: SiteContent =
@@ -121,10 +179,6 @@ function App() {
         if (isAbortError(error)) {
           return
         }
-
-        if (!controller.signal.aborted) {
-          console.warn('Unable to refresh homepage CMS content.', error)
-        }
       }
     }
 
@@ -164,11 +218,11 @@ function App() {
   }, [])
 
   useEffect(() => {
-    if (!hasWordPressBase() || route.kind === 'home') {
+    if (!hasWordPressBase() || route.kind === 'home' || orderingRoute) {
       setLoading(false)
       setLoadError(null)
       setPostArchive(null)
-      if (route.kind === 'home') {
+      if (route.kind === 'home' || orderingRoute) {
         setEntry(null)
       }
       return
@@ -216,10 +270,12 @@ function App() {
     void loadRouteData()
 
     return () => controller.abort()
-  }, [route])
+  }, [orderingRoute, route])
 
   const routeSeo =
-    route.kind === 'post' || route.kind === 'page'
+    orderingRoute
+      ? buildOrderingSeo(content, currentBootstrap.seo, route)
+      : route.kind === 'post' || route.kind === 'page'
       ? entry?.seo ?? currentBootstrap.seo
       : route.kind === 'blog'
         ? buildBlogArchiveSeo(content, postArchive, currentBootstrap.seo)
@@ -237,8 +293,18 @@ function App() {
   return (
     <div id="top" className="min-h-screen bg-[var(--sand)] text-[var(--ink)]">
       <SiteHeader content={shellContent} isScrolled={isScrolled} prefersReducedMotion={prefersReducedMotion} />
-      <main className="px-8 pb-20 pt-28 md:px-16 md:pt-36">
-        {route.kind === 'blog' ? (
+      <main className={orderingRoute ? 'px-4 pb-16 pt-24 md:px-8 md:pt-32' : 'px-8 pb-20 pt-28 md:px-16 md:pt-36'}>
+        {route.kind === 'menu' || route.kind === 'order' ? (
+          <MenuPage />
+        ) : route.kind === 'menu-item' ? (
+          <MenuItemPage slug={route.slug} />
+        ) : route.kind === 'cart' ? (
+          <CartPage />
+        ) : route.kind === 'checkout' ? (
+          <CheckoutPage />
+        ) : route.kind === 'order-success' ? (
+          <OrderSuccessPage />
+        ) : route.kind === 'blog' ? (
           <BlogIndexPage content={shellContent} archive={postArchive} loading={loading} loadError={loadError} />
         ) : route.kind === 'post' ? (
           <BlogPostPage content={shellContent} entry={entry as PostEntry | null} loading={loading} loadError={loadError} />
@@ -287,6 +353,7 @@ function EntryPage({
           <div className="mt-8 overflow-hidden rounded-[28px]">
             <CmsImage
               src={entry.featuredImage}
+              media={entry.featuredImageMedia}
               alt={entry.featuredImageAlt || entry.title}
               className="h-[280px] w-full object-cover md:h-[520px]"
               sizes="100vw"

@@ -2067,6 +2067,7 @@ class Manager {
 		$redirect = apply_filters( 'jetpack_connect_redirect_url', $redirect );
 
 		$secrets = ( new Secrets() )->generate( 'authorize', $user->ID, 2 * HOUR_IN_SECONDS );
+		$secret  = is_array( $secrets ) ? ( $secrets['secret_1'] ?? '' ) : '';
 
 		/**
 		 * Filter the type of authorization.
@@ -2109,7 +2110,7 @@ class Manager {
 				'is_active'             => $this->has_connected_owner(), // TODO Deprecate this.
 				'jp_version'            => (string) Constants::get_constant( 'JETPACK__VERSION' ),
 				'auth_type'             => $auth_type,
-				'secret'                => $secrets['secret_1'],
+				'secret'                => $secret,
 				'blogname'              => get_option( 'blogname' ),
 				'site_url'              => Urls::site_url(),
 				'home_url'              => Urls::home_url(),

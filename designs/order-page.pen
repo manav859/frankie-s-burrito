@@ -1,0 +1,4242 @@
+{
+  "version": "2.9",
+  "children": [
+    {
+      "type": "frame",
+      "id": "D3d8E",
+      "x": -374,
+      "y": -474,
+      "name": "Design System",
+      "fill": "$bg-color",
+      "layout": "vertical",
+      "gap": 32,
+      "padding": 40,
+      "children": [
+        {
+          "type": "frame",
+          "id": "XY90m",
+          "name": "Typography",
+          "layout": "vertical",
+          "gap": 16,
+          "children": [
+            {
+              "type": "text",
+              "id": "8kgD2",
+              "fill": "$text-color",
+              "content": "Frankie's Burritos",
+              "fontFamily": "$font-heading",
+              "fontSize": 48,
+              "fontWeight": "800"
+            },
+            {
+              "type": "text",
+              "id": "mKLfj",
+              "fill": "$text-color",
+              "content": "Section Heading",
+              "fontFamily": "$font-heading",
+              "fontSize": 24,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "THqhf",
+              "fill": "$text-muted",
+              "content": "Body text using Inter, very readable for mobile.",
+              "fontFamily": "$font-body",
+              "fontSize": 16,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "uVZFU",
+          "name": "Components",
+          "gap": 40,
+          "children": [
+            {
+              "type": "frame",
+              "id": "rvie2",
+              "name": "Primary Button",
+              "reusable": true,
+              "fill": "$primary-color",
+              "cornerRadius": 8,
+              "gap": 8,
+              "padding": [
+                12,
+                24
+              ],
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "ll9KW",
+                  "name": "label",
+                  "fill": "#FFFFFF",
+                  "content": "Add to Cart",
+                  "fontFamily": "$font-body",
+                  "fontSize": 16,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "zzioX",
+              "name": "Secondary Button",
+              "reusable": true,
+              "fill": "#00000000",
+              "cornerRadius": 8,
+              "stroke": {
+                "align": "inside",
+                "thickness": 2,
+                "fill": "$border-color"
+              },
+              "gap": 8,
+              "padding": [
+                12,
+                24
+              ],
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "QMgwo",
+                  "name": "label",
+                  "fill": "$text-color",
+                  "content": "Customize",
+                  "fontFamily": "$font-body",
+                  "fontSize": 16,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "xhdkb",
+              "name": "Badge",
+              "reusable": true,
+              "fill": "$secondary-color",
+              "cornerRadius": 100,
+              "padding": [
+                4,
+                8
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "zde7R",
+                  "name": "text",
+                  "fill": "#FFFFFF",
+                  "content": "POPULAR",
+                  "fontFamily": "$font-body",
+                  "fontSize": 10,
+                  "fontWeight": "800"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "14u1f",
+              "name": "Category Tab Active",
+              "reusable": true,
+              "fill": "$primary-color",
+              "cornerRadius": 100,
+              "layout": "vertical",
+              "padding": [
+                8,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "argRk",
+                  "name": "label",
+                  "fill": "#FFFFFF",
+                  "content": "Burritos",
+                  "fontFamily": "$font-body",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "oLpjv",
+              "name": "Category Tab Inactive",
+              "reusable": true,
+              "fill": "$surface-color",
+              "cornerRadius": 100,
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "$border-color"
+              },
+              "layout": "vertical",
+              "padding": [
+                8,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "lIQFy",
+                  "name": "label",
+                  "fill": "$text-muted",
+                  "content": "Sides",
+                  "fontFamily": "$font-body",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "O0Tx0",
+              "name": "Quantity Control",
+              "reusable": true,
+              "fill": "$surface-color",
+              "cornerRadius": 100,
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "$border-color"
+              },
+              "gap": 16,
+              "padding": [
+                6,
+                12
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "uTFzU",
+                  "name": "minus",
+                  "width": 18,
+                  "height": 18,
+                  "iconFontName": "minus",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-muted"
+                },
+                {
+                  "type": "text",
+                  "id": "aUfVz",
+                  "name": "amount",
+                  "fill": "$text-color",
+                  "content": "1",
+                  "fontFamily": "$font-body",
+                  "fontSize": 16,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "5ehkn",
+                  "name": "plus",
+                  "width": 18,
+                  "height": 18,
+                  "iconFontName": "plus",
+                  "iconFontFamily": "lucide",
+                  "fill": "$primary-color"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "mr3Sp",
+      "x": 214,
+      "y": -105,
+      "name": "Checkbox",
+      "reusable": true,
+      "gap": 12,
+      "padding": 4,
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "EzcRF",
+          "name": "box",
+          "width": 24,
+          "height": 24,
+          "cornerRadius": 4,
+          "stroke": {
+            "align": "inside",
+            "thickness": 2,
+            "fill": "$border-color"
+          }
+        },
+        {
+          "type": "text",
+          "id": "ROmih",
+          "name": "label",
+          "fill": "$text-color",
+          "content": "Add Guacamole",
+          "fontFamily": "$font-body",
+          "fontSize": 16,
+          "fontWeight": "normal"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "DQiAE",
+      "x": 92,
+      "y": -105,
+      "name": "Radio",
+      "reusable": true,
+      "gap": 12,
+      "padding": 4,
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "ellipse",
+          "id": "GFQpk",
+          "name": "ring",
+          "width": 24,
+          "height": 24,
+          "stroke": {
+            "align": "inside",
+            "thickness": 2,
+            "fill": "$border-color"
+          }
+        },
+        {
+          "type": "text",
+          "id": "eAaC4",
+          "name": "label",
+          "fill": "$text-color",
+          "content": "Mild Salsa",
+          "fontFamily": "$font-body",
+          "fontSize": 16,
+          "fontWeight": "normal"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "Pz9VE",
+      "x": -415,
+      "y": 0,
+      "name": "Menu Card Mobile",
+      "reusable": true,
+      "clip": true,
+      "width": 340,
+      "fill": "$surface-color",
+      "cornerRadius": 16,
+      "stroke": {
+        "align": "inside",
+        "thickness": 1,
+        "fill": "$border-color"
+      },
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "mTO4U",
+          "name": "ImageContainer",
+          "width": "fill_container",
+          "height": 200,
+          "fill": "$bg-color",
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon_font",
+              "id": "oN2yZ",
+              "name": "icon",
+              "width": 48,
+              "height": 48,
+              "iconFontName": "image",
+              "iconFontFamily": "lucide",
+              "fill": "$border-color"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "ILFbv",
+          "name": "Content",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "padding": 16,
+          "children": [
+            {
+              "type": "frame",
+              "id": "zCFlP",
+              "name": "Header",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "ijJgg",
+                  "name": "titleBox",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "zsjtz",
+                      "name": "title",
+                      "fill": "$text-color",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Frankie's Original Burrito",
+                      "fontFamily": "$font-heading",
+                      "fontSize": 20,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "gsxb2",
+                  "name": "priceTags",
+                  "width": 80,
+                  "layout": "vertical",
+                  "gap": 4,
+                  "alignItems": "end",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "HlaqK",
+                      "name": "price",
+                      "fill": "$primary-color",
+                      "content": "$11.99",
+                      "fontFamily": "$font-body",
+                      "fontSize": 16,
+                      "fontWeight": "700"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "xb2pN",
+              "name": "desc",
+              "fill": "$text-muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Eggs, bacon, tater tots, cheese, and our signature holy aioli.",
+              "lineHeight": 1.4,
+              "fontFamily": "$font-body",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "zJCfX",
+              "name": "Actions",
+              "width": "fill_container",
+              "padding": [
+                8,
+                0,
+                0,
+                0
+              ],
+              "justifyContent": "end",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "AMYIG",
+                  "name": "Add Button",
+                  "fill": "$primary-color",
+                  "cornerRadius": 8,
+                  "padding": [
+                    8,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "aiBVa",
+                      "name": "label",
+                      "fill": "#FFFFFF",
+                      "content": "Add",
+                      "fontFamily": "$font-body",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "q7sgV",
+      "x": -456,
+      "y": 490,
+      "name": "Menu Page Mobile",
+      "clip": true,
+      "width": 390,
+      "height": 844,
+      "fill": "$bg-color",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "GChU1",
+          "name": "Navbar",
+          "width": "fill_container",
+          "fill": "$surface-color",
+          "stroke": {
+            "align": "inside",
+            "thickness": {
+              "bottom": 1
+            },
+            "fill": "$border-color"
+          },
+          "padding": [
+            16,
+            24
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon_font",
+              "id": "cPkYk",
+              "width": 24,
+              "height": 24,
+              "iconFontName": "menu",
+              "iconFontFamily": "lucide",
+              "fill": "$text-color"
+            },
+            {
+              "type": "text",
+              "id": "vaiU6",
+              "fill": "$primary-color",
+              "content": "Frankie's",
+              "fontFamily": "$font-heading",
+              "fontSize": 24,
+              "fontWeight": "800"
+            },
+            {
+              "type": "frame",
+              "id": "fmYw4",
+              "name": "userActions",
+              "gap": 16,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "Z9SHV",
+                  "width": 24,
+                  "height": 24,
+                  "iconFontName": "search",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-color"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "vmFsn",
+          "name": "Categories Container",
+          "width": "fill_container",
+          "fill": "$bg-color",
+          "gap": 12,
+          "padding": [
+            16,
+            24
+          ],
+          "children": [
+            {
+              "id": "l9Jt8",
+              "type": "ref",
+              "ref": "14u1f",
+              "name": "tab1",
+              "width": "fit_content",
+              "x": 24,
+              "y": 16,
+              "height": "fit_content",
+              "descendants": {
+                "argRk": {
+                  "content": "Breakfast Burritos",
+                  "x": 16,
+                  "y": 8
+                }
+              }
+            },
+            {
+              "id": "lDuw8",
+              "type": "ref",
+              "ref": "oLpjv",
+              "name": "tab2",
+              "x": 191,
+              "y": 16,
+              "width": "fit_content",
+              "height": "fit_content",
+              "descendants": {
+                "lIQFy": {
+                  "content": "Sides",
+                  "x": 16,
+                  "y": 8
+                }
+              }
+            },
+            {
+              "id": "UJxjd",
+              "type": "ref",
+              "ref": "oLpjv",
+              "name": "tab3",
+              "width": "fit_content",
+              "x": 272,
+              "y": 16,
+              "height": "fit_content",
+              "descendants": {
+                "lIQFy": {
+                  "content": "Drinks",
+                  "x": 16,
+                  "y": 8
+                }
+              }
+            },
+            {
+              "id": "0ld6t",
+              "type": "ref",
+              "ref": "oLpjv",
+              "name": "tab4",
+              "width": "fit_content",
+              "x": 359,
+              "y": 16,
+              "height": "fit_content",
+              "descendants": {
+                "lIQFy": {
+                  "content": "Combos",
+                  "x": 16,
+                  "y": 8
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "rG2Jc",
+          "name": "Scrollable Menu",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 24,
+          "padding": [
+            0,
+            24,
+            100,
+            24
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "puFY4",
+              "name": "Category Section",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "G8LeG",
+                  "fill": "$text-color",
+                  "content": "Breakfast Burritos",
+                  "fontFamily": "$font-heading",
+                  "fontSize": 28,
+                  "fontWeight": "700"
+                },
+                {
+                  "id": "oTWJL",
+                  "type": "ref",
+                  "ref": "Pz9VE",
+                  "width": "fill_container",
+                  "name": "item1",
+                  "height": "fit_content",
+                  "x": 0,
+                  "y": 48,
+                  "descendants": {
+                    "mTO4U": {
+                      "width": "fill_container",
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "./images/generated-1774456994181.png",
+                        "mode": "fill"
+                      }
+                    },
+                    "oN2yZ": {
+                      "x": 147,
+                      "y": 76
+                    },
+                    "ILFbv": {
+                      "width": "fill_container",
+                      "height": "fit_content",
+                      "y": 200
+                    },
+                    "zCFlP": {
+                      "width": "fill_container",
+                      "height": "fit_content",
+                      "x": 16,
+                      "y": 16
+                    },
+                    "ijJgg": {
+                      "width": "fill_container",
+                      "height": "fit_content"
+                    },
+                    "zsjtz": {
+                      "content": "The OG Frankie",
+                      "width": "fill_container"
+                    },
+                    "gsxb2": {
+                      "x": 230,
+                      "height": "fit_content"
+                    },
+                    "HlaqK": {
+                      "x": 29
+                    },
+                    "xb2pN": {
+                      "content": "Eggs, bacon, tots, cheese, and holy aioli.",
+                      "width": "fill_container",
+                      "x": 16,
+                      "y": 47
+                    },
+                    "zJCfX": {
+                      "width": "fill_container",
+                      "y": 75,
+                      "height": "fit_content",
+                      "x": 16
+                    },
+                    "AMYIG": {
+                      "x": 250,
+                      "width": "fit_content",
+                      "height": "fit_content",
+                      "y": 8
+                    },
+                    "aiBVa": {
+                      "x": 16,
+                      "y": 8
+                    }
+                  }
+                },
+                {
+                  "id": "CSb70",
+                  "type": "ref",
+                  "ref": "Pz9VE",
+                  "width": "fill_container",
+                  "name": "item2",
+                  "x": 0,
+                  "y": 396,
+                  "height": "fit_content",
+                  "descendants": {
+                    "mTO4U": {
+                      "width": "fill_container",
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "./images/generated-1774457018292.png",
+                        "mode": "fill"
+                      }
+                    },
+                    "oN2yZ": {
+                      "x": 147,
+                      "y": 76
+                    },
+                    "ILFbv": {
+                      "width": "fill_container",
+                      "height": "fit_content",
+                      "y": 200
+                    },
+                    "zCFlP": {
+                      "width": "fill_container",
+                      "height": "fit_content",
+                      "x": 16,
+                      "y": 16
+                    },
+                    "ijJgg": {
+                      "width": "fill_container",
+                      "height": "fit_content"
+                    },
+                    "zsjtz": {
+                      "content": "El Pollo Loco",
+                      "width": "fill_container"
+                    },
+                    "gsxb2": {
+                      "x": 230,
+                      "height": "fit_content"
+                    },
+                    "HlaqK": {
+                      "content": "$13.50",
+                      "x": 26
+                    },
+                    "xb2pN": {
+                      "content": "Grilled chicken, fajita veggies, rice, black beans.",
+                      "width": "fill_container",
+                      "x": 16,
+                      "y": 47
+                    },
+                    "zJCfX": {
+                      "width": "fill_container",
+                      "height": "fit_content",
+                      "x": 16,
+                      "y": 95
+                    },
+                    "AMYIG": {
+                      "x": 250,
+                      "width": "fit_content",
+                      "height": "fit_content",
+                      "y": 8
+                    },
+                    "aiBVa": {
+                      "x": 16,
+                      "y": 8
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "C2FOx",
+          "layoutPosition": "absolute",
+          "x": 24,
+          "y": 740,
+          "name": "Floating Cart",
+          "width": 342,
+          "fill": "$primary-color",
+          "cornerRadius": 100,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#E03C3180",
+            "offset": {
+              "x": 0,
+              "y": 8
+            },
+            "blur": 16
+          },
+          "padding": 16,
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "oiiAm",
+              "name": "cartInfo",
+              "gap": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "gf5Lk",
+                  "name": "Count Badge",
+                  "width": 24,
+                  "height": 24,
+                  "fill": "$surface-color",
+                  "cornerRadius": 100,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Ggagk",
+                      "fill": "$primary-color",
+                      "content": "2",
+                      "fontFamily": "$font-body",
+                      "fontSize": 12,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "nKrFt",
+                  "fill": "#FFFFFF",
+                  "content": "View Cart",
+                  "fontFamily": "$font-body",
+                  "fontSize": 16,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "mpi3c",
+              "fill": "#FFFFFF",
+              "content": "$25.49",
+              "fontFamily": "$font-body",
+              "fontSize": 16,
+              "fontWeight": "700"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "6kgga",
+      "x": 710,
+      "y": -57,
+      "name": "Menu Page Mobile",
+      "clip": true,
+      "width": 390,
+      "height": 844,
+      "fill": "$bg-color",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "1fteo",
+          "name": "Navbar",
+          "width": "fill_container",
+          "fill": "$surface-color",
+          "stroke": {
+            "align": "inside",
+            "thickness": {
+              "bottom": 1
+            },
+            "fill": "$border-color"
+          },
+          "padding": [
+            16,
+            24
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon_font",
+              "id": "Iy55z",
+              "width": 24,
+              "height": 24,
+              "iconFontName": "menu",
+              "iconFontFamily": "lucide",
+              "fill": "$text-color"
+            },
+            {
+              "type": "text",
+              "id": "Y5iZ7",
+              "fill": "$primary-color",
+              "content": "Frankie's",
+              "fontFamily": "$font-heading",
+              "fontSize": 24,
+              "fontWeight": "800"
+            },
+            {
+              "type": "frame",
+              "id": "dX6lm",
+              "name": "userActions",
+              "gap": 16,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "UjtVA",
+                  "width": 24,
+                  "height": 24,
+                  "iconFontName": "search",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-color"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "ozDJl",
+          "name": "Categories Container",
+          "width": "fill_container",
+          "fill": "$bg-color",
+          "gap": 12,
+          "padding": [
+            16,
+            24
+          ],
+          "children": [
+            {
+              "id": "nmHdN",
+              "type": "ref",
+              "ref": "14u1f",
+              "name": "tab1",
+              "width": "fit_content",
+              "x": 24,
+              "y": 16,
+              "height": "fit_content",
+              "descendants": {
+                "argRk": {
+                  "content": "Breakfast Burritos",
+                  "x": 16,
+                  "y": 8
+                }
+              }
+            },
+            {
+              "id": "vxul8",
+              "type": "ref",
+              "ref": "oLpjv",
+              "name": "tab2",
+              "x": 191,
+              "y": 16,
+              "width": "fit_content",
+              "height": "fit_content",
+              "descendants": {
+                "lIQFy": {
+                  "content": "Sides",
+                  "x": 16,
+                  "y": 8
+                }
+              }
+            },
+            {
+              "id": "GB2Ok",
+              "type": "ref",
+              "ref": "oLpjv",
+              "name": "tab3",
+              "width": "fit_content",
+              "x": 272,
+              "y": 16,
+              "height": "fit_content",
+              "descendants": {
+                "lIQFy": {
+                  "content": "Drinks",
+                  "x": 16,
+                  "y": 8
+                }
+              }
+            },
+            {
+              "id": "vdWLh",
+              "type": "ref",
+              "ref": "oLpjv",
+              "name": "tab4",
+              "width": "fit_content",
+              "x": 359,
+              "y": 16,
+              "height": "fit_content",
+              "descendants": {
+                "lIQFy": {
+                  "content": "Combos",
+                  "x": 16,
+                  "y": 8
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "UYLSc",
+          "name": "Scrollable Menu",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 24,
+          "padding": [
+            0,
+            24,
+            100,
+            24
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "cWucp",
+              "name": "Category Section",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "sq9bz",
+                  "fill": "$text-color",
+                  "content": "Breakfast Burritos",
+                  "fontFamily": "$font-heading",
+                  "fontSize": 28,
+                  "fontWeight": "700"
+                },
+                {
+                  "id": "TyhrU",
+                  "type": "ref",
+                  "ref": "Pz9VE",
+                  "width": "fill_container",
+                  "name": "item1",
+                  "height": "fit_content",
+                  "x": 0,
+                  "y": 48,
+                  "descendants": {
+                    "mTO4U": {
+                      "type": "frame",
+                      "id": "rXAQs",
+                      "name": "img1",
+                      "width": "fill_container",
+                      "height": 200,
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "./images/generated-1774457050881.png",
+                        "mode": "fill"
+                      },
+                      "justifyContent": "center",
+                      "alignItems": "center"
+                    },
+                    "ILFbv": {
+                      "width": "fill_container",
+                      "height": "fit_content",
+                      "y": 200
+                    },
+                    "zCFlP": {
+                      "width": "fill_container",
+                      "height": "fit_content",
+                      "x": 16,
+                      "y": 16
+                    },
+                    "ijJgg": {
+                      "width": "fill_container",
+                      "height": "fit_content"
+                    },
+                    "zsjtz": {
+                      "content": "The OG Frankie",
+                      "width": "fill_container"
+                    },
+                    "gsxb2": {
+                      "x": 230,
+                      "height": "fit_content"
+                    },
+                    "HlaqK": {
+                      "x": 29
+                    },
+                    "xb2pN": {
+                      "content": "Eggs, bacon, tots, cheese, and holy aioli.",
+                      "width": "fill_container",
+                      "x": 16,
+                      "y": 47
+                    },
+                    "zJCfX": {
+                      "width": "fill_container",
+                      "y": 75,
+                      "height": "fit_content",
+                      "x": 16
+                    },
+                    "AMYIG": {
+                      "x": 250,
+                      "width": "fit_content",
+                      "height": "fit_content",
+                      "y": 8
+                    },
+                    "aiBVa": {
+                      "x": 16,
+                      "y": 8
+                    }
+                  }
+                },
+                {
+                  "id": "L93rf",
+                  "type": "ref",
+                  "ref": "Pz9VE",
+                  "width": "fill_container",
+                  "name": "item2",
+                  "x": 0,
+                  "y": 396,
+                  "height": "fit_content",
+                  "descendants": {
+                    "mTO4U": {
+                      "type": "frame",
+                      "id": "sWWlW",
+                      "name": "img2",
+                      "width": "fill_container",
+                      "height": 200,
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "./images/generated-1774457071027.png",
+                        "mode": "fill"
+                      },
+                      "justifyContent": "center",
+                      "alignItems": "center"
+                    },
+                    "ILFbv": {
+                      "width": "fill_container",
+                      "height": "fit_content",
+                      "y": 200
+                    },
+                    "zCFlP": {
+                      "width": "fill_container",
+                      "height": "fit_content",
+                      "x": 16,
+                      "y": 16
+                    },
+                    "ijJgg": {
+                      "width": "fill_container",
+                      "height": "fit_content"
+                    },
+                    "zsjtz": {
+                      "content": "El Pollo Loco",
+                      "width": "fill_container"
+                    },
+                    "gsxb2": {
+                      "x": 230,
+                      "height": "fit_content"
+                    },
+                    "HlaqK": {
+                      "content": "$13.50",
+                      "x": 26
+                    },
+                    "xb2pN": {
+                      "content": "Grilled chicken, fajita veggies, rice, black beans.",
+                      "width": "fill_container",
+                      "x": 16,
+                      "y": 47
+                    },
+                    "zJCfX": {
+                      "width": "fill_container",
+                      "height": "fit_content",
+                      "x": 16,
+                      "y": 95
+                    },
+                    "AMYIG": {
+                      "x": 250,
+                      "width": "fit_content",
+                      "height": "fit_content",
+                      "y": 8
+                    },
+                    "aiBVa": {
+                      "x": 16,
+                      "y": 8
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "f8VaS",
+          "layoutPosition": "absolute",
+          "x": 24,
+          "y": 740,
+          "name": "Floating Cart",
+          "width": 342,
+          "fill": "$primary-color",
+          "cornerRadius": 100,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#E03C3180",
+            "offset": {
+              "x": 0,
+              "y": 8
+            },
+            "blur": 16
+          },
+          "padding": 16,
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "XEMfC",
+              "name": "cartInfo",
+              "gap": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Oaycb",
+                  "name": "Count Badge",
+                  "width": 24,
+                  "height": 24,
+                  "fill": "$surface-color",
+                  "cornerRadius": 100,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "JbJMb",
+                      "fill": "$primary-color",
+                      "content": "2",
+                      "fontFamily": "$font-body",
+                      "fontSize": 12,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "HHfES",
+                  "fill": "#FFFFFF",
+                  "content": "View Cart",
+                  "fontFamily": "$font-body",
+                  "fontSize": 16,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "eWuKD",
+              "fill": "#FFFFFF",
+              "content": "$25.49",
+              "fontFamily": "$font-body",
+              "fontSize": 16,
+              "fontWeight": "700"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "gTJzT",
+      "x": 0,
+      "y": 0,
+      "name": "Menu Page Mobile",
+      "clip": true,
+      "width": 390,
+      "height": 844,
+      "fill": "$bg-color",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "U3DIZ",
+          "name": "Navbar",
+          "width": "fill_container",
+          "fill": "$surface-color",
+          "stroke": {
+            "align": "inside",
+            "thickness": {
+              "bottom": 1
+            },
+            "fill": "$border-color"
+          },
+          "padding": [
+            16,
+            24
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon_font",
+              "id": "euTIi",
+              "width": 24,
+              "height": 24,
+              "iconFontName": "menu",
+              "iconFontFamily": "lucide",
+              "fill": "$text-color"
+            },
+            {
+              "type": "text",
+              "id": "EXats",
+              "fill": "$primary-color",
+              "content": "Frankie's",
+              "fontFamily": "$font-heading",
+              "fontSize": 24,
+              "fontWeight": "800"
+            },
+            {
+              "type": "frame",
+              "id": "7xxsy",
+              "name": "userActions",
+              "gap": 16,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "pc9xR",
+                  "width": 24,
+                  "height": 24,
+                  "iconFontName": "search",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-color"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "jBNmU",
+          "name": "Categories Container",
+          "width": "fill_container",
+          "fill": "$bg-color",
+          "gap": 12,
+          "padding": [
+            16,
+            24
+          ],
+          "children": [
+            {
+              "id": "vRCRV",
+              "type": "ref",
+              "ref": "14u1f",
+              "name": "tab1",
+              "width": "fit_content",
+              "x": 24,
+              "y": 16,
+              "height": "fit_content",
+              "descendants": {
+                "argRk": {
+                  "content": "Breakfast Burritos",
+                  "x": 16,
+                  "y": 8
+                }
+              }
+            },
+            {
+              "id": "9SEXJ",
+              "type": "ref",
+              "ref": "oLpjv",
+              "name": "tab2",
+              "x": 191,
+              "y": 16,
+              "width": "fit_content",
+              "height": "fit_content",
+              "descendants": {
+                "lIQFy": {
+                  "content": "Sides",
+                  "x": 16,
+                  "y": 8
+                }
+              }
+            },
+            {
+              "id": "egT3E",
+              "type": "ref",
+              "ref": "oLpjv",
+              "name": "tab3",
+              "width": "fit_content",
+              "x": 272,
+              "y": 16,
+              "height": "fit_content",
+              "descendants": {
+                "lIQFy": {
+                  "content": "Drinks",
+                  "x": 16,
+                  "y": 8
+                }
+              }
+            },
+            {
+              "id": "zKGK7",
+              "type": "ref",
+              "ref": "oLpjv",
+              "name": "tab4",
+              "width": "fit_content",
+              "x": 359,
+              "y": 16,
+              "height": "fit_content",
+              "descendants": {
+                "lIQFy": {
+                  "content": "Combos",
+                  "x": 16,
+                  "y": 8
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "bXKQ3",
+          "name": "Scrollable Menu",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 24,
+          "padding": [
+            0,
+            24,
+            100,
+            24
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "r8YnE",
+              "name": "Category Section",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "SbH4c",
+                  "fill": "$text-color",
+                  "content": "Breakfast Burritos",
+                  "fontFamily": "$font-heading",
+                  "fontSize": 28,
+                  "fontWeight": "700"
+                },
+                {
+                  "id": "35uUx",
+                  "type": "ref",
+                  "ref": "Pz9VE",
+                  "width": "fill_container",
+                  "name": "item1",
+                  "height": "fit_content",
+                  "x": 0,
+                  "y": 48,
+                  "descendants": {
+                    "mTO4U": {
+                      "width": "fill_container"
+                    },
+                    "oN2yZ": {
+                      "x": 147,
+                      "y": 76
+                    },
+                    "ILFbv": {
+                      "width": "fill_container",
+                      "height": "fit_content",
+                      "y": 200
+                    },
+                    "zCFlP": {
+                      "width": "fill_container",
+                      "height": "fit_content",
+                      "x": 16,
+                      "y": 16
+                    },
+                    "ijJgg": {
+                      "width": "fill_container",
+                      "height": "fit_content"
+                    },
+                    "zsjtz": {
+                      "content": "The OG Frankie",
+                      "width": "fill_container"
+                    },
+                    "gsxb2": {
+                      "x": 230,
+                      "height": "fit_content"
+                    },
+                    "HlaqK": {
+                      "x": 29
+                    },
+                    "xb2pN": {
+                      "content": "Eggs, bacon, tots, cheese, and holy aioli.",
+                      "width": "fill_container",
+                      "x": 16,
+                      "y": 47
+                    },
+                    "zJCfX": {
+                      "width": "fill_container",
+                      "y": 75,
+                      "height": "fit_content",
+                      "x": 16
+                    },
+                    "AMYIG": {
+                      "x": 250,
+                      "width": "fit_content",
+                      "height": "fit_content",
+                      "y": 8
+                    },
+                    "aiBVa": {
+                      "x": 16,
+                      "y": 8
+                    }
+                  }
+                },
+                {
+                  "id": "6gei0",
+                  "type": "ref",
+                  "ref": "Pz9VE",
+                  "width": "fill_container",
+                  "name": "item2",
+                  "x": 0,
+                  "y": 396,
+                  "height": "fit_content",
+                  "descendants": {
+                    "mTO4U": {
+                      "width": "fill_container"
+                    },
+                    "oN2yZ": {
+                      "x": 147,
+                      "y": 76
+                    },
+                    "ILFbv": {
+                      "width": "fill_container",
+                      "height": "fit_content",
+                      "y": 200
+                    },
+                    "zCFlP": {
+                      "width": "fill_container",
+                      "height": "fit_content",
+                      "x": 16,
+                      "y": 16
+                    },
+                    "ijJgg": {
+                      "width": "fill_container",
+                      "height": "fit_content"
+                    },
+                    "zsjtz": {
+                      "content": "El Pollo Loco",
+                      "width": "fill_container"
+                    },
+                    "gsxb2": {
+                      "x": 230,
+                      "height": "fit_content"
+                    },
+                    "HlaqK": {
+                      "content": "$13.50",
+                      "x": 26
+                    },
+                    "xb2pN": {
+                      "content": "Grilled chicken, fajita veggies, rice, black beans.",
+                      "width": "fill_container",
+                      "x": 16,
+                      "y": 47
+                    },
+                    "zJCfX": {
+                      "width": "fill_container",
+                      "height": "fit_content",
+                      "x": 16,
+                      "y": 95
+                    },
+                    "AMYIG": {
+                      "x": 250,
+                      "width": "fit_content",
+                      "height": "fit_content",
+                      "y": 8
+                    },
+                    "aiBVa": {
+                      "x": 16,
+                      "y": 8
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "cpcbE",
+          "layoutPosition": "absolute",
+          "x": 24,
+          "y": 740,
+          "name": "Floating Cart",
+          "width": 342,
+          "fill": "$primary-color",
+          "cornerRadius": 100,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#E03C3180",
+            "offset": {
+              "x": 0,
+              "y": 8
+            },
+            "blur": 16
+          },
+          "padding": 16,
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "IWpET",
+              "name": "cartInfo",
+              "gap": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "xge8M",
+                  "name": "Count Badge",
+                  "width": 24,
+                  "height": 24,
+                  "fill": "$surface-color",
+                  "cornerRadius": 100,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "jpzGk",
+                      "fill": "$primary-color",
+                      "content": "2",
+                      "fontFamily": "$font-body",
+                      "fontSize": 12,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "qMaos",
+                  "fill": "#FFFFFF",
+                  "content": "View Cart",
+                  "fontFamily": "$font-body",
+                  "fontSize": 16,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "IP6wb",
+              "fill": "#FFFFFF",
+              "content": "$25.49",
+              "fontFamily": "$font-body",
+              "fontSize": 16,
+              "fontWeight": "700"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "bSh1h",
+      "x": 0,
+      "y": 1018,
+      "name": "Item Detail Page",
+      "clip": true,
+      "width": 390,
+      "height": 844,
+      "fill": "$bg-color",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "cVMnY",
+          "name": "topBar",
+          "width": "fill_container",
+          "fill": "$surface-color",
+          "padding": [
+            16,
+            24
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon_font",
+              "id": "M4pXt",
+              "width": 24,
+              "height": 24,
+              "iconFontName": "arrow-left",
+              "iconFontFamily": "lucide",
+              "fill": "$text-color"
+            },
+            {
+              "type": "text",
+              "id": "jn7bd",
+              "fill": "$text-color",
+              "content": "Item Details",
+              "fontFamily": "$font-body",
+              "fontSize": 18,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "MD7eN",
+          "name": "scroll",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 24,
+          "padding": [
+            0,
+            0,
+            100,
+            0
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "nA5Vj",
+              "name": "hero",
+              "width": "fill_container",
+              "height": 280,
+              "fill": "#EAEAEA",
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "wb0Fe",
+                  "width": 48,
+                  "height": 48,
+                  "iconFontName": "image",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-muted"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "DxXaX",
+              "name": "info",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 12,
+              "padding": [
+                0,
+                24
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "2v7T9",
+                  "name": "titleRow",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "JZ9ub",
+                      "fill": "$text-color",
+                      "textGrowth": "fixed-width",
+                      "width": 240,
+                      "content": "The OG Frankie",
+                      "fontFamily": "$font-heading",
+                      "fontSize": 28,
+                      "fontWeight": "800"
+                    },
+                    {
+                      "type": "text",
+                      "id": "9rmou",
+                      "fill": "$primary-color",
+                      "content": "$11.99",
+                      "fontFamily": "$font-heading",
+                      "fontSize": 24,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "L8q1r",
+                  "fill": "$text-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Eggs, bacon, tater tots, cheese, and our signature holy aioli wrapped in a fresh flour tortilla.",
+                  "lineHeight": 1.4,
+                  "fontFamily": "$font-body",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "5Btj4",
+              "name": "spiceSec",
+              "width": "fill_container",
+              "fill": "$surface-color",
+              "layout": "vertical",
+              "gap": 16,
+              "padding": [
+                16,
+                24
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "8W8R1",
+                  "fill": "$text-color",
+                  "content": "Choose Spice Level",
+                  "fontFamily": "$font-heading",
+                  "fontSize": 20,
+                  "fontWeight": "700"
+                },
+                {
+                  "id": "upbhb",
+                  "type": "ref",
+                  "ref": "DQiAE",
+                  "width": "fill_container",
+                  "name": "radio1",
+                  "x": 24,
+                  "y": 55,
+                  "height": "fit_content",
+                  "descendants": {
+                    "GFQpk": {
+                      "x": 4,
+                      "y": 4
+                    },
+                    "eAaC4": {
+                      "content": "Mild (No Spice)",
+                      "x": 40,
+                      "y": 6.5
+                    }
+                  }
+                },
+                {
+                  "id": "H8Umy",
+                  "type": "ref",
+                  "ref": "DQiAE",
+                  "width": "fill_container",
+                  "name": "radio2",
+                  "x": 24,
+                  "y": 103,
+                  "height": "fit_content",
+                  "descendants": {
+                    "GFQpk": {
+                      "x": 4,
+                      "y": 4
+                    },
+                    "eAaC4": {
+                      "content": "Medium (Jalapeño)",
+                      "x": 40,
+                      "y": 6.5
+                    }
+                  }
+                },
+                {
+                  "id": "EBy3K",
+                  "type": "ref",
+                  "ref": "DQiAE",
+                  "width": "fill_container",
+                  "name": "radio3",
+                  "x": 24,
+                  "y": 151,
+                  "height": "fit_content",
+                  "descendants": {
+                    "GFQpk": {
+                      "x": 4,
+                      "y": 4
+                    },
+                    "eAaC4": {
+                      "content": "Hot (Habanero)",
+                      "x": 40,
+                      "y": 6.5
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "mzo1H",
+              "name": "addonSec",
+              "width": "fill_container",
+              "fill": "$surface-color",
+              "layout": "vertical",
+              "gap": 16,
+              "padding": [
+                16,
+                24
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "kAaXv",
+                  "fill": "$text-color",
+                  "content": "Add-ons",
+                  "fontFamily": "$font-heading",
+                  "fontSize": 20,
+                  "fontWeight": "700"
+                },
+                {
+                  "id": "g92ZU",
+                  "type": "ref",
+                  "ref": "mr3Sp",
+                  "width": "fill_container",
+                  "name": "cb1",
+                  "x": 24,
+                  "y": 55,
+                  "height": "fit_content",
+                  "descendants": {
+                    "EzcRF": {
+                      "x": 4,
+                      "y": 4
+                    },
+                    "ROmih": {
+                      "content": "Extra Bacon (+$2.00)",
+                      "x": 40,
+                      "y": 6.5
+                    }
+                  }
+                },
+                {
+                  "id": "WrjrJ",
+                  "type": "ref",
+                  "ref": "mr3Sp",
+                  "width": "fill_container",
+                  "name": "cb2",
+                  "x": 24,
+                  "y": 103,
+                  "height": "fit_content",
+                  "descendants": {
+                    "EzcRF": {
+                      "x": 4,
+                      "y": 4
+                    },
+                    "ROmih": {
+                      "content": "Guacamole (+$1.50)",
+                      "x": 40,
+                      "y": 6.5
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "660kO",
+          "layoutPosition": "absolute",
+          "x": 0,
+          "y": 744,
+          "name": "bottomBar",
+          "width": "fill_container(0)",
+          "fill": "$surface-color",
+          "stroke": {
+            "align": "inside",
+            "thickness": {
+              "top": 1
+            },
+            "fill": "$border-color"
+          },
+          "gap": 16,
+          "padding": [
+            16,
+            24
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "id": "0Guqw",
+              "type": "ref",
+              "ref": "O0Tx0",
+              "x": 24,
+              "y": 26,
+              "width": "fit_content",
+              "height": "fit_content",
+              "descendants": {
+                "uTFzU": {
+                  "x": 12,
+                  "y": 6.5
+                },
+                "aUfVz": {
+                  "x": 46,
+                  "y": 6
+                },
+                "5ehkn": {
+                  "x": 69,
+                  "y": 6.5
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "K2SyG",
+              "name": "btn",
+              "width": "fill_container",
+              "fill": "$primary-color",
+              "cornerRadius": 8,
+              "padding": [
+                16,
+                24
+              ],
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "M0KaR",
+                  "fill": "#FFFFFF",
+                  "content": "Add to Cart - $11.99",
+                  "fontFamily": "$font-body",
+                  "fontSize": 16,
+                  "fontWeight": "700"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "DkPzB",
+          "name": "Cart Page Mobile",
+          "clip": true,
+          "width": 390,
+          "height": 844,
+          "fill": "$bg-color",
+          "layout": "vertical",
+          "children": [
+            {
+              "type": "frame",
+              "id": "iHQHr",
+              "name": "topBar",
+              "width": "fill_container",
+              "fill": "$surface-color",
+              "padding": [
+                16,
+                24
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "rdj2c",
+                  "width": 24,
+                  "height": 24,
+                  "iconFontName": "x",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-color"
+                },
+                {
+                  "type": "text",
+                  "id": "vyUjw",
+                  "fill": "$text-color",
+                  "content": "Your Cart",
+                  "fontFamily": "$font-heading",
+                  "fontSize": 20,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "frame",
+                  "id": "kdZgw",
+                  "width": 24,
+                  "height": 24
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "EUDtn",
+              "name": "scroll",
+              "width": "fill_container",
+              "height": "fill_container",
+              "layout": "vertical",
+              "gap": 24,
+              "padding": [
+                24,
+                24,
+                100,
+                24
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "31eh0",
+                  "name": "item1",
+                  "width": "fill_container",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "scIh3",
+                      "width": 64,
+                      "height": 64,
+                      "fill": "$border-color",
+                      "cornerRadius": 8,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "rN1js",
+                          "width": 24,
+                          "height": 24,
+                          "iconFontName": "image",
+                          "iconFontFamily": "lucide",
+                          "fill": "$text-muted"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "EFREk",
+                      "name": "item1Details",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "cliEw",
+                          "name": "item1Header",
+                          "width": "fill_container",
+                          "justifyContent": "space_between",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "dl1bS",
+                              "fill": "$text-color",
+                              "content": "The OG Frankie",
+                              "fontFamily": "$font-body",
+                              "fontSize": 16,
+                              "fontWeight": "700"
+                            },
+                            {
+                              "type": "text",
+                              "id": "8Ka0W",
+                              "fill": "$text-color",
+                              "content": "$11.99",
+                              "fontFamily": "$font-body",
+                              "fontSize": 16,
+                              "fontWeight": "700"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "duDsS",
+                          "name": "qtyCtl1",
+                          "fill": "$surface-color",
+                          "cornerRadius": 100,
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 1,
+                            "fill": "$border-color"
+                          },
+                          "gap": 16,
+                          "padding": [
+                            4,
+                            8
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon_font",
+                              "id": "2vgSe",
+                              "width": 14,
+                              "height": 14,
+                              "iconFontName": "minus",
+                              "iconFontFamily": "lucide",
+                              "fill": "$text-muted"
+                            },
+                            {
+                              "type": "text",
+                              "id": "NoruB",
+                              "fill": "$text-color",
+                              "content": "1",
+                              "fontFamily": "$font-body",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "icon_font",
+                              "id": "twaH5",
+                              "width": 14,
+                              "height": 14,
+                              "iconFontName": "plus",
+                              "iconFontFamily": "lucide",
+                              "fill": "$primary-color"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "1xi28",
+                  "name": "item2",
+                  "width": "fill_container",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "kZUZn",
+                      "width": 64,
+                      "height": 64,
+                      "fill": "$border-color",
+                      "cornerRadius": 8,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "MMKYq",
+                          "width": 24,
+                          "height": 24,
+                          "iconFontName": "image",
+                          "iconFontFamily": "lucide",
+                          "fill": "$text-muted"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "VUGOL",
+                      "name": "item2Details",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "sWnXb",
+                          "name": "item2Header",
+                          "width": "fill_container",
+                          "justifyContent": "space_between",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "LDf0m",
+                              "fill": "$text-color",
+                              "content": "El Pollo Loco",
+                              "fontFamily": "$font-body",
+                              "fontSize": 16,
+                              "fontWeight": "700"
+                            },
+                            {
+                              "type": "text",
+                              "id": "esnn8",
+                              "fill": "$text-color",
+                              "content": "$15.50",
+                              "fontFamily": "$font-body",
+                              "fontSize": 16,
+                              "fontWeight": "700"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "LpkSf",
+                          "fill": "$text-muted",
+                          "content": "+ Medium (Jalapeño)\n+ Extra Bacon",
+                          "lineHeight": 1.4,
+                          "fontFamily": "$font-body",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "jODdG",
+                          "name": "qtyCtl2",
+                          "fill": "$surface-color",
+                          "cornerRadius": 100,
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 1,
+                            "fill": "$border-color"
+                          },
+                          "gap": 16,
+                          "padding": [
+                            4,
+                            8
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "F1MMg",
+                              "fill": "$text-color",
+                              "content": "1",
+                              "fontFamily": "$font-body",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "q2iXq",
+                  "name": "upsell",
+                  "width": "fill_container",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": {
+                      "top": 1
+                    },
+                    "fill": "$border-color"
+                  },
+                  "layout": "vertical",
+                  "gap": 16,
+                  "padding": [
+                    24,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "d7CPB",
+                      "fill": "$text-color",
+                      "content": "Make it a combo?",
+                      "fontFamily": "$font-heading",
+                      "fontSize": 18,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "a2ggy",
+                      "name": "upsellScroll",
+                      "width": "fill_container",
+                      "gap": 12,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "2QUN7",
+                          "name": "upsell1",
+                          "width": 140,
+                          "fill": "$surface-color",
+                          "cornerRadius": 12,
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 1,
+                            "fill": "$border-color"
+                          },
+                          "layout": "vertical",
+                          "gap": 8,
+                          "padding": 12,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "TaCgU",
+                              "width": "fill_container",
+                              "height": 80,
+                              "fill": "$border-color",
+                              "cornerRadius": 8,
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "icon_font",
+                                  "id": "tnhGp",
+                                  "width": 24,
+                                  "height": 24,
+                                  "iconFontName": "image",
+                                  "iconFontFamily": "lucide",
+                                  "fill": "$text-muted"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "5dIwR",
+                              "fill": "$text-color",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Agua Fresca",
+                              "fontFamily": "$font-body",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "g2oHF",
+                              "fill": "$primary-color",
+                              "content": "+ $3.00",
+                              "fontFamily": "$font-body",
+                              "fontSize": 14,
+                              "fontWeight": "700"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "OOr26",
+                          "name": "upsell2",
+                          "width": 140,
+                          "fill": "$surface-color",
+                          "cornerRadius": 12,
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 1,
+                            "fill": "$border-color"
+                          },
+                          "layout": "vertical",
+                          "gap": 8,
+                          "padding": 12,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "up9yS",
+                              "width": "fill_container",
+                              "height": 80,
+                              "fill": "$border-color",
+                              "cornerRadius": 8,
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "icon_font",
+                                  "id": "ymDDG",
+                                  "width": 24,
+                                  "height": 24,
+                                  "iconFontName": "image",
+                                  "iconFontFamily": "lucide",
+                                  "fill": "$text-muted"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "Q8qfZ",
+                              "fill": "$text-color",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Chips & Guac",
+                              "fontFamily": "$font-body",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "A2nPK",
+                              "fill": "$primary-color",
+                              "content": "+ $4.50",
+                              "fontFamily": "$font-body",
+                              "fontSize": 14,
+                              "fontWeight": "700"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "xhD0r",
+                  "name": "summary",
+                  "width": "fill_container",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": {
+                      "top": 1
+                    },
+                    "fill": "$border-color"
+                  },
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": [
+                    24,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "O6A9V",
+                      "name": "row1",
+                      "width": "fill_container",
+                      "justifyContent": "space_between",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Rh41N",
+                          "fill": "$text-muted",
+                          "content": "Subtotal",
+                          "fontFamily": "$font-body",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "cyGKE",
+                          "fill": "$text-color",
+                          "content": "$27.49",
+                          "fontFamily": "$font-body",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "WQF1c",
+                      "name": "row2",
+                      "width": "fill_container",
+                      "justifyContent": "space_between",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "zqvTl",
+                          "fill": "$text-muted",
+                          "content": "Taxes & Fees",
+                          "fontFamily": "$font-body",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "BXJ7P",
+                          "fill": "$text-color",
+                          "content": "$3.00",
+                          "fontFamily": "$font-body",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "LwWLv",
+                      "name": "row3",
+                      "width": "fill_container",
+                      "padding": [
+                        8,
+                        0,
+                        0,
+                        0
+                      ],
+                      "justifyContent": "space_between",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "w1Jqv",
+                          "fill": "$text-color",
+                          "content": "Total",
+                          "fontFamily": "$font-body",
+                          "fontSize": 16,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "bzYov",
+                          "fill": "$primary-color",
+                          "content": "$30.49",
+                          "fontFamily": "$font-heading",
+                          "fontSize": 20,
+                          "fontWeight": "700"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "QoJgF",
+              "layoutPosition": "absolute",
+              "x": 0,
+              "y": 744,
+              "name": "bottomBar",
+              "width": 390,
+              "fill": "$surface-color",
+              "stroke": {
+                "align": "inside",
+                "thickness": {
+                  "top": 1
+                },
+                "fill": "$border-color"
+              },
+              "padding": [
+                16,
+                24
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "KXLca",
+                  "name": "btn",
+                  "width": "fill_container",
+                  "fill": "$primary-color",
+                  "cornerRadius": 8,
+                  "padding": [
+                    16,
+                    24
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "b95zb",
+                      "fill": "#FFFFFF",
+                      "content": "Checkout",
+                      "fontFamily": "$font-body",
+                      "fontSize": 16,
+                      "fontWeight": "700"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "OxqCO",
+      "x": -1000,
+      "y": 976,
+      "name": "Checkout Page Mobile",
+      "clip": true,
+      "width": 390,
+      "height": 844,
+      "fill": "$bg-color",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "7CLRV",
+          "name": "topBar",
+          "width": "fill_container",
+          "fill": "$surface-color",
+          "padding": [
+            16,
+            24
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon_font",
+              "id": "fZu3K",
+              "width": 24,
+              "height": 24,
+              "iconFontName": "arrow-left",
+              "iconFontFamily": "lucide",
+              "fill": "$text-color"
+            },
+            {
+              "type": "text",
+              "id": "Affxw",
+              "fill": "$text-color",
+              "content": "Checkout",
+              "fontFamily": "$font-body",
+              "fontSize": 18,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "gNU7K",
+              "width": 24,
+              "height": 24
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "MOrdI",
+          "name": "checkoutScroll",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 24,
+          "padding": [
+            24,
+            24,
+            100,
+            24
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "yaQrZ",
+              "name": "toggleRow",
+              "width": "fill_container",
+              "fill": "$surface-color",
+              "cornerRadius": 100,
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "$border-color"
+              },
+              "padding": 4,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "y4dKp",
+                  "name": "toggleActive",
+                  "width": "fill_container",
+                  "fill": "$bg-color",
+                  "cornerRadius": 100,
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#00000010",
+                    "offset": {
+                      "x": 0,
+                      "y": 2
+                    },
+                    "blur": 4
+                  },
+                  "padding": [
+                    12,
+                    0
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Dm1yL",
+                      "fill": "$text-color",
+                      "content": "Delivery",
+                      "fontFamily": "$font-body",
+                      "fontSize": 14,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "l2vc0",
+                  "name": "toggleInactive",
+                  "width": "fill_container",
+                  "padding": [
+                    12,
+                    0
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "rh5Fa",
+                      "fill": "$text-muted",
+                      "content": "Pickup",
+                      "fontFamily": "$font-body",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "fV9eJ",
+              "name": "formSec",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "xexe4",
+                  "fill": "$text-color",
+                  "content": "Delivery Details",
+                  "fontFamily": "$font-heading",
+                  "fontSize": 20,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "frame",
+                  "id": "sETKy",
+                  "name": "input1",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "3oieB",
+                      "fill": "$text-color",
+                      "content": "Full Name",
+                      "fontFamily": "$font-body",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "giE4U",
+                      "width": "fill_container",
+                      "height": 48,
+                      "fill": "$surface-color",
+                      "cornerRadius": 8,
+                      "stroke": {
+                        "align": "inside",
+                        "thickness": 1,
+                        "fill": "$border-color"
+                      },
+                      "padding": [
+                        0,
+                        16
+                      ],
+                      "justifyContent": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "B4UnV",
+                          "fill": "$text-color",
+                          "content": "John Doe",
+                          "fontFamily": "$font-body",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "AfIbQ",
+                  "name": "input2",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Q5axr",
+                      "fill": "$text-color",
+                      "content": "Mobile Number",
+                      "fontFamily": "$font-body",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "qFA4C",
+                      "width": "fill_container",
+                      "height": 48,
+                      "fill": "$surface-color",
+                      "cornerRadius": 8,
+                      "stroke": {
+                        "align": "inside",
+                        "thickness": 1,
+                        "fill": "$border-color"
+                      },
+                      "padding": [
+                        0,
+                        16
+                      ],
+                      "justifyContent": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "tAUsT",
+                          "fill": "$text-color",
+                          "content": "+1 (555) 000-0000",
+                          "fontFamily": "$font-body",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "4pKUw",
+                  "name": "input3",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Gnk9o",
+                      "fill": "$text-color",
+                      "content": "Street Address",
+                      "fontFamily": "$font-body",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "e3JFF",
+                      "width": "fill_container",
+                      "height": 48,
+                      "fill": "$surface-color",
+                      "cornerRadius": 8,
+                      "stroke": {
+                        "align": "inside",
+                        "thickness": 1,
+                        "fill": "$border-color"
+                      },
+                      "padding": [
+                        0,
+                        16
+                      ],
+                      "justifyContent": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "IOeUK",
+                          "fill": "$text-color",
+                          "content": "123 Spicy Taco Blvd...",
+                          "fontFamily": "$font-body",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "F0joJ",
+              "name": "paySec",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "14d1F",
+                  "fill": "$text-color",
+                  "content": "Payment Method",
+                  "fontFamily": "$font-heading",
+                  "fontSize": 20,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "frame",
+                  "id": "8Ad6q",
+                  "name": "payMethod1",
+                  "width": "fill_container",
+                  "fill": "$surface-color",
+                  "cornerRadius": 8,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 2,
+                    "fill": "$primary-color"
+                  },
+                  "padding": 16,
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "QSTmj",
+                      "name": "payRow1",
+                      "gap": 12,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "MPnbg",
+                          "width": 24,
+                          "height": 24,
+                          "iconFontName": "credit-card",
+                          "iconFontFamily": "lucide",
+                          "fill": "$primary-color"
+                        },
+                        {
+                          "type": "text",
+                          "id": "ffi9g",
+                          "fill": "$text-color",
+                          "content": "Credit / Debit Card",
+                          "fontFamily": "$font-body",
+                          "fontSize": 16,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "XLZAy",
+                      "width": 24,
+                      "height": 24,
+                      "iconFontName": "check-circle-2",
+                      "iconFontFamily": "lucide",
+                      "fill": "$primary-color"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "SuF98",
+                  "name": "payMethod2",
+                  "width": "fill_container",
+                  "fill": "$surface-color",
+                  "cornerRadius": 8,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "$border-color"
+                  },
+                  "padding": 16,
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "XVSjQ",
+                      "name": "payRow2",
+                      "gap": 12,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "TQYjE",
+                          "width": 24,
+                          "height": 24,
+                          "iconFontName": "smartphone",
+                          "iconFontFamily": "lucide",
+                          "fill": "$text-muted"
+                        },
+                        {
+                          "type": "text",
+                          "id": "lUEuT",
+                          "fill": "$text-color",
+                          "content": "UPI",
+                          "fontFamily": "$font-body",
+                          "fontSize": 16,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "mXdDa",
+                  "name": "payMethod3",
+                  "width": "fill_container",
+                  "fill": "$surface-color",
+                  "cornerRadius": 8,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "$border-color"
+                  },
+                  "padding": 16,
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "00ZiE",
+                      "name": "payRow3",
+                      "gap": 12,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "Bav2E",
+                          "width": 24,
+                          "height": 24,
+                          "iconFontName": "banknote",
+                          "iconFontFamily": "lucide",
+                          "fill": "$text-muted"
+                        },
+                        {
+                          "type": "text",
+                          "id": "y93GO",
+                          "fill": "$text-color",
+                          "content": "Cash on Delivery",
+                          "fontFamily": "$font-body",
+                          "fontSize": 16,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "ht4aW",
+          "layoutPosition": "absolute",
+          "x": 0,
+          "y": 744,
+          "name": "bottomBar",
+          "width": 390,
+          "fill": "$surface-color",
+          "stroke": {
+            "align": "inside",
+            "thickness": {
+              "top": 1
+            },
+            "fill": "$border-color"
+          },
+          "padding": [
+            16,
+            24
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "MRDH4",
+              "name": "totalInfo",
+              "layout": "vertical",
+              "gap": 2,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "s453S",
+                  "fill": "$text-muted",
+                  "content": "Total",
+                  "fontFamily": "$font-body",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "cVPcO",
+                  "fill": "$text-color",
+                  "content": "$30.49",
+                  "fontFamily": "$font-heading",
+                  "fontSize": 20,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "4WfmY",
+              "name": "btn",
+              "fill": "$primary-color",
+              "cornerRadius": 8,
+              "padding": [
+                16,
+                32
+              ],
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "1AkIq",
+                  "fill": "#FFFFFF",
+                  "content": "Place Order",
+                  "fontFamily": "$font-body",
+                  "fontSize": 16,
+                  "fontWeight": "700"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "p5kwq",
+      "x": -1000,
+      "y": -57,
+      "name": "Order Success Page",
+      "clip": true,
+      "width": 390,
+      "height": 844,
+      "fill": "$bg-color",
+      "layout": "vertical",
+      "gap": 32,
+      "padding": 24,
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "FsQmD",
+          "name": "illus",
+          "width": 240,
+          "height": 240,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "./images/generated-1774457340755.png",
+            "mode": "fill"
+          },
+          "cornerRadius": 120,
+          "justifyContent": "center",
+          "alignItems": "center"
+        },
+        {
+          "type": "frame",
+          "id": "rStU4",
+          "name": "textSec",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "ItwXI",
+              "fill": "$primary-color",
+              "content": "¡Ay Caramba!",
+              "fontFamily": "$font-heading",
+              "fontSize": 32,
+              "fontWeight": "800"
+            },
+            {
+              "type": "text",
+              "id": "1fF0b",
+              "fill": "$text-color",
+              "content": "Your order is confirmed.",
+              "fontFamily": "$font-body",
+              "fontSize": 18,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "SFLMN",
+          "name": "card",
+          "width": "fill_container",
+          "fill": "$surface-color",
+          "cornerRadius": 16,
+          "stroke": {
+            "align": "inside",
+            "thickness": 1,
+            "fill": "$border-color"
+          },
+          "layout": "vertical",
+          "gap": 12,
+          "padding": 24,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "lDNIm",
+              "fill": "$text-muted",
+              "content": "Order #10293",
+              "fontFamily": "$font-body",
+              "fontSize": 14,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "O7MLs",
+              "fill": "$text-color",
+              "content": "Estimated Pickup Time",
+              "fontFamily": "$font-body",
+              "fontSize": 16,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "N5aXH",
+              "fill": "$secondary-color",
+              "content": "15 - 20 mins",
+              "fontFamily": "$font-heading",
+              "fontSize": 24,
+              "fontWeight": "700"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "UT7Kk",
+          "name": "btn",
+          "width": "fill_container",
+          "fill": "$primary-color",
+          "cornerRadius": 8,
+          "padding": [
+            16,
+            32
+          ],
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "Ha6dX",
+              "fill": "#FFFFFF",
+              "content": "Track Order",
+              "fontFamily": "$font-body",
+              "fontSize": 16,
+              "fontWeight": "700"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "goPX9",
+          "name": "btn2",
+          "width": "fill_container",
+          "cornerRadius": 8,
+          "stroke": {
+            "align": "inside",
+            "thickness": 2,
+            "fill": "$primary-color"
+          },
+          "padding": [
+            16,
+            32
+          ],
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "7NUXe",
+              "fill": "$primary-color",
+              "content": "Back to Menu",
+              "fontFamily": "$font-body",
+              "fontSize": 16,
+              "fontWeight": "700"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "7vkG9",
+      "x": -837,
+      "y": 2011,
+      "name": "Desktop Menu w/ Cart",
+      "width": 1440,
+      "height": 1024,
+      "fill": "$bg-color",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "bwCfp",
+          "name": "nav",
+          "width": "fill_container",
+          "height": 80,
+          "fill": "$surface-color",
+          "stroke": {
+            "align": "inside",
+            "thickness": {
+              "bottom": 1
+            },
+            "fill": "$border-color"
+          },
+          "padding": [
+            0,
+            64
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "oSHh5",
+              "name": "logoSec",
+              "gap": 16,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "CjGHc",
+                  "width": 32,
+                  "height": 32,
+                  "iconFontName": "flame",
+                  "iconFontFamily": "lucide",
+                  "fill": "$primary-color"
+                },
+                {
+                  "type": "text",
+                  "id": "55PR1",
+                  "fill": "$primary-color",
+                  "content": "Frankie's Breakfast Burrito",
+                  "fontFamily": "$font-heading",
+                  "fontSize": 24,
+                  "fontWeight": "800"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "uLKY9",
+              "name": "navLinks",
+              "gap": 32,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "2G9qv",
+                  "fill": "$text-color",
+                  "content": "Menu",
+                  "fontFamily": "$font-body",
+                  "fontSize": 16,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "NMrlA",
+                  "fill": "$text-muted",
+                  "content": "Location",
+                  "fontFamily": "$font-body",
+                  "fontSize": 16,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "9impN",
+                  "fill": "$text-muted",
+                  "content": "Rewards",
+                  "fontFamily": "$font-body",
+                  "fontSize": 16,
+                  "fontWeight": "600"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "HZEHC",
+          "name": "heroContainer",
+          "width": "fill_container",
+          "height": 280,
+          "layout": "vertical",
+          "padding": 64,
+          "justifyContent": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "S4ySS",
+              "name": "heroImg",
+              "width": "fill_container",
+              "height": "fill_container",
+              "fill": {
+                "type": "image",
+                "enabled": true,
+                "url": "./images/generated-1774457562674.png",
+                "mode": "fill"
+              },
+              "cornerRadius": 24,
+              "justifyContent": "center",
+              "alignItems": "center"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "OIDqg",
+          "name": "mainContent",
+          "width": "fill_container",
+          "height": "fill_container",
+          "gap": 48,
+          "padding": [
+            48,
+            64
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "ze7TJ",
+              "name": "catSide",
+              "width": 240,
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Z97X6",
+                  "fill": "$text-color",
+                  "content": "Categories",
+                  "fontFamily": "$font-heading",
+                  "fontSize": 20,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "frame",
+                  "id": "zKeAe",
+                  "name": "catList",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "foBC6",
+                      "name": "c1",
+                      "width": "fill_container",
+                      "fill": "$primary-color",
+                      "cornerRadius": 8,
+                      "padding": 12,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "X78WM",
+                          "fill": "#FFFFFF",
+                          "content": "Breakfast Burritos",
+                          "fontFamily": "$font-body",
+                          "fontSize": 16,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "o9yYU",
+                      "name": "c2",
+                      "width": "fill_container",
+                      "fill": "#00000000",
+                      "cornerRadius": 8,
+                      "padding": 12,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "crY0X",
+                          "fill": "$text-color",
+                          "content": "Tacos",
+                          "fontFamily": "$font-body",
+                          "fontSize": 16,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "hYH5m",
+                      "name": "c3",
+                      "width": "fill_container",
+                      "fill": "#00000000",
+                      "cornerRadius": 8,
+                      "padding": 12,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "ztalu",
+                          "fill": "$text-color",
+                          "content": "Sides & Extras",
+                          "fontFamily": "$font-body",
+                          "fontSize": 16,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "1da9S",
+              "name": "menuGrid",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 32,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Msvzj",
+                  "fill": "$text-color",
+                  "content": "Breakfast Burritos",
+                  "fontFamily": "$font-heading",
+                  "fontSize": 32,
+                  "fontWeight": "800"
+                },
+                {
+                  "type": "frame",
+                  "id": "qsbdM",
+                  "name": "grid",
+                  "width": "fill_container",
+                  "gap": 24,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "EaTja",
+                      "name": "item1",
+                      "clip": true,
+                      "width": 280,
+                      "fill": "$surface-color",
+                      "cornerRadius": 16,
+                      "stroke": {
+                        "align": "inside",
+                        "thickness": 1,
+                        "fill": "$border-color"
+                      },
+                      "layout": "vertical",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "9xilT",
+                          "width": "fill_container",
+                          "height": 140,
+                          "fill": "$border-color",
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon_font",
+                              "id": "QGgYJ",
+                              "width": 32,
+                              "height": 32,
+                              "iconFontName": "image",
+                              "iconFontFamily": "lucide",
+                              "fill": "$text-muted"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "YdigS",
+                          "name": "itemBody",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 12,
+                          "padding": 16,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "7xJq8",
+                              "fill": "$text-color",
+                              "content": "The OG Frankie",
+                              "fontFamily": "$font-body",
+                              "fontSize": 18,
+                              "fontWeight": "700"
+                            },
+                            {
+                              "type": "text",
+                              "id": "mV3mK",
+                              "fill": "$text-muted",
+                              "content": "Eggs, bacon, potatoes, cheese.",
+                              "fontFamily": "$font-body",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "QEi19",
+                              "fill": "$text-color",
+                              "content": "$11.99",
+                              "fontFamily": "$font-body",
+                              "fontSize": 16,
+                              "fontWeight": "700"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "mrc0F",
+                      "name": "item2",
+                      "clip": true,
+                      "width": 280,
+                      "fill": "$surface-color",
+                      "cornerRadius": 16,
+                      "stroke": {
+                        "align": "inside",
+                        "thickness": 1,
+                        "fill": "$border-color"
+                      },
+                      "layout": "vertical",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "v5B2M",
+                          "width": "fill_container",
+                          "height": 140,
+                          "fill": "$border-color",
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon_font",
+                              "id": "ONtsx",
+                              "width": 32,
+                              "height": 32,
+                              "iconFontName": "image",
+                              "iconFontFamily": "lucide",
+                              "fill": "$text-muted"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "dEOZC",
+                          "name": "itemBody2",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 12,
+                          "padding": 16,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "2cCgK",
+                              "fill": "$text-color",
+                              "content": "El Pollo Loco",
+                              "fontFamily": "$font-body",
+                              "fontSize": 18,
+                              "fontWeight": "700"
+                            },
+                            {
+                              "type": "text",
+                              "id": "RsaT4",
+                              "fill": "$text-muted",
+                              "content": "Grilled chicken, peppers.",
+                              "fontFamily": "$font-body",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "ZtthU",
+                              "fill": "$text-color",
+                              "content": "$14.50",
+                              "fontFamily": "$font-body",
+                              "fontSize": 16,
+                              "fontWeight": "700"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "9z5dv",
+              "name": "cartSide",
+              "width": 360,
+              "fill": "$surface-color",
+              "cornerRadius": 16,
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "$border-color"
+              },
+              "layout": "vertical",
+              "gap": 24,
+              "padding": 24,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "o4hYT",
+                  "name": "cartHeader",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "RvkHy",
+                      "fill": "$text-color",
+                      "content": "Your Cart",
+                      "fontFamily": "$font-heading",
+                      "fontSize": 20,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "KzyFq",
+                  "name": "cartItem",
+                  "width": "fill_container",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "cl5bB",
+                      "fill": "$primary-color",
+                      "content": "1x",
+                      "fontFamily": "$font-body",
+                      "fontSize": 14,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "UbbRX",
+                      "name": "cartItemDetails",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 4,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "3dgJQ",
+                          "fill": "$text-color",
+                          "content": "The OG Frankie",
+                          "fontFamily": "$font-body",
+                          "fontSize": 16,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "9q67h",
+                          "fill": "$text-muted",
+                          "content": "$11.99",
+                          "fontFamily": "$font-body",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "dBqdq",
+                  "name": "cartTotal",
+                  "width": "fill_container",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": {
+                      "top": 1
+                    },
+                    "fill": "$border-color"
+                  },
+                  "padding": [
+                    16,
+                    0,
+                    0,
+                    0
+                  ],
+                  "justifyContent": "space_between",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "8QU5H",
+                      "fill": "$text-color",
+                      "content": "Total",
+                      "fontFamily": "$font-body",
+                      "fontSize": 16,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "PcySF",
+                      "fill": "$text-color",
+                      "content": "$11.99",
+                      "fontFamily": "$font-body",
+                      "fontSize": 16,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "LmzXU",
+                  "name": "btn",
+                  "width": "fill_container",
+                  "fill": "$primary-color",
+                  "cornerRadius": 8,
+                  "padding": 16,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "kfrUz",
+                      "fill": "#FFFFFF",
+                      "content": "Checkout",
+                      "fontFamily": "$font-body",
+                      "fontSize": 16,
+                      "fontWeight": "700"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "2Z1bq",
+      "x": 653,
+      "y": 1068,
+      "name": "Desktop Item Detail Modal",
+      "width": 1440,
+      "height": 1024,
+      "fill": "#00000080",
+      "layout": "vertical",
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "fkDdn",
+          "name": "modalCard",
+          "clip": true,
+          "width": 900,
+          "height": 600,
+          "fill": "$bg-color",
+          "cornerRadius": 24,
+          "stroke": {
+            "align": "inside",
+            "thickness": 1,
+            "fill": "$border-color"
+          },
+          "children": [
+            {
+              "type": "frame",
+              "id": "gK0SW",
+              "name": "left",
+              "width": 450,
+              "height": "fill_container",
+              "fill": {
+                "type": "image",
+                "enabled": true,
+                "url": "./images/generated-1774457658059.png",
+                "mode": "fill"
+              },
+              "justifyContent": "center",
+              "alignItems": "center"
+            },
+            {
+              "type": "frame",
+              "id": "VyJUg",
+              "name": "right",
+              "width": 450,
+              "height": "fill_container",
+              "layout": "vertical",
+              "gap": 32,
+              "padding": 48,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "JyBTW",
+                  "name": "rTop",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "ElXur",
+                      "fill": "$text-color",
+                      "content": "The OG Frankie",
+                      "fontFamily": "$font-heading",
+                      "fontSize": 24,
+                      "fontWeight": "800"
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "INeDN",
+                      "width": 24,
+                      "height": 24,
+                      "iconFontName": "x",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-color"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "jDuVt",
+                  "fill": "$text-muted",
+                  "content": "Scrambled eggs, thick-cut bacon, crispy potatoes, and melted cheddar cheese wrapped in a fresh flour tortilla.",
+                  "lineHeight": 1.5,
+                  "fontFamily": "$font-body",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "9XjyO",
+                  "name": "options",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Lk2TP",
+                      "fill": "$text-color",
+                      "content": "Spice Level",
+                      "fontFamily": "$font-body",
+                      "fontSize": 16,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "unZlK",
+                      "name": "opt1",
+                      "gap": 12,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "g8TrY",
+                          "width": 20,
+                          "height": 20,
+                          "cornerRadius": 10,
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 2,
+                            "fill": "$primary-color"
+                          },
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "EZhYn",
+                              "width": 10,
+                              "height": 10,
+                              "fill": "$primary-color",
+                              "cornerRadius": 5
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "8nU9V",
+                          "fill": "$text-color",
+                          "content": "Medium (Jalapeño)",
+                          "fontFamily": "$font-body",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "8zuiG",
+                  "name": "spacer",
+                  "width": "fill_container",
+                  "height": "fill_container"
+                },
+                {
+                  "type": "frame",
+                  "id": "XaCcO",
+                  "name": "actionMenu",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "WZUu8",
+                      "name": "qtyRow",
+                      "width": "fill_container",
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "AJW5i",
+                          "name": "qtyCtl",
+                          "fill": "$surface-color",
+                          "cornerRadius": 100,
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 1,
+                            "fill": "$border-color"
+                          },
+                          "gap": 24,
+                          "padding": [
+                            8,
+                            16
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon_font",
+                              "id": "dkF4V",
+                              "width": 16,
+                              "height": 16,
+                              "iconFontName": "minus",
+                              "iconFontFamily": "lucide",
+                              "fill": "$text-muted"
+                            },
+                            {
+                              "type": "text",
+                              "id": "7kH9s",
+                              "fill": "$text-color",
+                              "content": "1",
+                              "fontFamily": "$font-body",
+                              "fontSize": 16,
+                              "fontWeight": "700"
+                            },
+                            {
+                              "type": "icon_font",
+                              "id": "7nB1E",
+                              "width": 16,
+                              "height": 16,
+                              "iconFontName": "plus",
+                              "iconFontFamily": "lucide",
+                              "fill": "$primary-color"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "6fuB8",
+                          "fill": "$text-color",
+                          "content": "$11.99",
+                          "fontFamily": "$font-heading",
+                          "fontSize": 24,
+                          "fontWeight": "700"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "XPxtL",
+                      "name": "btn",
+                      "width": "fill_container",
+                      "fill": "$primary-color",
+                      "cornerRadius": 8,
+                      "padding": 16,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "xlQlu",
+                          "fill": "#FFFFFF",
+                          "content": "Add to Cart",
+                          "fontFamily": "$font-body",
+                          "fontSize": 16,
+                          "fontWeight": "700"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variables": {
+    "bg-color": {
+      "type": "color",
+      "value": "#FDFBF7"
+    },
+    "border-color": {
+      "type": "color",
+      "value": "#EAEAEA"
+    },
+    "font-body": {
+      "type": "string",
+      "value": "Inter"
+    },
+    "font-heading": {
+      "type": "string",
+      "value": "Rokkitt"
+    },
+    "primary-color": {
+      "type": "color",
+      "value": "#E33A2D"
+    },
+    "secondary-color": {
+      "type": "color",
+      "value": "#F2A900"
+    },
+    "success-color": {
+      "type": "color",
+      "value": "#4A8C40"
+    },
+    "surface-color": {
+      "type": "color",
+      "value": "#FFFFFF"
+    },
+    "text-color": {
+      "type": "color",
+      "value": "#2B2826"
+    },
+    "text-muted": {
+      "type": "color",
+      "value": "#827E7A"
+    }
+  }
+}

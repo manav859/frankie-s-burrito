@@ -1,0 +1,59 @@
+=== Meta for WooCommerce ===
+Contributors: meta
+Tags: meta, facebook, whatsapp, conversions api, catalog sync, ads
+Requires at least: 5.6
+Tested up to: 6.9
+Stable tag: 3.5.18
+Requires PHP: 7.4
+MySQL: 5.6 or greater
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+
+Get the Official Meta for WooCommerce plugin for powerful ways to help grow your business.
+
+== Description ==
+
+This is the official Meta for WooCommerce plugin that connects your WooCommerce website to Facebook, Instagram and WhatsApp. With this plugin, you can install the Facebook pixel, upload your online store catalog, enabling you to easily run dynamic ads and connect your WhatsApp Business account to automatically update customers about their orders.
+
+
+Marketing on Meta platforms helps your business build lasting relationships with people, find new customers, and increase sales for your online store. With this Facebook ad extension, reaching the people who matter most to your business is simple. This extension will track the results of your advertising across devices. It will also help you:
+
+* Maximize your campaign performance. By setting up the Facebook pixel and building your audience, you will optimize your ads for people likely to buy your products, and reach people with relevant ads on Facebook after they’ve visited your website.
+* Find more customers. Connecting your product catalog automatically creates carousel ads that showcase the products you sell and attract more shoppers to your website.
+* Generate sales among your website visitors. When you set up the Facebook pixel and connect your product catalog, you can use dynamic ads to reach shoppers when they're on Facebook with ads for the products they viewed on your website. This will be included in a future release of Meta for WooCommerce.
+* Engage with customers on WhatsApp by updating your customers about their orders at every step, freeing up more time for you to focus on your business.
+
+== Installation ==
+
+Visit the Facebook Help Center [here](https://www.facebook.com/business/help/900699293402826).
+
+== Support ==
+
+Before raising a question with Meta Support, please first take a look at the Meta [helpcenter docs](https://www.facebook.com/business/help), by searching for keywords like 'WooCommerce' here. If you didn't find what you were looking for, you can go to [Meta Direct Support](https://www.facebook.com/business-support-home) and ask your question.
+
+When reporting an issue on Meta Direct Support, please give us as many details as possible.
+* Symptoms of your problem
+* Screenshot, if possible
+* Your Facebook page URL
+* Your website URL
+* Current version of Facebook-for-WooCommerce, WooCommerce, Wordpress, PHP
+
+To suggest technical improvements, you can raise an issue on our [Github repository](https://github.com/facebook/facebook-for-woocommerce/issues).
+
+== Changelog ==
+
+= 3.6.0 - 2026-03-10 =
+* Add - [WhatsApp Utility WooCommerce] Remove Rollout switch WhatsApp rich order status by @ashutoshbondre in #3884
+* Add - [WhatsApp GA]  Add plugin version when rendering Whatsapp splash page by @sharunaanandraj in #3885
+* Fix - [WhatsApp Utility] Change image size from 'large' to 'full' in Rich Order Images. by @ashutoshbondre in #3883
+* Add - [WhatsApp GA] Remove additional event logging for Unsupported Order Update Events by @sharunaanandraj in #3882
+* Fix - Simplify JWT decode retry logic and remove firebase/php-jwt legacy code by @mradmeta in #3881
+* Add - [WhatsApp GA] Remove WhatsApp Beta Rollout Switches by @sharunaanandraj in #3880
+* Dev - Fix duplicate CAPI fire for Search event by @cshing-meta in #3873
+* Tweak - [WhatsApp GA] Delete the WhatsApp Beta Promo Banner by @sharunaanandraj in #3875
+* Add - Fix pixel event loss by waiting for FB SDK to load before firing events by @cshing-meta in #3864
+* Add - [WhatsApp GA] Update github Readme.txt and Readme.MD files to include WhatsApp Changes by @sharunaanandraj in #3877
+* Fix - Fix E2E product-category test reliability by @rafael-curran in #3878
+* Fix - Fix E2E WordPress version check failing on pinned WP versions by @rafael-curran in #3872
+
+[See changelog for all versions](https://raw.githubusercontent.com/facebook/facebook-for-woocommerce/refs/heads/main/changelog.txt).

@@ -1,4 +1,5 @@
 import type { SiteContent } from '../../types'
+import { CmsImage } from './CmsImage'
 
 export function BrandMark({
   content,
@@ -10,16 +11,16 @@ export function BrandMark({
   light?: boolean
 }) {
   const logoSrc = light ? content.siteLogoLight || content.siteLogo : content.siteLogo || content.siteLogoLight
+  const logoMedia = light ? content.siteLogoLightMedia || content.siteLogoMedia : content.siteLogoMedia || content.siteLogoLightMedia
 
   if (logoSrc) {
     return (
-      <img
+      <CmsImage
         src={logoSrc}
+        media={logoMedia}
         alt={content.siteLogoAlt || content.siteName}
         className={className}
-        loading="eager"
-        decoding="async"
-        fetchPriority="high"
+        priority
       />
     )
   }

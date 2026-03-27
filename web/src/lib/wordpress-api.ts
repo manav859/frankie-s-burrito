@@ -12,6 +12,7 @@ import type {
   SiteBootstrap,
   TaxonomyTerm,
 } from '../types'
+import { normalizeResponsiveImageAsset } from './media'
 
 const ENV_WORDPRESS_BASE = import.meta.env.VITE_WORDPRESS_BASE_URL?.replace(/\/$/, '')
 const MEMORY_CACHE = new Map<string, { etag: string; data: unknown; cachedAt: number }>()
@@ -166,6 +167,7 @@ function normalizeArchiveMeta(archive: Partial<BlogArchiveMeta> | undefined): Bl
     permalink,
     featuredImage: archive?.featuredImage?.trim() || '',
     featuredImageAlt: archive?.featuredImageAlt?.trim() || title,
+    featuredImageMedia: normalizeResponsiveImageAsset(archive?.featuredImageMedia),
     pageForPostsId: typeof archive?.pageForPostsId === 'number' ? archive.pageForPostsId : 0,
     isAssigned: Boolean(archive?.isAssigned),
     showOnFront: archive?.showOnFront?.trim() || 'posts',
@@ -194,6 +196,7 @@ function normalizeArchiveItem(item: Partial<PostArchiveItem>): PostArchiveItem {
     excerpt: item.excerpt?.trim() || '',
     featuredImage: item.featuredImage?.trim() || '',
     featuredImageAlt: item.featuredImageAlt?.trim() || title,
+    featuredImageMedia: normalizeResponsiveImageAsset(item.featuredImageMedia),
     publishedAt: item.publishedAt?.trim() || '',
     modifiedAt: item.modifiedAt?.trim() || undefined,
     author: normalizeAuthor(item.author),
@@ -244,6 +247,35 @@ function normalizePostEntry(payload: PostEntry): PostEntry {
     content: payload.content || '',
     archive: normalizeArchiveMeta(payload.archive),
     related: (payload.related || []).map(normalizeArchiveItem),
+  }
+}
+
+function normalizePageEntry(payload: PageEntry): PageEntry {
+  return {
+    ...payload,
+    type: 'page',
+    title: payload.title?.trim() || 'Untitled page',
+    slug: payload.slug?.trim() || '',
+    content: payload.content || '',
+    featuredImage: payload.featuredImage?.trim() || '',
+    featuredImageAlt: payload.featuredImageAlt?.trim() || payload.title?.trim() || 'Untitled page',
+    featuredImageMedia: normalizeResponsiveImageAsset(payload.featuredImageMedia),
+    modifiedAt: payload.modifiedAt?.trim() || undefined,
+  }
+}
+
+function normalizePageArchiveResponse(payload: PageArchiveResponse): PageArchiveResponse {
+  return {
+    ...payload,
+    items: (payload.items || []).map((item) => ({
+      ...item,
+      title: item.title?.trim() || 'Untitled page',
+      slug: item.slug?.trim() || '',
+      featuredImage: item.featuredImage?.trim() || '',
+      featuredImageAlt: item.featuredImageAlt?.trim() || item.title?.trim() || 'Untitled page',
+      featuredImageMedia: normalizeResponsiveImageAsset(item.featuredImageMedia),
+      modifiedAt: item.modifiedAt?.trim() || undefined,
+    })),
   }
 }
 
@@ -551,11 +583,11 @@ export async function getPostBySlug(slug: string, signal?: AbortSignal): Promise
 }
 
 export async function getPages(signal?: AbortSignal): Promise<PageArchiveResponse> {
-  return fetchWordPressJson<PageArchiveResponse>('/frankies/v1/pages', { signal })
+  return normalizePageArchiveResponse(await fetchWordPressJson<PageArchiveResponse>('/frankies/v1/pages', { signal }))
 }
 
 export async function getPageBySlug(slug: string, signal?: AbortSignal): Promise<PageEntry> {
-  return fetchWordPressJson<PageEntry>(`/frankies/v1/pages/${encodeURIComponent(slug)}`, { signal })
+  return normalizePageEntry(await fetchWordPressJson<PageEntry>(`/frankies/v1/pages/${encodeURIComponent(slug)}`, { signal }))
 }
 
 export function hasWordPressBase() {

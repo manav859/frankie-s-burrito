@@ -10,6 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+require_once __DIR__ . '/includes/class-frankies-headless-api.php';
+require_once __DIR__ . '/includes/class-frankies-headless-commerce.php';
+
 final class Frankies_Headless_Plugin {
 	const OPTION_KEY = 'frankies_headless_settings';
 	const PREVIEW_HEADER = 'x_frankies_preview_token';
@@ -24,6 +27,16 @@ final class Frankies_Headless_Plugin {
 	 */
 	private static $instance = null;
 
+	/**
+	 * @var Frankies_Headless_Commerce|null
+	 */
+	private $commerce = null;
+
+	/**
+	 * @var Frankies_Headless_Api
+	 */
+	private $api;
+
 	public static function instance() {
 		if ( null === self::$instance ) {
 			self::$instance = new self();
@@ -33,10 +46,14 @@ final class Frankies_Headless_Plugin {
 	}
 
 	private function __construct() {
+		$this->api = new Frankies_Headless_Api();
+
 		if ( ! get_option( self::OPTION_KEY ) ) {
 			add_option( self::OPTION_KEY, $this->default_settings() );
 		}
 
+		add_action( 'plugins_loaded', array( $this, 'bootstrap_integrations' ), 20 );
+		add_action( 'admin_notices', array( $this, 'maybe_render_woocommerce_notice' ) );
 		add_action( 'after_setup_theme', array( $this, 'register_theme_support' ) );
 		add_action( 'init', array( $this, 'register_content_models' ) );
 		add_action( 'init', array( $this, 'ensure_blog_setup' ), 20 );
@@ -93,6 +110,7 @@ final class Frankies_Headless_Plugin {
 
 	public static function activate() {
 		$instance = self::instance();
+		$instance->bootstrap_integrations();
 		$instance->register_theme_support();
 		$instance->register_content_models();
 		$instance->ensure_post_editor_support();
@@ -114,7 +132,31 @@ final class Frankies_Headless_Plugin {
 			update_option( 'permalink_structure', '/%postname%/' );
 		}
 
+		if ( $instance->commerce ) {
+			Frankies_Headless_Commerce::activate();
+		}
+
 		flush_rewrite_rules();
+	}
+
+	public function bootstrap_integrations() {
+		if ( null !== $this->commerce || ! class_exists( 'WooCommerce' ) ) {
+			return;
+		}
+
+		$this->commerce = new Frankies_Headless_Commerce( $this, $this->api );
+	}
+
+	public function get_commerce_module() {
+		return $this->commerce;
+	}
+
+	public function maybe_render_woocommerce_notice() {
+		if ( class_exists( 'WooCommerce' ) || ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		echo '<div class="notice notice-warning"><p>Frankies Headless commerce features require WooCommerce to be installed and active. Content APIs still work, but menu, cart, and checkout endpoints will stay unavailable until WooCommerce is active.</p></div>';
 	}
 
 	public static function deactivate() {
@@ -613,8 +655,38 @@ final class Frankies_Headless_Plugin {
 	}
 
 	public function rest_page( WP_REST_Request $request ) {
+		$slug = sanitize_title( (string) $request['slug'] );
+
+		// Ordering routes are app-owned surfaces, not CMS-backed WordPress pages.
+		// Short-circuit them here so stale frontend bundles do not trigger slow or broken
+		// page resolution requests like /frankies/v1/pages/order.
+		if ( in_array( $slug, array( 'order', 'menu', 'cart', 'checkout', 'order-success' ), true ) ) {
+			return $this->finalize_rest_response(
+				array(
+					'type' => 'page',
+					'title' => ucwords( str_replace( '-', ' ', $slug ) ),
+					'slug' => $slug,
+					'content' => '',
+					'featuredImage' => '',
+					'featuredImageAlt' => '',
+					'modifiedAt' => gmdate( DATE_ATOM ),
+					'seo' => array(
+						'title' => ucwords( str_replace( '-', ' ', $slug ) ) . ' | ' . $this->get_settings()['site']['siteName'],
+						'description' => '',
+						'canonicalUrl' => trailingslashit( home_url( $slug ) ),
+						'ogImage' => '',
+						'keywords' => '',
+						'noindex' => false,
+						'twitterCard' => 'summary_large_image',
+						'schema' => null,
+					),
+				),
+				false
+			);
+		}
+
 		$preview = $this->request_allows_preview( $request );
-		$page = $this->get_post_by_slug( 'page', (string) $request['slug'], $preview );
+		$page = $this->get_post_by_slug( 'page', $slug, $preview );
 		if ( ! $page ) {
 			return new WP_Error( 'frankies_page_not_found', 'Page not found.', array( 'status' => 404 ) );
 		}
@@ -1183,8 +1255,11 @@ final class Frankies_Headless_Plugin {
 		$hero = $settings['hero'];
 		$hero['backgroundImage'] = $this->normalize_public_url( $hero['backgroundImage'], $site_url );
 		$hero['mobileImage'] = $this->normalize_public_url( $hero['mobileImage'], $site_url );
+		$hero['backgroundImageMedia'] = $this->get_media_payload_from_url( $hero['backgroundImage'], $hero['title'], 'full' );
+		$hero['mobileImageMedia'] = $this->get_media_payload_from_url( $hero['mobileImage'], $hero['title'], 'full' );
 		$about = $settings['about'];
 		$about['image'] = $this->normalize_public_url( $about['image'], $site_url );
+		$about['imageMedia'] = $this->get_media_payload_from_url( $about['image'], $about['title'], 'large' );
 		$proof = $settings['proof'];
 		$proof['backgroundImage'] = $this->normalize_public_url( $proof['backgroundImage'], $site_url );
 		$menu = $settings['menu'];
@@ -1210,6 +1285,8 @@ final class Frankies_Headless_Plugin {
 				'siteLogo'      => $this->normalize_public_url( $settings['site']['logoUrl'], $site_url ),
 				'siteLogoLight' => $this->normalize_public_url( $settings['site']['logoLightUrl'], $site_url ),
 				'siteLogoAlt'   => (string) $settings['site']['logoAlt'],
+				'siteLogoMedia' => $this->get_media_payload_from_url( $settings['site']['logoUrl'], $settings['site']['logoAlt'], 'medium' ),
+				'siteLogoLightMedia' => $this->get_media_payload_from_url( $settings['site']['logoLightUrl'], $settings['site']['logoAlt'], 'medium' ),
 				'hero'          => $hero,
 				'navigation'    => $resolved_navigation,
 				'featuredIntro' => $settings['featuredIntro'],
@@ -1247,6 +1324,11 @@ final class Frankies_Headless_Plugin {
 					),
 					'footerNote' => $settings['menu']['footerNote'],
 					'footerCta'  => $settings['menu']['footerCta'],
+					'imageMedia' => $this->get_media_payload_from_url(
+						$this->resolve_menu_image_url( $settings['menu'], $site_url ),
+						(string) ( $settings['menu']['imageAlt'] ?: $settings['site']['siteName'] . ' menu' ),
+						'large'
+					),
 				),
 				'about'         => $about,
 				'proof'         => array(
@@ -1254,6 +1336,7 @@ final class Frankies_Headless_Plugin {
 					'title'   => $proof['title'],
 					'body'    => $proof['body'],
 					'backgroundImage' => $proof['backgroundImage'],
+					'backgroundImageMedia' => $this->get_media_payload_from_url( $proof['backgroundImage'], $proof['title'], 'full' ),
 					'items'   => $testimonials,
 				),
 				'location'      => $location,
@@ -1284,16 +1367,23 @@ final class Frankies_Headless_Plugin {
 		$site = $settings['site'];
 		$site['logoUrl'] = $this->normalize_public_url( $site['logoUrl'], $site_url );
 		$site['logoLightUrl'] = $this->normalize_public_url( $site['logoLightUrl'], $site_url );
+		$site['logoMedia'] = $this->get_media_payload_from_url( $site['logoUrl'], $site['logoAlt'], 'medium' );
+		$site['logoLightMedia'] = $this->get_media_payload_from_url( $site['logoLightUrl'], $site['logoAlt'], 'medium' );
 		$hero = $settings['hero'];
 		$hero['backgroundImage'] = $this->normalize_public_url( $hero['backgroundImage'], $site_url );
 		$hero['mobileImage'] = $this->normalize_public_url( $hero['mobileImage'], $site_url );
+		$hero['backgroundImageMedia'] = $this->get_media_payload_from_url( $hero['backgroundImage'], $hero['title'], 'full' );
+		$hero['mobileImageMedia'] = $this->get_media_payload_from_url( $hero['mobileImage'], $hero['title'], 'full' );
 		$about = $settings['about'];
 		$about['image'] = $this->normalize_public_url( $about['image'], $site_url );
+		$about['imageMedia'] = $this->get_media_payload_from_url( $about['image'], $about['title'], 'large' );
 		$proof = $settings['proof'];
 		$proof['backgroundImage'] = $this->normalize_public_url( $proof['backgroundImage'], $site_url );
+		$proof['backgroundImageMedia'] = $this->get_media_payload_from_url( $proof['backgroundImage'], $proof['title'], 'full' );
 		$menu = $settings['menu'];
 		$menu['image'] = $this->resolve_menu_image_url( $menu, $site_url );
 		$menu['imageAlt'] = (string) ( $menu['imageAlt'] ?: $settings['site']['siteName'] . ' menu' );
+		$menu['imageMedia'] = $this->get_media_payload_from_url( $menu['image'], $menu['imageAlt'], 'large' );
 		$location = $settings['location'];
 		$order_url = isset( $location['orderUrl'] ) ? (string) $location['orderUrl'] : '';
 		$hero['primaryCta'] = $this->resolve_order_cta_url( $hero['primaryCta'], $order_url );
@@ -1324,6 +1414,13 @@ final class Frankies_Headless_Plugin {
 	}
 
 	private function get_featured_items( $preview ) {
+		if ( $this->commerce ) {
+			$items = $this->commerce->get_featured_products_payload( $preview );
+			if ( ! empty( $items ) ) {
+				return $items;
+			}
+		}
+
 		$items = get_posts(
 			array(
 				'post_type'      => 'menu_item',
@@ -1342,6 +1439,13 @@ final class Frankies_Headless_Plugin {
 	}
 
 	private function get_menu_sections( $preview ) {
+		if ( $this->commerce ) {
+			$sections = $this->commerce->get_menu_sections_payload( $preview );
+			if ( ! empty( $sections ) ) {
+				return $sections;
+			}
+		}
+
 		$terms = get_terms(
 			array(
 				'taxonomy'   => 'menu_category',
@@ -1471,6 +1575,7 @@ final class Frankies_Headless_Plugin {
 			'price'       => (string) get_post_meta( $post->ID, '_frankies_price', true ),
 			'image'       => $media['url'],
 			'imageAlt'    => $media['alt'],
+			'imageMedia'  => $media,
 			'dark'        => (bool) get_post_meta( $post->ID, '_frankies_featured_dark', true ),
 			'orderUrl'    => (string) get_post_meta( $post->ID, '_frankies_order_url', true ),
 		);
@@ -1660,6 +1765,7 @@ final class Frankies_Headless_Plugin {
 			'excerpt'          => has_excerpt( $post ) ? get_the_excerpt( $post ) : wp_trim_words( wp_strip_all_tags( (string) $post->post_content ), 32 ),
 			'featuredImage'    => $media['url'],
 			'featuredImageAlt' => $media['alt'],
+			'featuredImageMedia' => $media,
 			'publishedAt'      => get_post_time( DATE_ATOM, true, $post ),
 			'modifiedAt'       => get_post_modified_time( DATE_ATOM, true, $post ),
 			'author'           => $this->map_post_author( $post ),
@@ -1686,6 +1792,7 @@ final class Frankies_Headless_Plugin {
 			'content'          => apply_filters( 'the_content', $post->post_content ),
 			'featuredImage'    => $media['url'],
 			'featuredImageAlt' => $media['alt'],
+			'featuredImageMedia' => $media,
 			'publishedAt'      => get_post_time( DATE_ATOM, true, $post ),
 			'modifiedAt'       => get_post_modified_time( DATE_ATOM, true, $post ),
 			'author'           => $this->map_post_author( $post ),
@@ -1725,6 +1832,7 @@ final class Frankies_Headless_Plugin {
 			'content'       => apply_filters( 'the_content', $page->post_content ),
 			'featuredImage' => $media['url'],
 			'featuredImageAlt' => $media['alt'],
+			'featuredImageMedia' => $media,
 			'modifiedAt'    => get_post_modified_time( DATE_ATOM, true, $page ),
 			'seo'           => $this->build_entry_seo_payload( $page ),
 		);
@@ -1738,6 +1846,7 @@ final class Frankies_Headless_Plugin {
 			'slug'          => $page->post_name,
 			'featuredImage' => $media['url'],
 			'featuredImageAlt' => $media['alt'],
+			'featuredImageMedia' => $media,
 			'modifiedAt'    => get_post_modified_time( DATE_ATOM, true, $page ),
 			'seo'           => $this->build_entry_seo_payload( $page ),
 		);
@@ -1796,17 +1905,20 @@ final class Frankies_Headless_Plugin {
 
 	private function get_featured_media_payload( $post_id, $size = 'large' ) {
 		$thumbnail_id = get_post_thumbnail_id( $post_id );
-		$url = $thumbnail_id ? wp_get_attachment_image_url( $thumbnail_id, $size ) : '';
-		$alt = $thumbnail_id ? trim( (string) get_post_meta( $thumbnail_id, '_wp_attachment_image_alt', true ) ) : '';
-
-		if ( empty( $alt ) ) {
-			$alt = get_the_title( $post_id );
-		}
-
-		return array(
-			'url' => $this->normalize_public_url( $url ?: '', $this->get_public_site_url() ),
-			'alt' => $alt ?: '',
+		return $thumbnail_id ? $this->api->get_attachment_payload( $thumbnail_id, $size, get_the_title( $post_id ) ) : array(
+			'id'       => 0,
+			'url'      => '',
+			'alt'      => get_the_title( $post_id ),
+			'width'    => 0,
+			'height'   => 0,
+			'mimeType' => '',
+			'srcset'   => '',
+			'sources'  => array(),
 		);
+	}
+
+	private function get_media_payload_from_url( $url, $fallback_alt = '', $size = 'large' ) {
+		return $this->api->get_media_payload_from_url( $this->normalize_public_url( $url, $this->get_public_site_url() ), $fallback_alt, $size );
 	}
 
 	private function get_public_site_url() {
@@ -1978,8 +2090,14 @@ final class Frankies_Headless_Plugin {
 		$blog_page = $blog_page_id ? get_post( $blog_page_id ) : null;
 		$site_url = $this->get_public_site_url();
 		$featured_media = $blog_page instanceof WP_Post ? $this->get_featured_media_payload( $blog_page->ID, 'large' ) : array(
-			'url' => '',
-			'alt' => '',
+			'id'       => 0,
+			'url'      => '',
+			'alt'      => '',
+			'width'    => 0,
+			'height'   => 0,
+			'mimeType' => '',
+			'srcset'   => '',
+			'sources'  => array(),
 		);
 		$seo = $blog_page instanceof WP_Post
 			? $this->build_entry_seo_payload( $blog_page )
@@ -2006,6 +2124,7 @@ final class Frankies_Headless_Plugin {
 			'permalink'       => trailingslashit( $site_url . 'blog' ),
 			'featuredImage'   => $featured_media['url'],
 			'featuredImageAlt' => $featured_media['alt'],
+			'featuredImageMedia' => $featured_media,
 			'pageForPostsId'  => $blog_page instanceof WP_Post ? (int) $blog_page->ID : 0,
 			'isAssigned'      => (int) get_option( 'page_for_posts', 0 ) === ( $blog_page instanceof WP_Post ? (int) $blog_page->ID : 0 ),
 			'showOnFront'     => (string) get_option( 'show_on_front', 'posts' ),
@@ -2213,7 +2332,7 @@ final class Frankies_Headless_Plugin {
 				'title'           => "FRANKIE'S\nBREAKFAST BURRITOS",
 				'backgroundImage' => '',
 				'mobileImage'     => '',
-				'primaryCta'      => array( 'label' => 'Order Online', 'href' => '#location', 'variant' => 'primary' ),
+				'primaryCta'      => array( 'label' => 'Order Online', 'href' => '/order', 'variant' => 'primary' ),
 				'secondaryCta'    => array( 'label' => 'View Menu', 'href' => '#menu', 'variant' => 'secondary' ),
 			),
 			'featuredIntro' => array(
@@ -2249,7 +2368,7 @@ final class Frankies_Headless_Plugin {
 				'categoryFocusBody'  => 'Browse one category at a time for a cleaner, more premium menu interaction without clutter.',
 				'itemCtaLabel'       => 'Order this burrito',
 				'footerNote' => 'Open live ordering for modifiers and full details.',
-				'footerCta'  => array( 'label' => 'Order with Toast', 'href' => '#location', 'variant' => 'primary' ),
+				'footerCta'  => array( 'label' => 'Order Online', 'href' => '/order', 'variant' => 'primary' ),
 			),
 			'about'         => array(
 				'eyebrow'    => "ABOUT FRANKIE'S",
@@ -2282,9 +2401,9 @@ final class Frankies_Headless_Plugin {
 				'phone'              => '+18183181034',
 				'hours'              => 'Open daily from 8:00 AM to 3:00 PM',
 				'openingHoursSchema' => array( 'Mo-Su 08:00-15:00' ),
-				'ordering'           => 'Pickup, delivery, catering, and gift cards all route through Toast.',
-				'orderUrl'           => 'https://frankiesbreakfastburritos.toast.site/',
-				'primaryCta'         => array( 'label' => 'Order Online', 'href' => '', 'variant' => 'primary' ),
+				'ordering'           => 'Pickup, delivery, and catering can be managed through the online ordering page.',
+				'orderUrl'           => '/order',
+				'primaryCta'         => array( 'label' => 'Order Online', 'href' => '/order', 'variant' => 'primary' ),
 				'secondaryCta'       => array( 'label' => 'Call Store', 'href' => 'tel:+18183181034', 'variant' => 'secondary' ),
 				'mapTitle'           => 'Map and storefront panel',
 				'mapBody'            => 'Responsive embed area with parking, pickup, and landmark context.',
@@ -2296,7 +2415,7 @@ final class Frankies_Headless_Plugin {
 				'eyebrow'      => 'READY TO ORDER?',
 				'title'        => 'Start with a signature burrito. Add the tots. Make the morning better.',
 				'body'         => 'Use this final section to push directly into the live ordering flow.',
-				'primaryCta'   => array( 'label' => 'Order Now', 'href' => '', 'variant' => 'light' ),
+				'primaryCta'   => array( 'label' => 'Order Now', 'href' => '/order', 'variant' => 'light' ),
 				'secondaryCta' => array( 'label' => 'View Menu', 'href' => '#menu', 'variant' => 'secondary' ),
 			),
 			'footer'        => array(
@@ -2305,7 +2424,7 @@ final class Frankies_Headless_Plugin {
 				'orderHeading'    => 'Order and Social',
 				'description' => 'Breakfast burritos, frescas, and loaded sides served daily in Agoura Hills.',
 				'visit'       => array( '28708 Roadside Drive', 'Agoura Hills, CA 91301', 'Open daily', '8:00 AM - 3:00 PM' ),
-				'order'       => array( 'Toast online ordering', 'Gift cards', 'Delivery', 'Catering', 'Instagram' ),
+				'order'       => array( 'Online ordering', 'Gift cards', 'Delivery', 'Catering', 'Instagram' ),
 			),
 			'seo'           => array(
 				'siteUrl'     => '',

@@ -5,6 +5,7 @@ import { CowboyRider } from './DecorativeIcons'
 import { BrandMark } from '../ui/BrandMark'
 import { Button } from '../ui/Button'
 import { Reveal, useReveal } from '../ui/Reveal'
+import { CmsImage } from '../ui/CmsImage'
 
 export function DesktopHero({
   content,
@@ -19,14 +20,23 @@ export function DesktopHero({
   const floatRef1 = useFloatingAccent(10, 5000, 0)
   const floatRef2 = useFloatingAccent(7, 4200, 1400)
   const floatRef3 = useFloatingAccent(9, 4800, 2800)
+  const shouldLoadDesktopHero = typeof window === 'undefined' || window.matchMedia('(min-width: 768px)').matches
 
   return (
-    <section
-      className="relative hidden min-h-[100dvh] flex-col overflow-hidden bg-cover bg-center bg-no-repeat md:flex"
-      style={{
-        backgroundImage: `linear-gradient(rgba(27, 19, 13, 0.18), rgba(27, 19, 13, 0.18)), url(${content.hero.backgroundImage})`,
-      }}
-    >
+    <section className="relative hidden min-h-[100dvh] flex-col overflow-hidden md:flex">
+      {shouldLoadDesktopHero && content.hero.backgroundImage ? (
+        <div className="absolute inset-0">
+          <CmsImage
+            src={content.hero.backgroundImage}
+            media={content.hero.backgroundImageMedia}
+            alt={content.hero.title}
+            className="h-full w-full object-cover"
+            sizes="100vw"
+            priority
+          />
+          <div className="absolute inset-0 bg-[rgba(27,19,13,0.18)]" />
+        </div>
+      ) : null}
       {!prefersReducedMotion && (
         <>
           <div ref={floatRef1 as RefObject<HTMLDivElement>} className="floating-accent left-[8%] top-[22%] text-5xl">🌶️</div>

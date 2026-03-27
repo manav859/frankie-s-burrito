@@ -27,6 +27,7 @@ export function FeaturedCard({
       <div className="overflow-hidden rounded-[20px]">
         <CmsImage
           src={item.image}
+          media={item.imageMedia}
           alt={item.imageAlt || item.name}
           className="image-zoom h-60 w-full rounded-[20px] object-cover"
           sizes="(min-width: 768px) 33vw, 100vw"

@@ -59,6 +59,7 @@ export function BlogPostPage({
         <div className="blog-card-shadow mt-8 overflow-hidden rounded-[24px] border border-[rgba(43,33,27,0.18)] bg-black">
           <CmsImage
             src={entry.featuredImage}
+            media={entry.featuredImageMedia}
             alt={entry.featuredImageAlt || entry.title}
             className="h-[240px] w-full object-cover md:h-[420px] xl:h-[520px]"
             sizes="100vw"

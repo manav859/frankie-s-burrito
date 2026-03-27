@@ -47,6 +47,7 @@ export function MenuSection({
               {content.menu.image ? (
                 <CmsImage
                   src={content.menu.image}
+                  media={content.menu.imageMedia}
                   alt={content.menu.imageAlt || `${content.siteName} menu`}
                   className="h-[360px] w-full bg-white object-contain md:h-[720px]"
                   sizes="(min-width: 768px) 60vw, 100vw"

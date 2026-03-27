@@ -11,7 +11,7 @@
       "mobileImage": "/wp-content/uploads/2026/03/home.jpeg",
       "primaryCta": {
         "label": "Order Online",
-        "href": "https://frankiesbreakfastburritos.toast.site/",
+        "href": "/order",
         "variant": "primary"
       },
       "secondaryCta": {
@@ -93,8 +93,8 @@
       "sections": [],
       "footerNote": "Open live ordering for modifiers and full details.",
       "footerCta": {
-        "label": "Order with Toast",
-        "href": "#location",
+        "label": "Order Online",
+        "href": "/order",
         "variant": "primary"
       }
     },
@@ -154,11 +154,11 @@
       "openingHoursSchema": [
         "Mo-Su 08:00-15:00"
       ],
-      "ordering": "Pickup, delivery, catering, and gift cards all route through Toast.",
-      "orderUrl": "",
+      "ordering": "Pickup, delivery, and catering can be managed through the online ordering page.",
+      "orderUrl": "/order",
       "primaryCta": {
         "label": "Order Online",
-        "href": "",
+        "href": "/order",
         "variant": "primary"
       },
       "secondaryCta": {
@@ -182,7 +182,7 @@
       "body": "Use this final section to push directly into the live ordering flow.",
       "primaryCta": {
         "label": "Order Now",
-        "href": "",
+        "href": "/order",
         "variant": "light"
       },
       "secondaryCta": {
@@ -203,7 +203,7 @@
         "8:00 AM - 3:00 PM"
       ],
       "order": [
-        "Toast online ordering",
+        "Online ordering",
         "Gift cards",
         "Delivery",
         "Catering",

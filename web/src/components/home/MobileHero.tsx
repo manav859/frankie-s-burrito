@@ -5,6 +5,7 @@ import { BrandMark } from '../ui/BrandMark'
 import { Button } from '../ui/Button'
 import { MobileMenu } from '../site/MobileMenu'
 import { CowboyRider } from './DecorativeIcons'
+import { CmsImage } from '../ui/CmsImage'
 
 export function MobileHero({
   content,
@@ -16,6 +17,7 @@ export function MobileHero({
   prefersReducedMotion: boolean
 }) {
   const [menuOpen, setMenuOpen] = useState(false)
+  const shouldLoadMobileHero = typeof window === 'undefined' || window.matchMedia('(max-width: 767px)').matches
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : ''
@@ -26,12 +28,20 @@ export function MobileHero({
   }, [menuOpen])
 
   return (
-    <section
-      className="relative flex min-h-[100dvh] flex-col items-center justify-center bg-cover bg-center bg-no-repeat md:hidden"
-      style={{
-        backgroundImage: `linear-gradient(rgba(27, 19, 13, 0.2), rgba(27, 19, 13, 0.28)), url(${content.hero.mobileImage})`,
-      }}
-    >
+    <section className="relative flex min-h-[100dvh] flex-col items-center justify-center md:hidden">
+      {shouldLoadMobileHero && content.hero.mobileImage ? (
+        <div className="absolute inset-0">
+          <CmsImage
+            src={content.hero.mobileImage}
+            media={content.hero.mobileImageMedia}
+            alt={content.hero.title}
+            className="h-full w-full object-cover"
+            sizes="100vw"
+            priority
+          />
+          <div className="absolute inset-0 bg-[rgba(27,19,13,0.24)]" />
+        </div>
+      ) : null}
       {!prefersReducedMotion ? (
         <div className="cowboy-wrapper mobile-cowboy-wrapper">
           <div className="cowboy-inner mobile-cowboy-inner">

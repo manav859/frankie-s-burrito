@@ -38,6 +38,7 @@ export function AboutSection({
             <div className="overflow-hidden rounded-[28px] shadow-xl">
               <CmsImage
                 src={content.about.image}
+                media={content.about.imageMedia}
                 alt={content.about.title}
                 className="image-zoom h-[320px] w-full object-cover md:h-[500px]"
                 sizes="(min-width: 768px) 60vw, 100vw"

@@ -1,3 +1,5 @@
+import type { ResponsiveImageAsset } from './lib/media'
+
 export type CtaVariant = 'primary' | 'secondary' | 'light'
 
 export type Cta = {
@@ -17,6 +19,7 @@ export type FeaturedItem = {
   price: string
   image: string
   imageAlt?: string
+  imageMedia?: ResponsiveImageAsset
   dark?: boolean
   orderUrl?: string
 }
@@ -36,10 +39,14 @@ export type SiteContent = {
   siteLogo?: string
   siteLogoLight?: string
   siteLogoAlt?: string
+  siteLogoMedia?: ResponsiveImageAsset
+  siteLogoLightMedia?: ResponsiveImageAsset
   hero: {
     title: string
     backgroundImage: string
     mobileImage: string
+    backgroundImageMedia?: ResponsiveImageAsset
+    mobileImageMedia?: ResponsiveImageAsset
     primaryCta: Cta
     secondaryCta: Cta
   }
@@ -63,6 +70,7 @@ export type SiteContent = {
     note: string
     image?: string
     imageAlt?: string
+    imageMedia?: ResponsiveImageAsset
     categoryFocusTitle?: string
     categoryFocusBody?: string
     itemCtaLabel?: string
@@ -80,6 +88,7 @@ export type SiteContent = {
     title: string
     paragraphs: string[]
     image: string
+    imageMedia?: ResponsiveImageAsset
     facts: Array<{ value: string; label: string }>
   }
   proof: {
@@ -87,6 +96,7 @@ export type SiteContent = {
     title: string
     body: string
     backgroundImage?: string
+    backgroundImageMedia?: ResponsiveImageAsset
     items: InfoCard[]
   }
   location: {
@@ -181,6 +191,7 @@ export type BlogArchiveMeta = {
   permalink: string
   featuredImage?: string
   featuredImageAlt?: string
+  featuredImageMedia?: ResponsiveImageAsset
   pageForPostsId: number
   isAssigned: boolean
   showOnFront: string
@@ -196,6 +207,7 @@ export type PostArchiveItem = {
   excerpt: string
   featuredImage: string
   featuredImageAlt?: string
+  featuredImageMedia?: ResponsiveImageAsset
   publishedAt: string
   modifiedAt?: string
   author?: EntryAuthor
@@ -234,6 +246,7 @@ export type PostEntry = {
   content: string
   featuredImage: string
   featuredImageAlt?: string
+  featuredImageMedia?: ResponsiveImageAsset
   publishedAt: string
   modifiedAt?: string
   author?: EntryAuthor
@@ -250,6 +263,7 @@ export type PageArchiveItem = {
   slug: string
   featuredImage: string
   featuredImageAlt?: string
+  featuredImageMedia?: ResponsiveImageAsset
   modifiedAt?: string
   seo: EntrySeo
 }
@@ -265,6 +279,7 @@ export type PageEntry = {
   content: string
   featuredImage: string
   featuredImageAlt?: string
+  featuredImageMedia?: ResponsiveImageAsset
   modifiedAt?: string
   seo: EntrySeo
 }
@@ -277,6 +292,8 @@ export type SettingsPayload = {
     logoUrl?: string
     logoLightUrl?: string
     logoAlt?: string
+    logoMedia?: ResponsiveImageAsset
+    logoLightMedia?: ResponsiveImageAsset
   }
   hero: SiteContent['hero']
   featured: SiteContent['featuredIntro']

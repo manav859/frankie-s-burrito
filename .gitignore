@@ -2,6 +2,7 @@ backend/wp-content/database/.ht.sqlite
 backend/wp-content/uploads/
 backend/wp-content/upgrade/
 backend/wp-content/cache/
+backend/wp-content/ai1wm-backups/
 backend/.env
 backend/.env.local
 
