@@ -1,5 +1,6 @@
 import type { SiteContent } from '../../types'
 import { withBase } from '../../lib/base-path'
+import { resolveAppHref } from '../../lib/routes'
 import { BrandMark } from '../ui/BrandMark'
 import { Reveal, useReveal } from '../ui/Reveal'
 
@@ -31,7 +32,7 @@ export function Footer({
             <div className="mt-1.5 space-y-2 text-[15px]">
               {navigationItems.map((item) => (
                 <div key={item.label}>
-                  <a href={item.href}>{item.label}</a>
+                  <a href={resolveAppHref(item.href, item.label)}>{item.label}</a>
                 </div>
               ))}
             </div>

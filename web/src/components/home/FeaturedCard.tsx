@@ -2,6 +2,7 @@ import type { RefObject } from 'react'
 import { useTilt3D } from '../../lib/animations'
 import type { FeaturedItem, SiteContent } from '../../types'
 import { CmsImage } from '../ui/CmsImage'
+import { resolveAppHref } from '../../lib/routes'
 
 export function FeaturedCard({
   item,
@@ -41,7 +42,7 @@ export function FeaturedCard({
         {item.price}
       </div>
       <a
-        href={item.orderUrl || '#location'}
+        href={resolveAppHref(item.orderUrl || '#location', 'Order')}
         className="mt-2.5 flex items-center justify-between rounded-[18px] bg-[var(--cream-soft)] px-[18px] py-4 text-[15px] font-semibold text-[var(--red)] transition duration-300 group-hover:bg-white"
       >
         <span>{menu.itemCtaLabel || 'Order this burrito'}</span>

@@ -11,6 +11,11 @@ web/.env.local
 web/node_modules/
 web/dist/
 web/blog/
+web/menu/
+web/order/
+web/cart/
+web/checkout/
+web/order-success/
 web/sample-page/
 web/public/robots.txt
 web/public/sitemap.xml

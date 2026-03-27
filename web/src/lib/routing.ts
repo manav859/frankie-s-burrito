@@ -1,4 +1,5 @@
 import { stripBase } from './base-path'
+import { APP_ROUTES } from './routes'
 
 export type AppRoute =
   | { kind: 'home' }
@@ -29,36 +30,36 @@ export function getAppRoute(pathname: string): AppRoute {
     return { kind: 'home' }
   }
 
-  if (normalized === '/blog') {
+  if (normalized === APP_ROUTES.blog) {
     return { kind: 'blog' }
   }
 
-  if (normalized === '/menu') {
+  if (normalized === APP_ROUTES.menu) {
     return { kind: 'menu' }
   }
 
-  if (normalized === '/order') {
+  if (normalized === APP_ROUTES.order) {
     return { kind: 'order' }
   }
 
-  if (normalized.startsWith('/menu/')) {
-    return { kind: 'menu-item', slug: normalized.replace('/menu/', '') }
+  if (normalized.startsWith(`${APP_ROUTES.menu}/`)) {
+    return { kind: 'menu-item', slug: normalized.replace(`${APP_ROUTES.menu}/`, '') }
   }
 
-  if (normalized === '/cart') {
+  if (normalized === APP_ROUTES.cart) {
     return { kind: 'cart' }
   }
 
-  if (normalized === '/checkout') {
+  if (normalized === APP_ROUTES.checkout) {
     return { kind: 'checkout' }
   }
 
-  if (normalized === '/order-success') {
+  if (normalized === APP_ROUTES.orderSuccess) {
     return { kind: 'order-success' }
   }
 
-  if (normalized.startsWith('/blog/')) {
-    return { kind: 'post', slug: normalized.replace('/blog/', '') }
+  if (normalized.startsWith(`${APP_ROUTES.blog}/`)) {
+    return { kind: 'post', slug: normalized.replace(`${APP_ROUTES.blog}/`, '') }
   }
 
   return { kind: 'page', slug: normalized.replace(/^\//, '') }

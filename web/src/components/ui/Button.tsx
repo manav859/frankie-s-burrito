@@ -1,6 +1,7 @@
 import type { RefObject } from 'react'
 import { useMagnetic } from '../../lib/animations'
 import type { Cta } from '../../types'
+import { resolveAppHref } from '../../lib/routes'
 
 export function Button({
   cta,
@@ -15,7 +16,7 @@ export function Button({
 }) {
   const magneticRef = useMagnetic(0.25, 120)
   const variant = forceVariant || cta.variant
-  const href = (cta.href || '').trim() || '#'
+  const href = resolveAppHref((cta.href || '').trim() || '#', cta.label)
   const isExternal = /^https?:\/\//i.test(href)
   const isPrimary = variant !== 'secondary' && variant !== 'light'
   const style =

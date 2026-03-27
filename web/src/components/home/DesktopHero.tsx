@@ -6,6 +6,7 @@ import { BrandMark } from '../ui/BrandMark'
 import { Button } from '../ui/Button'
 import { Reveal, useReveal } from '../ui/Reveal'
 import { CmsImage } from '../ui/CmsImage'
+import { resolveAppHref } from '../../lib/routes'
 
 export function DesktopHero({
   content,
@@ -74,7 +75,7 @@ export function DesktopHero({
             ].join(' ')}
           >
             {content.navigation.map((item) => (
-              <a key={item.label} href={item.href} className="nav-link transition hover:text-[var(--gold)]">
+              <a key={item.label} href={resolveAppHref(item.href, item.label)} className="nav-link transition hover:text-[var(--gold)]">
                 {item.label}
               </a>
             ))}

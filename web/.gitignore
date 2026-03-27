@@ -11,6 +11,11 @@ node_modules
 dist
 dist-ssr
 blog
+menu
+order
+cart
+checkout
+order-success
 sample-page
 public/robots.txt
 public/sitemap.xml

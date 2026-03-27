@@ -1,6 +1,7 @@
 import type { SiteContent } from '../../types'
 import { BrandMark } from '../ui/BrandMark'
 import { Button } from '../ui/Button'
+import { resolveAppHref } from '../../lib/routes'
 
 export function MobileMenu({
   content,
@@ -41,7 +42,7 @@ export function MobileMenu({
           {content.navigation.map((item, index) => (
             <a
               key={item.label}
-              href={item.href}
+              href={resolveAppHref(item.href, item.label)}
               onClick={onClose}
               className={[
                 'rounded-2xl bg-white px-4 py-4 text-lg font-medium text-[var(--ink)] transition-all duration-300',

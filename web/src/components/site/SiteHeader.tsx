@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { SiteContent } from '../../types'
 import { withBase } from '../../lib/base-path'
+import { resolveAppHref } from '../../lib/routes'
 import { BrandMark } from '../ui/BrandMark'
 import { Button } from '../ui/Button'
 import { MobileMenu } from './MobileMenu'
@@ -43,7 +44,7 @@ export function SiteHeader({
 
           <nav className="hidden items-center gap-6 text-[15px] font-medium text-[var(--ink)] md:flex">
             {navigationItems.map((item) => (
-              <a key={item.label} href={item.href} className="nav-link transition hover:text-[var(--gold)]">
+              <a key={item.label} href={resolveAppHref(item.href, item.label)} className="nav-link transition hover:text-[var(--gold)]">
                 {item.label}
               </a>
             ))}

@@ -328,6 +328,15 @@ export async function buildStaticSite({ bootstrap, posts = [], pages = [], entri
 
   await fs.mkdir(publicDir, { recursive: true })
   await writeRouteHtml('/', homepageHtml)
+  for (const routePath of ['/menu', '/order', '/cart', '/checkout', '/order-success']) {
+    await writeRouteHtml(
+      routePath,
+      createHtmlDocument({
+        seo: bootstrap.seo,
+        rootMarkup: '',
+      }),
+    )
+  }
 
   const blogSeo = buildBlogArchiveSeo(bootstrap, posts)
 
