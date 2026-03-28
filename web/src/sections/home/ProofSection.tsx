@@ -53,8 +53,8 @@ export function ProofSection({
       className="section-divider deferred-section relative overflow-hidden bg-cover bg-center px-5 py-20 md:bg-fixed md:px-16 md:py-32"
       style={{
         backgroundImage: backgroundImage
-          ? `linear-gradient(rgba(244,234,225,0.85), rgba(244,234,225,0.92)), url('${backgroundImage}')`
-          : 'linear-gradient(rgba(244,234,225,0.96), rgba(244,234,225,0.96))',
+          ? `linear-gradient(rgba(255,255,255,0.85), rgba(255,255,255,0.92)), url('${backgroundImage}')`
+          : 'linear-gradient(rgba(255,255,255,0.96), rgba(255,255,255,0.96))',
       }}
     >
       <div className="absolute top-10 right-10 rotate-12 opacity-60 pointer-events-none md:right-32">
@@ -103,7 +103,7 @@ export function ProofSection({
                   onClick={() => setActiveIndex(pageIndex)}
                   className={[
                     'h-2.5 rounded-full transition-all duration-300',
-                    activeIndex === pageIndex ? 'w-8 bg-[var(--brick)]' : 'w-2.5 bg-[rgba(106,45,31,0.28)]',
+                    activeIndex === pageIndex ? 'w-8 bg-[var(--red)]' : 'w-2.5 bg-[rgba(17,17,17,0.18)]',
                   ].join(' ')}
                 />
               ))}

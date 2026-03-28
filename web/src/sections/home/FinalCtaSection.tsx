@@ -17,10 +17,10 @@ export function FinalCtaSection({
         className="h-3 w-full"
         style={{
           background:
-            'repeating-linear-gradient(90deg, var(--red) 0px, var(--red) 12px, var(--gold) 12px, var(--gold) 18px, #3d6b35 18px, #3d6b35 30px, var(--orange) 30px, var(--orange) 36px, var(--ink) 36px, var(--ink) 42px)',
+            'repeating-linear-gradient(90deg, var(--red) 0px, var(--red) 12px, var(--gold) 12px, var(--gold) 18px, var(--muted) 18px, var(--muted) 30px, var(--orange) 30px, var(--orange) 36px, var(--ink) 36px, var(--ink) 42px)',
         }}
       />
-      <section className="deferred-section bg-[#19522f] px-5 py-14 text-white md:px-16 md:py-24">
+      <section className="deferred-section bg-[var(--footer)] px-5 py-14 text-white md:px-16 md:py-24">
         <div ref={reveal.ref} className="mx-auto max-w-[1312px]">
           <Reveal visible={reveal.visible} reducedMotion={prefersReducedMotion} direction="left" className="mobile-section-gutter">
             <p className="section-eyebrow !text-[var(--cream)]">{content.finalCta.eyebrow}</p>
@@ -31,7 +31,7 @@ export function FinalCtaSection({
             </h2>
           </div>
           <Reveal visible={reveal.visible} reducedMotion={prefersReducedMotion} delay={200} className="mobile-section-gutter">
-            <p className="mt-5 hidden max-w-[760px] text-lg leading-[1.6] text-[#fdf4e8] md:block">{content.finalCta.body}</p>
+            <p className="mt-5 hidden max-w-[760px] text-lg leading-[1.6] text-[var(--cream-dim)] md:block">{content.finalCta.body}</p>
           </Reveal>
           <Reveal visible={reveal.visible} reducedMotion={prefersReducedMotion} delay={320} className="mobile-section-gutter">
             <div className="mt-6 flex flex-col gap-3 [&>a]:w-full sm:flex-row sm:[&>a]:w-auto">

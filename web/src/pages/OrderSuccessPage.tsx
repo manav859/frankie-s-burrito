@@ -91,7 +91,7 @@ export function OrderSuccessPage() {
   }
 
   return (
-    <div className="mx-auto max-w-[920px]">
+    <div className="w-full xl:mx-auto xl:max-w-[920px]">
       <section className="relative overflow-hidden rounded-[36px] border border-[rgba(106,45,31,0.12)] bg-white p-6 shadow-[0_24px_52px_rgba(31,25,21,0.08)] md:p-8 lg:p-10">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(217,162,27,0.12),_transparent_42%),radial-gradient(circle_at_bottom_right,_rgba(185,49,47,0.08),_transparent_34%)]" />
 
