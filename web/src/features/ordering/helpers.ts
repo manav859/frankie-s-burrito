@@ -3,9 +3,49 @@ import type { Money } from './types'
 export function createEmptyMoney(currency = 'USD'): Money {
   return {
     raw: '0.00',
-    formatted: '$0.00',
+    formatted: formatMoney(0, currency),
     currency,
-    symbol: '$',
+    symbol: getCurrencySymbol(currency),
+  }
+}
+
+export function getCurrencySymbol(currency = 'USD') {
+  try {
+    const parts = new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency,
+      currencyDisplay: 'symbol',
+      minimumFractionDigits: 2,
+    }).formatToParts(0)
+
+    return parts.find((part) => part.type === 'currency')?.value || '$'
+  } catch {
+    return '$'
+  }
+}
+
+export function formatMoney(value: number, currency = 'USD') {
+  try {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(value)
+  } catch {
+    return `$${value.toFixed(2)}`
+  }
+}
+
+export function moneyFromRaw(rawValue: number | string, currency = 'USD'): Money {
+  const value = typeof rawValue === 'number' ? rawValue : Number(rawValue)
+  const safeValue = Number.isFinite(value) ? value : 0
+
+  return {
+    raw: safeValue.toFixed(2),
+    formatted: formatMoney(safeValue, currency),
+    currency,
+    symbol: getCurrencySymbol(currency),
   }
 }
 
@@ -25,4 +65,26 @@ export function getSafeText(value: unknown, fallback = '') {
 export function getNonEmptyText(value: unknown, fallback: string) {
   const safe = getSafeText(value)
   return safe || fallback
+}
+
+export function decodeHtmlEntities(value: string) {
+  if (!value || typeof window === 'undefined' || typeof window.DOMParser === 'undefined') {
+    return value
+  }
+
+  let decoded = value
+
+  for (let index = 0; index < 3; index += 1) {
+    const parser = new window.DOMParser()
+    const document = parser.parseFromString(decoded, 'text/html')
+    const next = document.documentElement.textContent || decoded
+
+    if (next === decoded) {
+      break
+    }
+
+    decoded = next
+  }
+
+  return decoded
 }

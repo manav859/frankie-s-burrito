@@ -26,9 +26,9 @@ export function CartSummary({
         </div>
       </div>
 
-      {!compact && cart.items.length ? (
+      {cart.items.length ? (
         <div className="mt-5 border-t border-[rgba(106,45,31,0.08)] pt-4">
-          <CartLineItems items={cart.items.slice(0, 3)} compact />
+          <CartLineItems items={cart.items.slice(0, compact ? cart.items.length : 3)} compact />
         </div>
       ) : (
         <div className="mt-5 rounded-[20px] bg-[var(--paper)] px-4 py-4 text-sm leading-[1.6] text-[var(--muted)]">

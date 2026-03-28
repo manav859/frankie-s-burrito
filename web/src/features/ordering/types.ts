@@ -39,6 +39,10 @@ export type MenuItemCard = {
   availability: Availability
   fulfillment_mode: FulfillmentMode
   sort_order: number
+  price?: number
+  add_on_groups: MenuAddonGroup[]
+  spice_options?: MenuSpiceOption[]
+  allergens_enabled: boolean
 }
 
 export type MenuSpiceOption = {
@@ -56,7 +60,8 @@ export type MenuAddonOption = {
 export type MenuAddonGroup = {
   key: string
   label: string
-  type: 'checkbox' | 'single'
+  type: 'multiple' | 'single'
+  required: boolean
   min: number
   max: number
   options: MenuAddonOption[]
@@ -92,44 +97,67 @@ export type MenuBootstrap = {
   }
 }
 
+export type MenuCollectionCategory = MenuCategory & {
+  items: MenuItemCard[]
+}
+
 export type CartSelectedOption = {
   key: string
   label: string
   price_adjustment: Money
 }
 
+export type CartSelectedAddOn = {
+  group_id: string
+  option_id: string
+  name: string
+  price: Money
+}
+
+export type ItemCustomizationSelection = {
+  selectedSize: CartSelectedOption | null
+  selectedAddons: CartSelectedAddOn[]
+  notes?: string
+}
+
 export type CartItem = {
   key: string
   product_id: number
+  slug: string
   name: string
   image: string
   image_data?: ResponsiveImageAsset
   quantity: number
-  unit_price: Money
+  base_price: Money
+  final_price: Money
+  selected_size: CartSelectedOption | null
+  addons: CartSelectedAddOn[]
+  notes?: string
   line_subtotal: Money
   line_total: Money
+  selected_add_ons: CartSelectedAddOn[]
   selected_options: {
     spice_level: CartSelectedOption | null
-    addons: CartSelectedOption[]
+    addons: CartSelectedAddOn[]
+    allergies_note?: string
   }
   summary_lines: string[]
+  allergies_note?: string
+  fulfillment_mode?: FulfillmentMode
 }
 
 export type CartResponse = {
-  cart_token: string
   items: CartItem[]
   item_count: number
   subtotal: Money
   taxes: Money
   fees: Money
+  discount: Money
+  tip: Money
   total: Money
   currency: string
   available_upsells: MenuItemCard[]
-  integration?: {
-    cart_token_header?: string
-    guest_cart?: boolean
-    nonce?: string
-  }
+  coupon_code?: string
 }
 
 export type CheckoutDeliveryMethod = {
@@ -153,16 +181,24 @@ export type CheckoutFulfillmentMode = {
 }
 
 export type CheckoutConfig = {
-  cart: CartResponse
   fulfillment_modes: CheckoutFulfillmentMode[]
   payment_methods: CheckoutPaymentMethod[]
   delivery_methods: CheckoutDeliveryMethod[]
+  store: {
+    pickup_address: string
+    delivery_radius_km: number
+    location: {
+      lat: number
+      lng: number
+    } | null
+  }
   required_fields: {
     pickup: string[]
     delivery: string[]
   }
   estimated_times: Record<FulfillmentType, number>
   notes: {
+    payment?: string
     upi: string
     auth: string
   }
@@ -183,6 +219,9 @@ export type CheckoutInput = {
   payment_method?: string
   delivery_method?: string
   address: CheckoutAddressInput
+  coupon_code?: string
+  tip_amount?: string
+  cart_items?: Array<Record<string, unknown>>
 }
 
 export type CheckoutValidationResponse = {
@@ -191,6 +230,13 @@ export type CheckoutValidationResponse = {
   checkout: Omit<CheckoutInput, 'delivery_method'> & {
     delivery_method: CheckoutDeliveryMethod | null
     estimated_ready_time: string
+  }
+  pricing: {
+    subtotal: Money
+    discount: Money
+    tip: Money
+    total: Money
+    coupon_code?: string
   }
   message: string
 }
@@ -240,10 +286,38 @@ export type PlaceOrderResponse = {
 }
 
 export type AddToCartInput = {
+  item_id?: number
   product_id: number
+  slug: string
+  name: string
+  image: string
+  image_data?: ResponsiveImageAsset
+  base_price: Money
+  final_price?: Money
   quantity: number
-  spice_level?: string
-  addons?: string[]
+  fulfillment_mode?: FulfillmentMode
+  size?: CartSelectedOption | null
+  spice_level?: CartSelectedOption | null
+  addons?: CartSelectedAddOn[]
+  selected_add_ons?: CartSelectedAddOn[]
+  notes?: string
+  allergies_note?: string
+}
+
+export type UpdateCartItemCustomizationInput = AddToCartInput & {
+  key: string
+}
+
+export type DeliveryValidationResponse = {
+  available: boolean
+  distance_km: number
+  radius_km: number
+  pickup_address: string
+  store_location: {
+    lat: number
+    lng: number
+  } | null
+  message: string
 }
 
 export type UpdateCartItemInput = {

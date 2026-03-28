@@ -8,6 +8,7 @@ export function CartLineItems({
   removingKey,
   onQuantityChange,
   onRemove,
+  onEdit,
   compact = false,
 }: {
   items: CartItem[]
@@ -15,6 +16,7 @@ export function CartLineItems({
   removingKey?: string | null
   onQuantityChange?: (key: string, quantity: number) => void
   onRemove?: (key: string) => void
+  onEdit?: (item: CartItem) => void
   compact?: boolean
 }) {
   return (
@@ -68,14 +70,21 @@ export function CartLineItems({
                     )}
 
                     {onRemove ? (
-                      <button
-                        type="button"
-                        onClick={() => onRemove(item.key)}
-                        className="text-sm font-semibold text-[var(--red)]"
-                        disabled={pendingRemove}
-                      >
-                        {pendingRemove ? 'Removing...' : 'Remove'}
-                      </button>
+                      <div className="flex items-center gap-4">
+                        {onEdit ? (
+                          <button type="button" onClick={() => onEdit(item)} className="text-sm font-semibold text-[var(--brick)]">
+                            Edit
+                          </button>
+                        ) : null}
+                        <button
+                          type="button"
+                          onClick={() => onRemove(item.key)}
+                          className="text-sm font-semibold text-[var(--red)]"
+                          disabled={pendingRemove}
+                        >
+                          {pendingRemove ? 'Removing...' : 'Remove'}
+                        </button>
+                      </div>
                     ) : null}
                   </div>
                 ) : null}

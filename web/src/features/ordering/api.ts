@@ -2,6 +2,7 @@ import type {
   ApiAddToCartInput,
   ApiCheckoutAddressInput,
   ApiCheckoutInput,
+  ApiDeliveryValidationResponse,
   ApiMenuBootstrapResponse,
   ApiMenuCategoriesResponse,
   ApiMenuCollectionResponse,
@@ -15,6 +16,7 @@ import {
   parseCartResponse,
   parseCheckoutConfigResponse,
   parseCheckoutValidationResponse,
+  parseDeliveryValidationResponse,
   parseMenuBootstrapResponse,
   parseMenuCategoriesResponse,
   parseMenuCollectionResponse,
@@ -31,7 +33,9 @@ import type {
   CheckoutConfig,
   CheckoutInput,
   CheckoutValidationResponse,
+  DeliveryValidationResponse,
   MenuBootstrap,
+  MenuCollectionCategory,
   MenuCategory,
   MenuItemCard,
   MenuItemDetail,
@@ -42,6 +46,9 @@ import type {
 const ENV_WORDPRESS_BASE = import.meta.env.VITE_WORDPRESS_BASE_URL?.replace(/\/$/, '')
 const API_NAMESPACE = '/frankies-headless/v1'
 const DEFAULT_COUNTRY = 'US'
+const GET_RESPONSE_CACHE_TTL_MS = 5 * 60 * 1000
+const responseCache = new Map<string, { expiresAt: number; data: unknown }>()
+const inflightGetRequests = new Map<string, Promise<unknown>>()
 
 type QueryValue = string | number | boolean | undefined
 
@@ -59,6 +66,8 @@ type RequestOptions = {
   signal?: AbortSignal
   query?: Record<string, QueryValue>
   includeCartToken?: boolean
+  cacheTtlMs?: number
+  bypassResponseCache?: boolean
 }
 
 export class FrankiesHeadlessError extends Error {
@@ -192,6 +201,11 @@ function buildEndpoint(route: string, query?: Record<string, QueryValue>) {
   return `/wp-json${API_NAMESPACE}${normalizedRoute}${suffix ? `?${suffix}` : ''}`
 }
 
+function getResponseCacheKey(wordpressBase: string, route: string, options: RequestOptions) {
+  const method = options.method || 'GET'
+  return `${method}:${wordpressBase}${buildEndpoint(route, options.query)}`
+}
+
 async function readError(response: Response) {
   let payload: ApiErrorPayload | null = null
 
@@ -221,6 +235,25 @@ async function requestJson<T>(route: string, options: RequestOptions = {}): Prom
 
   const query = { ...(options.query || {}) }
   let body = options.body
+  const method = options.method || 'GET'
+  const cacheKey = getResponseCacheKey(wordpressBase, route, { ...options, method, query })
+  const shouldUseResponseCache = method === 'GET' && !options.bypassResponseCache
+  const shouldDeduplicateInflight = shouldUseResponseCache && !options.signal
+  const cacheTtlMs = options.cacheTtlMs ?? GET_RESPONSE_CACHE_TTL_MS
+
+  if (shouldUseResponseCache) {
+    const cached = responseCache.get(cacheKey)
+    if (cached && cached.expiresAt > Date.now()) {
+      return cached.data as T
+    }
+  }
+
+  if (shouldDeduplicateInflight) {
+    const inflight = inflightGetRequests.get(cacheKey)
+    if (inflight) {
+      return (await inflight) as T
+    }
+  }
 
   if (options.includeCartToken !== false) {
     const cartToken = readCartToken()
@@ -233,21 +266,43 @@ async function requestJson<T>(route: string, options: RequestOptions = {}): Prom
     }
   }
 
-  const response = await fetch(`${wordpressBase}${buildEndpoint(route, query)}`, {
-    method: options.method || 'GET',
-    headers,
-    body: body !== undefined ? JSON.stringify(body) : undefined,
-    signal: options.signal,
-    cache: 'no-store',
-  })
+  const request = (async () => {
+    const response = await fetch(`${wordpressBase}${buildEndpoint(route, query)}`, {
+      method,
+      headers,
+      body: body !== undefined ? JSON.stringify(body) : undefined,
+      signal: options.signal,
+      cache: method === 'GET' && !options.bypassResponseCache ? 'default' : 'no-store',
+    })
 
-  if (!response.ok) {
-    await readError(response)
+    if (!response.ok) {
+      await readError(response)
+    }
+
+    const payload = normalizePayload((await response.json()) as T)
+    persistCartTokenFromResponse(payload)
+
+    if (shouldUseResponseCache) {
+      responseCache.set(cacheKey, {
+        expiresAt: Date.now() + cacheTtlMs,
+        data: payload,
+      })
+    }
+
+    return payload
+  })()
+
+  if (shouldDeduplicateInflight) {
+    inflightGetRequests.set(cacheKey, request as Promise<unknown>)
   }
 
-  const payload = normalizePayload((await response.json()) as T)
-  persistCartTokenFromResponse(payload)
-  return payload
+  try {
+    return await request
+  } finally {
+    if (shouldDeduplicateInflight) {
+      inflightGetRequests.delete(cacheKey)
+    }
+  }
 }
 
 async function requestAndParse<TRaw, TParsed>(route: string, parser: (input: unknown) => TParsed, options: RequestOptions = {}) {
@@ -275,11 +330,17 @@ export function clearPersistedCartToken() {
 
 export const menuApi = {
   getBootstrap(signal?: AbortSignal) {
-    return requestAndParse<ApiMenuBootstrapResponse, MenuBootstrap>('/menu/bootstrap', parseMenuBootstrapResponse, { signal })
+    return requestAndParse<ApiMenuBootstrapResponse, MenuBootstrap>('/menu/bootstrap', parseMenuBootstrapResponse, {
+      signal,
+      includeCartToken: false,
+    })
   },
 
   getCategories(signal?: AbortSignal) {
-    return requestAndParse<ApiMenuCategoriesResponse, { items: MenuCategory[] }>('/menu/categories', parseMenuCategoriesResponse, { signal })
+    return requestAndParse<ApiMenuCategoriesResponse, { items: MenuCategory[] }>('/menu/categories', parseMenuCategoriesResponse, {
+      signal,
+      includeCartToken: false,
+    })
   },
 
   getItems(
@@ -295,13 +356,14 @@ export const menuApi = {
     return requestAndParse<ApiMenuItemsResponse, { filters: Record<string, unknown>; items: MenuItemCard[]; empty: boolean }>(
       '/menu/items',
       parseMenuItemsResponse,
-      { query, signal },
+      { query, signal, includeCartToken: false },
     )
   },
 
   getItem(idOrSlug: string, signal?: AbortSignal) {
     return requestAndParse<ApiMenuItemDetail, MenuItemDetail>(`/menu/items/${encodeURIComponent(idOrSlug)}`, parseMenuItemDetailResponse, {
       signal,
+      includeCartToken: false,
     })
   },
 
@@ -314,11 +376,14 @@ export const menuApi = {
       limit?: number
     },
     signal?: AbortSignal,
+    options?: {
+      bypassResponseCache?: boolean
+    },
   ) {
-    return requestAndParse<ApiMenuCollectionResponse, { meta: { version: string; empty: boolean }; sections: Array<{ category: MenuCategory; items: MenuItemCard[] }> }>(
+    return requestAndParse<ApiMenuCollectionResponse, { meta: { version: string; empty: boolean }; categories: MenuCollectionCategory[]; sections: Array<{ category: MenuCategory; items: MenuItemCard[] }>; featured: MenuItemCard[] }>(
       '/menu',
       parseMenuCollectionResponse,
-      { query, signal },
+      { query, signal, includeCartToken: false, bypassResponseCache: options?.bypassResponseCache },
     )
   },
 }
@@ -346,18 +411,15 @@ export const cartApi = {
 }
 
 export const checkoutApi = {
-  getConfig(address?: ApiCheckoutAddressInput, signal?: AbortSignal) {
-    const query = address
-      ? {
-          'address[street_address]': address.street_address,
-          'address[city]': address.city,
-          'address[state]': address.state,
-          'address[postcode]': address.postcode,
-          'address[country]': address.country,
-        }
-      : undefined
-
-    return requestAndParse<unknown, CheckoutConfig>('/checkout/config', parseCheckoutConfigResponse, { signal, query })
+  getConfig(address?: ApiCheckoutAddressInput, cartItems?: unknown[], signal?: AbortSignal) {
+    return requestAndParse<unknown, CheckoutConfig>('/checkout/config', parseCheckoutConfigResponse, {
+      method: 'POST',
+      body: {
+        address,
+        cart_items: cartItems,
+      },
+      signal,
+    })
   },
 
   validate(input: ApiCheckoutInput, signal?: AbortSignal) {
@@ -374,6 +436,20 @@ export const checkoutApi = {
       body: input,
       signal,
     })
+  },
+}
+
+export const deliveryApi = {
+  validate(location: { latitude: number; longitude: number }, signal?: AbortSignal) {
+    return requestAndParse<ApiDeliveryValidationResponse, DeliveryValidationResponse>(
+      '/delivery/validate',
+      parseDeliveryValidationResponse,
+      {
+        method: 'POST',
+        body: { location },
+        signal,
+      },
+    )
   },
 }
 
@@ -425,8 +501,11 @@ export async function getMenu(
     limit?: number
   },
   signal?: AbortSignal,
+  options?: {
+    bypassResponseCache?: boolean
+  },
 ) {
-  return menuApi.getMenu(query, signal)
+  return menuApi.getMenu(query, signal, options)
 }
 
 export async function getCart(signal?: AbortSignal) {
@@ -449,8 +528,8 @@ export async function clearCart(signal?: AbortSignal) {
   return cartApi.clear(signal)
 }
 
-export async function getCheckoutConfig(address?: CheckoutAddressInput, signal?: AbortSignal) {
-  return checkoutApi.getConfig(address, signal)
+export async function getCheckoutConfig(address?: CheckoutAddressInput, cartItems?: unknown[], signal?: AbortSignal) {
+  return checkoutApi.getConfig(address, cartItems, signal)
 }
 
 export async function validateCheckout(input: CheckoutInput, signal?: AbortSignal) {
@@ -459,6 +538,10 @@ export async function validateCheckout(input: CheckoutInput, signal?: AbortSigna
 
 export async function placeOrder(input: CheckoutInput, signal?: AbortSignal) {
   return checkoutApi.placeOrder(input, signal)
+}
+
+export async function validateDelivery(location: { latitude: number; longitude: number }, signal?: AbortSignal) {
+  return deliveryApi.validate(location, signal)
 }
 
 export async function getOrderConfirmation(orderId: string, orderKey: string, signal?: AbortSignal) {

@@ -5,6 +5,7 @@ import type {
   ApiCheckoutDeliveryMethod,
   ApiCheckoutPaymentMethod,
   ApiCheckoutValidationResponse,
+  ApiDeliveryValidationResponse,
   ApiMenuBootstrapResponse,
   ApiMenuCategoriesResponse,
   ApiMenuCategory,
@@ -16,7 +17,7 @@ import type {
   ApiOrderConfirmationResponse,
   ApiPlaceOrderResponse,
 } from './contract'
-import { createEmptyMoney, getNonEmptyText, getSafeText } from './helpers'
+import { createEmptyMoney, decodeHtmlEntities, getNonEmptyText, getSafeText } from './helpers'
 import { normalizeResponsiveImageAsset } from '../../lib/media'
 import type {
   CartItem,
@@ -25,8 +26,11 @@ import type {
   CheckoutDeliveryMethod,
   CheckoutPaymentMethod,
   CheckoutValidationResponse,
+  DeliveryValidationResponse,
   MenuBootstrap,
+  MenuAddonGroup,
   MenuCategory,
+  MenuCollectionCategory,
   MenuItemCard,
   MenuItemDetail,
   OrderConfirmation,
@@ -64,14 +68,14 @@ function parseMenuCategory(input: unknown): MenuCategory {
   return {
     id: typeof record.id === 'number' ? record.id : 0,
     slug: getSafeText(record.slug),
-    name: getNonEmptyText(record.name, 'Menu'),
+    name: decodeHtmlEntities(getSafeText(record.name)),
     image: normalizeWordPressUrl(getSafeText(record.image)),
-    image_alt: getSafeText(record.image_alt),
+    image_alt: decodeHtmlEntities(getSafeText(record.image_alt)),
     image_data: normalizeResponsiveImageAsset(record.image_data),
     count: typeof record.count === 'number' ? record.count : 0,
     sort_order: typeof record.sort_order === 'number' ? record.sort_order : 0,
-    description: getSafeText(record.description),
-    cta_label: getSafeText(record.cta_label),
+    description: decodeHtmlEntities(getSafeText(record.description)),
+    cta_label: decodeHtmlEntities(getSafeText(record.cta_label)),
   }
 }
 
@@ -86,17 +90,68 @@ function parseMenuItemCard(input: unknown): MenuItemCard {
   return {
     id: typeof record.id === 'number' ? record.id : 0,
     slug: getSafeText(record.slug),
-    name: getNonEmptyText(record.name, 'Menu item'),
+    name: decodeHtmlEntities(getSafeText(record.name)),
     image: normalizeWordPressUrl(getSafeText(record.image)),
-    image_alt: getSafeText(record.image_alt),
+    image_alt: decodeHtmlEntities(getSafeText(record.image_alt)),
     image_data: normalizeResponsiveImageAsset(record.image_data),
-    short_description: getSafeText(record.short_description),
-    formatted_price: getNonEmptyText(record.formatted_price, '$0.00'),
-    base_price: getNonEmptyText(record.base_price, '0.00'),
-    badge: getSafeText(record.badge),
+    short_description: decodeHtmlEntities(getSafeText(record.short_description)),
+    formatted_price: getSafeText(record.formatted_price),
+    base_price: getSafeText(record.base_price),
+    badge: decodeHtmlEntities(getSafeText(record.badge)),
     availability,
     fulfillment_mode: fulfillmentMode,
     sort_order: typeof record.sort_order === 'number' ? record.sort_order : 0,
+    price: typeof record.price === 'number' ? record.price : undefined,
+    add_on_groups: asArray(record.add_on_groups).map(parseAddonGroup),
+    spice_options: asArray(record.spice_options).map((option) => {
+      const optionRecord = asRecord(option)
+      return {
+        key: getSafeText(optionRecord.key),
+        label: decodeHtmlEntities(getNonEmptyText(optionRecord.label, 'Option')),
+        price_adjustment:
+          typeof optionRecord.price_adjustment === 'string'
+            ? optionRecord.price_adjustment
+            : parseMoney(optionRecord.price_adjustment),
+      }
+    }),
+    allergens_enabled: record.allergens_enabled === true,
+  }
+}
+
+function normalizeMenuText(value: string) {
+  return value.trim().toLowerCase().replace(/\s+/g, ' ')
+}
+
+function isExcludedMenuItem(item: Pick<MenuItemCard, 'slug' | 'name' | 'short_description'>) {
+  return (
+    normalizeMenuText(item.slug) === 'breakfast' &&
+    normalizeMenuText(item.name) === 'breakfast' &&
+    normalizeMenuText(item.short_description) === 'classic breakfast burrito with eggs, cheese, and choice of fillings.'
+  )
+}
+
+function filterMenuItems<T extends MenuItemCard>(items: T[]) {
+  return items.filter((item) => !isExcludedMenuItem(item))
+}
+
+function parseAddonGroup(input: unknown): MenuAddonGroup {
+  const record = asRecord(input)
+  const type: MenuAddonGroup['type'] = record.type === 'single' || record.type === 'radio' ? 'single' : 'multiple'
+  return {
+    key: getSafeText(record.key || record.id),
+    label: decodeHtmlEntities(getNonEmptyText(record.label || record.name, 'Add-ons')),
+    type,
+    required: record.required === true || (typeof record.min === 'number' && record.min > 0),
+    min: typeof record.min === 'number' ? record.min : 0,
+    max: typeof record.max === 'number' ? record.max : 0,
+    options: asArray(record.options).map((option) => {
+      const optionRecord = asRecord(option)
+      return {
+        key: getSafeText(optionRecord.key || optionRecord.id),
+        label: decodeHtmlEntities(getNonEmptyText(optionRecord.label || optionRecord.name, 'Add-on')),
+        price_adjustment: parseMoney(optionRecord.price_adjustment || optionRecord.price),
+      }
+    }),
   }
 }
 
@@ -134,25 +189,54 @@ function parseCartItem(input: unknown): CartItem {
   return {
     key: getSafeText(record.key),
     product_id: typeof record.product_id === 'number' ? record.product_id : 0,
+    slug: getSafeText(record.slug),
     name: getNonEmptyText(record.name, 'Cart item'),
     image: normalizeWordPressUrl(getSafeText(record.image)),
     image_data: normalizeResponsiveImageAsset(record.image_data),
     quantity: typeof record.quantity === 'number' ? record.quantity : 0,
-    unit_price: parseMoney(record.unit_price),
+    base_price: parseMoney(record.base_price),
+    final_price: parseMoney(record.base_price),
+    selected_size: spiceLevel,
+    addons: asArray(record.selected_add_ons).map((addon) => {
+      const addonRecord = asRecord(addon)
+      return {
+        group_id: getSafeText(addonRecord.group_id),
+        option_id: getSafeText(addonRecord.option_id || addonRecord.key),
+        name: getNonEmptyText(addonRecord.name || addonRecord.label, 'Add-on'),
+        price: parseMoney(addonRecord.price || addonRecord.price_adjustment),
+      }
+    }),
+    notes: getSafeText(record.allergies_note) || getSafeText(selectedOptions.allergies_note) || undefined,
     line_subtotal: parseMoney(record.line_subtotal),
     line_total: parseMoney(record.line_total),
+    selected_add_ons: asArray(record.selected_add_ons).map((addon) => {
+      const addonRecord = asRecord(addon)
+      return {
+        group_id: getSafeText(addonRecord.group_id),
+        option_id: getSafeText(addonRecord.option_id || addonRecord.key),
+        name: getNonEmptyText(addonRecord.name || addonRecord.label, 'Add-on'),
+        price: parseMoney(addonRecord.price || addonRecord.price_adjustment),
+      }
+    }),
     selected_options: {
       spice_level: spiceLevel,
       addons: asArray(selectedOptions.addons).map((addon) => {
         const addonRecord = asRecord(addon)
         return {
-          key: getSafeText(addonRecord.key),
-          label: getNonEmptyText(addonRecord.label, 'Add-on'),
-          price_adjustment: parseMoney(addonRecord.price_adjustment),
+          group_id: getSafeText(addonRecord.group_id),
+          option_id: getSafeText(addonRecord.option_id || addonRecord.key),
+          name: getNonEmptyText(addonRecord.name || addonRecord.label, 'Add-on'),
+          price: parseMoney(addonRecord.price || addonRecord.price_adjustment),
         }
       }),
+      allergies_note: getSafeText(selectedOptions.allergies_note),
     },
     summary_lines: asArray(record.summary_lines).map((line) => getSafeText(line)).filter(Boolean),
+    allergies_note: getSafeText(record.allergies_note),
+    fulfillment_mode:
+      record.fulfillment_mode === 'pickup' || record.fulfillment_mode === 'delivery' || record.fulfillment_mode === 'both'
+        ? record.fulfillment_mode
+        : undefined,
   }
 }
 
@@ -160,6 +244,8 @@ export function parseMenuBootstrapResponse(input: unknown): MenuBootstrap {
   const record = asRecord(input) as Partial<ApiMenuBootstrapResponse>
   const meta = asRecord(record.meta)
   const cart = asRecord(record.cart)
+  const featured = filterMenuItems(asArray(record.featured).map(parseMenuItemCard))
+  const initialItems = filterMenuItems(asArray(record.initial_items).map(parseMenuItemCard))
 
   return {
     meta: {
@@ -169,8 +255,8 @@ export function parseMenuBootstrapResponse(input: unknown): MenuBootstrap {
       initial_category: getSafeText(meta.initial_category),
     },
     categories: asArray(record.categories).map(parseMenuCategory),
-    featured: asArray(record.featured).map(parseMenuItemCard),
-    initial_items: asArray(record.initial_items).map(parseMenuItemCard),
+    featured,
+    initial_items: initialItems,
     cart: {
       item_count: typeof cart.item_count === 'number' ? cart.item_count : 0,
       subtotal: parseMoney(cart.subtotal),
@@ -190,6 +276,7 @@ export function parseMenuCategoriesResponse(input: unknown): { items: MenuCatego
 export function parseMenuItemsResponse(input: unknown): ApiMenuItemsResponse & { items: MenuItemCard[] } {
   const record = asRecord(input) as Partial<ApiMenuItemsResponse>
   const filters = asRecord(record.filters)
+  const items = filterMenuItems(asArray(record.items).map(parseMenuItemCard))
 
   return {
     filters: {
@@ -198,35 +285,61 @@ export function parseMenuItemsResponse(input: unknown): ApiMenuItemsResponse & {
       search: getSafeText(filters.search),
       availability: getSafeText(filters.availability),
     },
-    items: asArray(record.items).map(parseMenuItemCard),
-    empty: record.empty === true,
+    items,
+    empty: items.length === 0,
   }
 }
 
 export function parseMenuCollectionResponse(input: unknown): ApiMenuCollectionResponse & {
+  categories: MenuCollectionCategory[]
   sections: Array<{ category: MenuCategory; items: MenuItemCard[] }>
+  featured: MenuItemCard[]
 } {
   const record = asRecord(input) as Partial<ApiMenuCollectionResponse>
   const meta = asRecord(record.meta)
+  const categories = asArray(record.categories).map((category) => {
+    const categoryRecord = asRecord(category)
+    const items = filterMenuItems(asArray(categoryRecord.items).map(parseMenuItemCard))
+    return {
+      ...parseMenuCategory(categoryRecord),
+      count: items.length,
+      items,
+    }
+  })
+  const sections = asArray(record.sections).map((section) => {
+    const sectionRecord = asRecord(section)
+    const items = filterMenuItems(asArray(sectionRecord.items).map(parseMenuItemCard))
+    return {
+      category: {
+        ...parseMenuCategory(sectionRecord.category),
+        count: items.length,
+      },
+      items,
+    }
+  })
+  const featured = filterMenuItems(asArray(record.featured).map(parseMenuItemCard))
+  const normalizedCategories = categories.length
+    ? categories
+    : sections.map((section) => ({
+        ...section.category,
+        items: section.items,
+      }))
 
   return {
     meta: {
       version: getNonEmptyText(meta.version, 'v1'),
-      empty: meta.empty === true,
+      empty: normalizedCategories.every((category) => category.items.length === 0),
     },
-    sections: asArray(record.sections).map((section) => {
-      const sectionRecord = asRecord(section)
-      return {
-        category: parseMenuCategory(sectionRecord.category),
-        items: asArray(sectionRecord.items).map(parseMenuItemCard),
-      }
-    }),
+    categories: normalizedCategories,
+    sections,
+    featured,
   }
 }
 
 export function parseMenuItemDetailResponse(input: unknown): MenuItemDetail {
   const record = asRecord(input) as Partial<ApiMenuItemDetail>
   const base = parseMenuItemCard(record)
+  const upsellProducts = filterMenuItems(asArray(record.upsell_products).map(parseMenuItemCard))
 
   return {
     ...base,
@@ -235,7 +348,7 @@ export function parseMenuItemDetailResponse(input: unknown): MenuItemDetail {
       return {
         id: typeof categoryRecord.id === 'number' ? categoryRecord.id : 0,
         slug: getSafeText(categoryRecord.slug),
-        name: getNonEmptyText(categoryRecord.name, 'Category'),
+        name: decodeHtmlEntities(getSafeText(categoryRecord.name)),
       }
     }),
     gallery: asArray(record.gallery).map((image) => normalizeWordPressUrl(getSafeText(image))).filter(Boolean),
@@ -247,53 +360,34 @@ export function parseMenuItemDetailResponse(input: unknown): MenuItemDetail {
       const optionRecord = asRecord(option)
       return {
         key: getSafeText(optionRecord.key),
-        label: getNonEmptyText(optionRecord.label, 'Option'),
+        label: decodeHtmlEntities(getNonEmptyText(optionRecord.label, 'Option')),
         price_adjustment: typeof optionRecord.price_adjustment === 'string' ? optionRecord.price_adjustment : parseMoney(optionRecord.price_adjustment),
       }
     }),
-    addon_groups: asArray(record.addon_groups).map((group) => {
-      const groupRecord = asRecord(group)
-      return {
-        key: getSafeText(groupRecord.key),
-        label: getNonEmptyText(groupRecord.label, 'Add-ons'),
-        type: groupRecord.type === 'single' ? 'single' : 'checkbox',
-        min: typeof groupRecord.min === 'number' ? groupRecord.min : 0,
-        max: typeof groupRecord.max === 'number' ? groupRecord.max : 0,
-        options: asArray(groupRecord.options).map((option) => {
-          const optionRecord = asRecord(option)
-          return {
-            key: getSafeText(optionRecord.key),
-            label: getNonEmptyText(optionRecord.label, 'Add-on'),
-            price_adjustment: parseMoney(optionRecord.price_adjustment),
-          }
-        }),
-      }
-    }),
-    upsell_products: asArray(record.upsell_products).map(parseMenuItemCard),
+    addon_groups: asArray(record.addon_groups || record.add_on_groups).map(parseAddonGroup),
+    upsell_products: upsellProducts,
     estimated_prep_minutes: typeof record.estimated_prep_minutes === 'number' ? record.estimated_prep_minutes : undefined,
     empty_state: getSafeText(record.empty_state),
+    allergens_enabled: record.allergens_enabled === true,
   }
 }
 
 export function parseCartResponse(input: unknown): CartResponse {
   const record = asRecord(input) as Partial<ApiCartResponse>
-  const integration = asRecord(record.integration)
+  const availableUpsells = filterMenuItems(asArray(record.available_upsells).map(parseMenuItemCard))
 
   return {
-    cart_token: getSafeText(record.cart_token),
     items: asArray(record.items).map(parseCartItem),
     item_count: typeof record.item_count === 'number' ? record.item_count : 0,
     subtotal: parseMoney(record.subtotal),
     taxes: parseMoney(record.taxes),
     fees: parseMoney(record.fees),
+    discount: parseMoney(record.discount),
+    tip: parseMoney(record.tip),
     total: parseMoney(record.total),
     currency: getNonEmptyText(record.currency, 'USD'),
-    available_upsells: asArray(record.available_upsells).map(parseMenuItemCard),
-    integration: {
-      cart_token_header: getSafeText(integration.cart_token_header),
-      guest_cart: integration.guest_cart === true,
-      nonce: getSafeText(integration.nonce),
-    },
+    available_upsells: availableUpsells,
+    coupon_code: getSafeText(record.coupon_code),
   }
 }
 
@@ -302,9 +396,10 @@ export function parseCheckoutConfigResponse(input: unknown): CheckoutConfig {
   const requiredFields = asRecord(record.required_fields)
   const estimatedTimes = asRecord(record.estimated_times)
   const notes = asRecord(record.notes)
+  const store = asRecord(record.store)
+  const storeLocation = asRecord(store.location)
 
   return {
-    cart: parseCartResponse(record.cart),
     fulfillment_modes: asArray(record.fulfillment_modes).map((mode) => {
       const modeRecord = asRecord(mode)
       return {
@@ -315,6 +410,14 @@ export function parseCheckoutConfigResponse(input: unknown): CheckoutConfig {
     }),
     payment_methods: asArray(record.payment_methods).map(parsePaymentMethod),
     delivery_methods: asArray(record.delivery_methods).map(parseDeliveryMethod),
+    store: {
+      pickup_address: getSafeText(store.pickup_address),
+      delivery_radius_km: typeof store.delivery_radius_km === 'number' ? store.delivery_radius_km : 0,
+      location:
+        typeof storeLocation.lat === 'number' && typeof storeLocation.lng === 'number'
+          ? { lat: storeLocation.lat, lng: storeLocation.lng }
+          : null,
+    },
     required_fields: {
       pickup: asArray(requiredFields.pickup).map((field) => getSafeText(field)).filter(Boolean),
       delivery: asArray(requiredFields.delivery).map((field) => getSafeText(field)).filter(Boolean),
@@ -324,9 +427,27 @@ export function parseCheckoutConfigResponse(input: unknown): CheckoutConfig {
       delivery: typeof estimatedTimes.delivery === 'number' ? estimatedTimes.delivery : 0,
     },
     notes: {
-      upi: getSafeText(notes.upi),
+      payment: getSafeText(notes.payment),
+      upi: getSafeText(notes.upi || notes.payment),
       auth: getSafeText(notes.auth),
     },
+  }
+}
+
+export function parseDeliveryValidationResponse(input: unknown): DeliveryValidationResponse {
+  const record = asRecord(input) as Partial<ApiDeliveryValidationResponse>
+  const storeLocation = asRecord(record.store_location)
+
+  return {
+    available: record.available === true,
+    distance_km: typeof record.distance_km === 'number' ? record.distance_km : 0,
+    radius_km: typeof record.radius_km === 'number' ? record.radius_km : 0,
+    pickup_address: getSafeText(record.pickup_address),
+    store_location:
+      typeof storeLocation.lat === 'number' && typeof storeLocation.lng === 'number'
+        ? { lat: storeLocation.lat, lng: storeLocation.lng }
+        : null,
+    message: getSafeText(record.message),
   }
 }
 
@@ -352,6 +473,13 @@ export function parseCheckoutValidationResponse(input: unknown): CheckoutValidat
         postcode: getSafeText(address.postcode),
         country: getNonEmptyText(address.country, 'US'),
       },
+    },
+    pricing: {
+      subtotal: parseMoney(record.pricing ? asRecord(record.pricing).subtotal : undefined),
+      discount: parseMoney(record.pricing ? asRecord(record.pricing).discount : undefined),
+      tip: parseMoney(record.pricing ? asRecord(record.pricing).tip : undefined),
+      total: parseMoney(record.pricing ? asRecord(record.pricing).total : undefined),
+      coupon_code: record.pricing ? getSafeText(asRecord(record.pricing).coupon_code) : '',
     },
     message: getSafeText(record.message),
   }
@@ -412,19 +540,16 @@ export function parsePlaceOrderResponse(input: unknown): PlaceOrderResponse {
 
 export function createEmptyCartResponse(currency = 'USD'): CartResponse {
   return {
-    cart_token: '',
     items: [],
     item_count: 0,
     subtotal: createEmptyMoney(currency),
     taxes: createEmptyMoney(currency),
     fees: createEmptyMoney(currency),
+    discount: createEmptyMoney(currency),
+    tip: createEmptyMoney(currency),
     total: createEmptyMoney(currency),
     currency,
     available_upsells: [],
-    integration: {
-      cart_token_header: 'X-Frankies-Cart-Token',
-      guest_cart: true,
-      nonce: '',
-    },
+    coupon_code: '',
   }
 }

@@ -18,7 +18,7 @@ export function CategoryTabs({
       className={[
         vertical
           ? 'flex flex-col gap-2'
-          : 'flex gap-3 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
+          : 'flex w-full min-w-0 gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
       ].join(' ')}
     >
       {categories.map((category) => {
@@ -32,7 +32,7 @@ export function CategoryTabs({
             className={[
               vertical
                 ? 'w-full rounded-[18px] border px-4 py-3 text-left text-sm font-semibold transition'
-                : 'shrink-0 rounded-full border px-4 py-2 text-sm font-semibold transition',
+                : 'min-w-fit shrink-0 rounded-full border px-4 py-2.5 text-center text-sm font-semibold transition',
               active
                 ? vertical
                   ? 'border-[var(--red)] bg-[var(--red)] text-white shadow-[0_14px_24px_rgba(185,49,47,0.18)]'

@@ -34,6 +34,10 @@ export type ApiMenuItemCard = {
   availability: 'available' | 'unavailable'
   fulfillment_mode: 'pickup' | 'delivery' | 'both'
   sort_order: number
+  price?: number
+  add_on_groups?: ApiMenuAddonGroup[]
+  spice_options?: ApiMenuSpiceOption[]
+  allergens_enabled?: boolean
 }
 
 export type ApiMenuSpiceOption = {
@@ -52,6 +56,7 @@ export type ApiMenuAddonGroup = {
   key: string
   label: string
   type: string
+  required?: boolean
   min: number
   max: number
   options: ApiMenuAddonOption[]
@@ -92,10 +97,12 @@ export type ApiMenuCollectionResponse = {
     version: string
     empty: boolean
   }
+  categories?: Array<ApiMenuCategory & { items: ApiMenuItemCard[] }>
   sections: Array<{
     category: ApiMenuCategory
     items: ApiMenuItemCard[]
   }>
+  featured?: ApiMenuItemCard[]
 }
 
 export type ApiMenuCategoriesResponse = {
@@ -119,38 +126,47 @@ export type ApiCartSelectedOption = {
   price_adjustment: ApiMoney
 }
 
+export type ApiCartSelectedAddOn = {
+  group_id: string
+  option_id: string
+  name: string
+  price: ApiMoney
+}
+
 export type ApiCartItem = {
   key: string
   product_id: number
+  slug?: string
   name: string
   image: string
   image_data?: ResponsiveImageAsset
   quantity: number
-  unit_price: ApiMoney
+  base_price: ApiMoney
   line_subtotal: ApiMoney
   line_total: ApiMoney
+  selected_add_ons?: ApiCartSelectedAddOn[]
   selected_options: {
     spice_level: ApiCartSelectedOption | null
-    addons: ApiCartSelectedOption[]
+    addons: ApiCartSelectedAddOn[]
+    allergies_note?: string
   }
   summary_lines: string[]
+  allergies_note?: string
+  fulfillment_mode?: 'pickup' | 'delivery' | 'both'
 }
 
 export type ApiCartResponse = {
-  cart_token: string
   items: ApiCartItem[]
   item_count: number
   subtotal: ApiMoney
   taxes: ApiMoney
   fees: ApiMoney
+  discount?: ApiMoney
+  tip?: ApiMoney
   total: ApiMoney
   currency: string
   available_upsells: ApiMenuItemCard[]
-  integration?: {
-    cart_token_header?: string
-    guest_cart?: boolean
-    nonce?: string
-  }
+  coupon_code?: string
 }
 
 export type ApiCheckoutDeliveryMethod = {
@@ -174,10 +190,17 @@ export type ApiCheckoutFulfillmentMode = {
 }
 
 export type ApiCheckoutConfigResponse = {
-  cart: ApiCartResponse
   fulfillment_modes: ApiCheckoutFulfillmentMode[]
   payment_methods: ApiCheckoutPaymentMethod[]
   delivery_methods: ApiCheckoutDeliveryMethod[]
+  store: {
+    pickup_address: string
+    delivery_radius_km: number
+    location: {
+      lat: number
+      lng: number
+    } | null
+  }
   required_fields: {
     pickup: string[]
     delivery: string[]
@@ -187,6 +210,7 @@ export type ApiCheckoutConfigResponse = {
     delivery: number
   }
   notes: {
+    payment?: string
     upi: string
     auth: string
   }
@@ -207,6 +231,9 @@ export type ApiCheckoutInput = {
   payment_method?: string
   delivery_method?: string
   address: ApiCheckoutAddressInput
+  coupon_code?: string
+  tip_amount?: string
+  cart_items?: Array<Record<string, unknown>>
 }
 
 export type ApiCheckoutValidationResponse = {
@@ -215,6 +242,13 @@ export type ApiCheckoutValidationResponse = {
   checkout: ApiCheckoutInput & {
     delivery_method: ApiCheckoutDeliveryMethod | null
     estimated_ready_time: string
+  }
+  pricing: {
+    subtotal: ApiMoney
+    discount: ApiMoney
+    tip: ApiMoney
+    total: ApiMoney
+    coupon_code?: string
   }
   message: string
 }
@@ -264,10 +298,35 @@ export type ApiPlaceOrderResponse = {
 }
 
 export type ApiAddToCartInput = {
+  item_id?: number
+  itemId?: number
   product_id: number
+  slug: string
+  name: string
+  image: string
+  image_data?: ResponsiveImageAsset
+  base_price: ApiMoney
+  final_price?: ApiMoney
   quantity: number
-  spice_level?: string
-  addons?: string[]
+  fulfillment_mode?: 'pickup' | 'delivery' | 'both'
+  size?: ApiCartSelectedOption | null
+  spice_level?: ApiCartSelectedOption | null
+  addons?: ApiCartSelectedAddOn[]
+  selected_add_ons?: ApiCartSelectedAddOn[]
+  notes?: string
+  allergies_note?: string
+}
+
+export type ApiDeliveryValidationResponse = {
+  available: boolean
+  distance_km: number
+  radius_km: number
+  pickup_address: string
+  store_location: {
+    lat: number
+    lng: number
+  } | null
+  message: string
 }
 
 export type ApiUpdateCartItemInput = {
