@@ -43,7 +43,7 @@ import type {
   PlaceOrderResponse,
 } from './types'
 
-const ENV_WORDPRESS_BASE = import.meta.env.VITE_WORDPRESS_BASE_URL?.replace(/\/$/, '')
+import { getBrowserOrigin, getWordPressOrigin, isProxyingWordPressThroughFrontend, WORDPRESS_BASE_URL as ENV_WORDPRESS_BASE } from '../../lib/env'
 const API_NAMESPACE = '/frankies-headless/v1'
 const DEFAULT_COUNTRY = 'US'
 const GET_RESPONSE_CACHE_TTL_MS = 5 * 60 * 1000
@@ -82,58 +82,18 @@ export class FrankiesHeadlessError extends Error {
   }
 }
 
-function getBrowserOrigin() {
-  if (typeof window === 'undefined' || !/^https?:$/i.test(window.location.protocol)) {
-    return ''
-  }
+// getBrowserOrigin, getLocalWordPressOrigin and isProxyingWordPressThroughFrontend 
+// are now handled via lib/env.ts imports.
 
-  return window.location.origin.replace(/\/$/, '')
-}
-
-function getLocalWordPressOrigin() {
-  if (typeof window === 'undefined' || !/^https?:$/i.test(window.location.protocol)) {
-    return ''
-  }
-
-  const { protocol, hostname } = window.location
-  return `${protocol}//${hostname}:8080`
-}
-
-function isProxyingWordPressThroughFrontend() {
-  if (!import.meta.env.DEV) {
-    return false
-  }
-
-  const browserOrigin = getBrowserOrigin()
-  return Boolean(browserOrigin) && !browserOrigin.endsWith(':8080')
-}
+// isProxyingWordPressThroughFrontend is now imported from env.ts
 
 function getWordPressBase() {
-  if (isProxyingWordPressThroughFrontend()) {
-    return getBrowserOrigin()
-  }
-
-  if (ENV_WORDPRESS_BASE) {
-    return ENV_WORDPRESS_BASE
-  }
-
-  if (typeof window !== 'undefined' && /^https?:$/i.test(window.location.protocol)) {
-    const { protocol, hostname, port } = window.location
-
-    if ((hostname === 'localhost' || hostname === '127.0.0.1') && port !== '8080') {
-      return `${protocol}//${hostname}:8080`
-    }
-  }
-
-  return ''
+  return getWordPressOrigin()
 }
 
 function normalizeWordPressUrl(value: string) {
   const browserOrigin = getBrowserOrigin()
-  const wordpressBase =
-    ENV_WORDPRESS_BASE ||
-    (isProxyingWordPressThroughFrontend() ? browserOrigin : '') ||
-    getLocalWordPressOrigin()
+  const wordpressBase = getWordPressOrigin()
 
   if (/^\/wp-(content|includes)\//i.test(value)) {
     return wordpressBase ? `${wordpressBase}${value}` : value
@@ -148,12 +108,7 @@ function normalizeWordPressUrl(value: string) {
     const knownOrigins = new Set<string>(
       [
         ENV_WORDPRESS_BASE,
-        getLocalWordPressOrigin(),
         browserOrigin,
-        'http://localhost:8080',
-        'https://localhost:8080',
-        'http://127.0.0.1:8080',
-        'https://127.0.0.1:8080',
       ].filter(Boolean),
     )
 

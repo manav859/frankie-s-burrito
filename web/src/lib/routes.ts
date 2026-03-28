@@ -1,4 +1,5 @@
 import { withBase } from './base-path'
+import { WORDPRESS_BASE_URL } from './env'
 
 export const APP_ROUTES = {
   home: '/',
@@ -63,22 +64,11 @@ function getKnownInternalHosts() {
     hosts.add(window.location.host.toLowerCase())
   }
 
-  for (const candidate of [
-    import.meta.env.VITE_WORDPRESS_BASE_URL,
-    import.meta.env.WORDPRESS_BASE_URL,
-    'http://localhost:8080',
-    'https://localhost:8080',
-    'http://127.0.0.1:8080',
-    'https://127.0.0.1:8080',
-  ]) {
-    if (!candidate) {
-      continue
-    }
-
+  if (WORDPRESS_BASE_URL) {
     try {
-      hosts.add(new URL(candidate).host.toLowerCase())
+      hosts.add(new URL(WORDPRESS_BASE_URL).host.toLowerCase())
     } catch {
-      // Ignore malformed local env values.
+      // Ignore malformed env value.
     }
   }
 

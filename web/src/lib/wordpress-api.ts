@@ -14,7 +14,7 @@ import type {
 } from '../types'
 import { normalizeResponsiveImageAsset } from './media'
 
-const ENV_WORDPRESS_BASE = import.meta.env.VITE_WORDPRESS_BASE_URL?.replace(/\/$/, '')
+import { getBrowserOrigin, getWordPressOrigin, isProxyingWordPressThroughFrontend, WORDPRESS_BASE_URL as ENV_WORDPRESS_BASE } from './env'
 const MEMORY_CACHE = new Map<string, { etag: string; data: unknown; cachedAt: number }>()
 const REQUEST_CACHE_PREFIX = 'frankies-wp-cache:v3:'
 const BROWSER_CACHE_HARD_TTL_MS = 15 * 60 * 1000
@@ -35,38 +35,9 @@ export function isAbortError(error: unknown) {
   return candidate.name === 'AbortError' || candidate.message === 'signal is aborted without reason'
 }
 
-function getBrowserOrigin() {
-  if (typeof window === 'undefined' || !/^https?:$/i.test(window.location.protocol)) {
-    return ''
-  }
-
-  return window.location.origin.replace(/\/$/, '')
-}
-
-function getLocalWordPressOrigin() {
-  if (typeof window === 'undefined' || !/^https?:$/i.test(window.location.protocol)) {
-    return ''
-  }
-
-  const { protocol, hostname } = window.location
-  return `${protocol}//${hostname}:8080`
-}
-
-function isProxyingWordPressThroughFrontend() {
-  if (!import.meta.env.DEV) {
-    return false
-  }
-
-  const browserOrigin = getBrowserOrigin()
-  return Boolean(browserOrigin) && !browserOrigin.endsWith(':8080')
-}
-
 function normalizeWordPressUrl(value: string) {
   const browserOrigin = getBrowserOrigin()
-  const wordpressBase =
-    ENV_WORDPRESS_BASE ||
-    (isProxyingWordPressThroughFrontend() ? browserOrigin : '') ||
-    getLocalWordPressOrigin()
+  const wordpressBase = getWordPressOrigin()
 
   if (/^\/wp-(content|includes)\//i.test(value)) {
     if (!wordpressBase) {
@@ -85,12 +56,7 @@ function normalizeWordPressUrl(value: string) {
     const knownOrigins = new Set<string>(
       [
         ENV_WORDPRESS_BASE,
-        getLocalWordPressOrigin(),
         browserOrigin,
-        'http://localhost:8080',
-        'https://localhost:8080',
-        'http://127.0.0.1:8080',
-        'https://127.0.0.1:8080',
       ].filter(Boolean),
     )
 
@@ -279,25 +245,7 @@ function normalizePageArchiveResponse(payload: PageArchiveResponse): PageArchive
   }
 }
 
-function getWordPressBase() {
-  if (isProxyingWordPressThroughFrontend()) {
-    return getBrowserOrigin()
-  }
-
-  if (ENV_WORDPRESS_BASE) {
-    return ENV_WORDPRESS_BASE
-  }
-
-  if (typeof window !== 'undefined' && /^https?:$/i.test(window.location.protocol)) {
-    const { protocol, hostname, port } = window.location
-
-    if ((hostname === 'localhost' || hostname === '127.0.0.1') && port !== '8080') {
-      return `${protocol}//${hostname}:8080`
-    }
-  }
-
-  return ''
-}
+// getWordPressBase is now getWordPressOrigin imported from env.ts
 
 function getPreviewState(): PreviewState {
   if (typeof window === 'undefined') {
@@ -462,7 +410,7 @@ async function fetchWordPressJson<T>(
     query?: Record<string, QueryValue>
   },
 ): Promise<T> {
-  const wordpressBase = getWordPressBase()
+  const wordpressBase = getWordPressOrigin()
 
   if (!wordpressBase) {
     throw new Error('Missing VITE_WORDPRESS_BASE_URL or reachable local WordPress backend')
@@ -538,7 +486,7 @@ export function getInitialBootstrap(): SiteBootstrap {
 }
 
 export async function getSiteBootstrap(signal?: AbortSignal): Promise<SiteBootstrap> {
-  if (!getWordPressBase()) {
+  if (!getWordPressOrigin()) {
     return getGeneratedBootstrap()
   }
 
@@ -546,7 +494,7 @@ export async function getSiteBootstrap(signal?: AbortSignal): Promise<SiteBootst
 }
 
 export async function getSettings(signal?: AbortSignal): Promise<SettingsPayload | null> {
-  if (!getWordPressBase()) {
+  if (!getWordPressOrigin()) {
     return null
   }
 
@@ -558,7 +506,7 @@ export async function getSettings(signal?: AbortSignal): Promise<SettingsPayload
 }
 
 export async function getNavigation(signal?: AbortSignal): Promise<NavigationPayload | null> {
-  if (!getWordPressBase()) {
+  if (!getWordPressOrigin()) {
     return null
   }
 
@@ -591,5 +539,5 @@ export async function getPageBySlug(slug: string, signal?: AbortSignal): Promise
 }
 
 export function hasWordPressBase() {
-  return Boolean(getWordPressBase())
+  return Boolean(getWordPressOrigin())
 }
