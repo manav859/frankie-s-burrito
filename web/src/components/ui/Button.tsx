@@ -24,7 +24,7 @@ export function Button({
       ? 'border border-[var(--red)] bg-[var(--cream-soft)] text-[var(--red)] hover:bg-white'
       : variant === 'light'
         ? 'border border-transparent bg-white text-[var(--red)] hover:shadow-[0_10px_28px_rgba(255,255,255,0.24)]'
-        : 'border border-transparent bg-[var(--red)] text-white hover:shadow-[0_12px_28px_rgba(185,49,47,0.28)]'
+        : 'border border-transparent bg-[var(--red)] text-white hover:shadow-[0_12px_28px_rgba(17,17,17,0.24)]'
 
   return (
     <a

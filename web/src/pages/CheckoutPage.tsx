@@ -1,145 +1,211 @@
 import { useEffect, useMemo, useState, type InputHTMLAttributes, type ReactNode } from 'react'
 import { CartLineItems } from '../components/ordering/CartLineItems'
-import { OrderEmptyState, OrderErrorState, OrderLoadingState } from '../components/ordering/OrderState'
+import { OrderEmptyState, OrderErrorState } from '../components/ordering/OrderState'
 import { useCart } from '../features/ordering/cart'
-import { getCheckoutConfig, getDefaultCheckoutAddress } from '../features/ordering/api'
+import { getDefaultCheckoutAddress, validateDelivery } from '../features/ordering/api'
+import { createEmptyMoney, moneyFromRaw } from '../features/ordering/helpers'
 import type {
   CartResponse,
   CheckoutConfig,
   CheckoutInput,
+  CheckoutValidationResponse,
+  DeliveryValidationResponse,
   FulfillmentType,
+  Money,
 } from '../features/ordering/types'
+import { useCheckoutConfig } from '../features/ordering/useCheckoutConfig'
 import { withBase } from '../lib/base-path'
 
 const ORDER_CONFIRMATION_CACHE_KEY = 'frankies-last-order-confirmation:v1'
 
 type CheckoutFieldErrors = Partial<Record<'full_name' | 'mobile_number' | 'street_address' | 'city' | 'state' | 'postcode' | 'country' | 'payment_method' | 'delivery_method', string>>
 
+type TipChoice = '0' | '10' | '15' | '20' | 'custom'
+
 export function CheckoutPage() {
   const { cart, ready, error, mutation, validateCurrentCheckout, submitOrder } = useCart()
-  const [config, setConfig] = useState<CheckoutConfig | null>(null)
-  const [debouncedAddress, setDebouncedAddress] = useState(getDefaultCheckoutAddress())
-  const [loadingConfig, setLoadingConfig] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [formError, setFormError] = useState<string | null>(null)
   const [fieldErrors, setFieldErrors] = useState<CheckoutFieldErrors>({})
   const [validationMessage, setValidationMessage] = useState<string | null>(null)
+  const [deliveryStatus, setDeliveryStatus] = useState<DeliveryValidationResponse | null>(null)
+  const [deliveryLoading, setDeliveryLoading] = useState(false)
+  const [pricingPreview, setPricingPreview] = useState<CheckoutValidationResponse['pricing'] | null>(null)
+  const [couponCode, setCouponCode] = useState('')
+  const [tipChoice, setTipChoice] = useState<TipChoice>('0')
+  const [customTip, setCustomTip] = useState('')
   const [formState, setFormState] = useState<CheckoutInput>({
-    fulfillment_type: 'delivery',
+    fulfillment_type: 'pickup',
     full_name: '',
     mobile_number: '',
+    payment_method: 'cod',
     address: getDefaultCheckoutAddress(),
   })
+  const { config, loading: loadingConfig, error: configError } = useCheckoutConfig(cart.items, ready && cart.items.length > 0)
+
+  const fallbackConfig = useMemo<CheckoutConfig>(
+    () => ({
+      fulfillment_modes: [
+        { id: 'pickup', label: 'Pickup', methods: [{ id: 'pickup', label: 'Pickup', price: moneyFromRaw(0, cart.currency) }] },
+        { id: 'delivery', label: 'Delivery', methods: [{ id: 'delivery', label: 'Delivery', price: moneyFromRaw(0, cart.currency) }] },
+      ],
+      payment_methods: [
+        {
+          id: 'cod',
+          type: 'cash_on_delivery',
+          label: 'Cash on Delivery',
+          description: 'Fallback method shown while live payment methods load.',
+          enabled: true,
+        },
+      ],
+      delivery_methods: [{ id: 'delivery', label: 'Delivery', price: moneyFromRaw(0, cart.currency) }],
+      store: {
+        pickup_address: '',
+        delivery_radius_km: 0,
+        location: null,
+      },
+      required_fields: {
+        pickup: ['full_name', 'mobile_number', 'payment_method'],
+        delivery: ['full_name', 'mobile_number', 'street_address', 'city', 'state', 'postcode', 'delivery_method', 'payment_method'],
+      },
+      estimated_times: {
+        pickup: 20,
+        delivery: 40,
+      },
+      notes: {
+        payment: 'Live payment methods are loading in the background.',
+        upi: '',
+        auth: '',
+      },
+    }),
+    [cart.currency],
+  )
+  const effectiveConfig = config || fallbackConfig
 
   useEffect(() => {
-    if (formState.fulfillment_type !== 'delivery') {
-      setDebouncedAddress(getDefaultCheckoutAddress())
+    if (!effectiveConfig.fulfillment_modes.length) {
       return
     }
 
-    const timeoutId = window.setTimeout(() => setDebouncedAddress(formState.address), 250)
-    return () => window.clearTimeout(timeoutId)
-  }, [formState.address, formState.fulfillment_type])
+    if (!effectiveConfig.fulfillment_modes.some((mode) => mode.id === formState.fulfillment_type)) {
+      setFormState((current) => ({ ...current, fulfillment_type: effectiveConfig.fulfillment_modes[0].id }))
+    }
+  }, [effectiveConfig.fulfillment_modes, formState.fulfillment_type])
 
   useEffect(() => {
-    if (!ready || !cart?.items.length) {
-      setLoadingConfig(false)
+    if (!effectiveConfig.payment_methods.length) {
+      return
+    }
+
+    if (!effectiveConfig.payment_methods.some((method) => method.id === formState.payment_method)) {
+      setFormState((current) => ({ ...current, payment_method: effectiveConfig.payment_methods[0].id }))
+    }
+  }, [effectiveConfig.payment_methods, formState.payment_method])
+
+  useEffect(() => {
+    if (formState.fulfillment_type !== 'delivery') {
+      setDeliveryStatus(null)
+      return
+    }
+
+    const address = `${formState.address.street_address}, ${formState.address.city}, ${formState.address.state}, ${formState.address.postcode}, ${formState.address.country}`.trim()
+    if (!formState.address.street_address || !formState.address.city || !formState.address.state || !formState.address.postcode) {
+      setDeliveryStatus(null)
       return
     }
 
     const controller = new AbortController()
-
-    const loadConfig = async () => {
-      setLoadingConfig(true)
+    const timeoutId = window.setTimeout(async () => {
+      setDeliveryLoading(true)
 
       try {
-        const response = await getCheckoutConfig(formState.fulfillment_type === 'delivery' ? debouncedAddress : undefined, controller.signal)
-        setConfig(response)
-        setFormError(null)
+        const coordinates = await geocodeAddress(address, controller.signal)
+
+        if (!coordinates) {
+          setDeliveryStatus({
+            available: false,
+            distance_km: 0,
+            radius_km: effectiveConfig.store.delivery_radius_km || 0,
+            pickup_address: effectiveConfig.store.pickup_address || '',
+            store_location: effectiveConfig.store.location || null,
+            message: 'We could not confirm this delivery address yet.',
+          })
+          return
+        }
+
+        const result = await validateDelivery(
+          { latitude: coordinates.lat, longitude: coordinates.lng },
+          controller.signal,
+        )
+        setDeliveryStatus(result)
       } catch (caughtError) {
         if (controller.signal.aborted) {
           return
         }
 
-        setFormError(caughtError instanceof Error ? caughtError.message : 'Unable to load checkout options.')
+        setDeliveryStatus({
+          available: false,
+          distance_km: 0,
+          radius_km: effectiveConfig.store.delivery_radius_km || 0,
+          pickup_address: effectiveConfig.store.pickup_address || '',
+          store_location: effectiveConfig.store.location || null,
+          message: caughtError instanceof Error ? caughtError.message : 'Unable to validate delivery right now.',
+        })
       } finally {
         if (!controller.signal.aborted) {
-          setLoadingConfig(false)
+          setDeliveryLoading(false)
         }
       }
+    }, 500)
+
+    return () => {
+      controller.abort()
+      window.clearTimeout(timeoutId)
     }
+  }, [effectiveConfig.store.delivery_radius_km, effectiveConfig.store.location, effectiveConfig.store.pickup_address, formState.address, formState.fulfillment_type])
 
-    void loadConfig()
-    return () => controller.abort()
-  }, [cart?.item_count, debouncedAddress, formState.fulfillment_type, ready])
-
-  const availableFulfillmentModes = useMemo(() => config?.fulfillment_modes || [], [config])
+  const requiredFields = useMemo(
+    () => effectiveConfig.required_fields[formState.fulfillment_type] || [],
+    [effectiveConfig, formState.fulfillment_type],
+  )
   const activeDeliveryMethods = useMemo(() => {
-    if (formState.fulfillment_type !== 'delivery' || !config) {
+    if (formState.fulfillment_type !== 'delivery') {
       return []
     }
 
-    const activeMode = config.fulfillment_modes.find((mode) => mode.id === formState.fulfillment_type)
-    return activeMode?.methods.length ? activeMode.methods : config.delivery_methods || []
-  }, [config, formState.fulfillment_type])
-  const requiredFields = useMemo(
-    () => (config ? config.required_fields[formState.fulfillment_type] : []),
-    [config, formState.fulfillment_type],
-  )
-
-  useEffect(() => {
-    if (!availableFulfillmentModes.length) {
-      return
+    return effectiveConfig.fulfillment_modes.find((mode) => mode.id === 'delivery')?.methods || effectiveConfig.delivery_methods
+  }, [effectiveConfig, formState.fulfillment_type])
+  const tipAmount = useMemo(() => {
+    const subtotal = Number(cart.subtotal.raw)
+    if (!Number.isFinite(subtotal)) {
+      return 0
     }
 
-    const availableModeIds = new Set(availableFulfillmentModes.map((mode) => mode.id))
-    if (!availableModeIds.has(formState.fulfillment_type)) {
-      setFormState((current) => ({ ...current, fulfillment_type: availableFulfillmentModes[0].id }))
-    }
-  }, [availableFulfillmentModes, formState.fulfillment_type])
-
-  useEffect(() => {
-    if (formState.fulfillment_type !== 'delivery') {
-      if (formState.delivery_method) {
-        setFormState((current) => ({ ...current, delivery_method: undefined }))
-      }
-      return
+    if (tipChoice === 'custom') {
+      const custom = Number(customTip)
+      return Number.isFinite(custom) && custom > 0 ? custom : 0
     }
 
-    if (!activeDeliveryMethods.length) {
-      return
+    const percent = Number(tipChoice)
+    return percent > 0 ? subtotal * (percent / 100) : 0
+  }, [cart.subtotal.raw, customTip, tipChoice])
+  const displayTotals = useMemo(() => {
+    if (pricingPreview) {
+      return pricingPreview
     }
 
-    const existingMethod = activeDeliveryMethods.find((method) => method.id === formState.delivery_method)
-    if (!existingMethod) {
-      setFormState((current) => ({ ...current, delivery_method: activeDeliveryMethods[0].id }))
+    const subtotal = Number(cart.subtotal.raw)
+    const safeSubtotal = Number.isFinite(subtotal) ? subtotal : 0
+    const total = safeSubtotal + tipAmount
+
+    return {
+      subtotal: cart.subtotal,
+      discount: createEmptyMoney(cart.currency),
+      tip: moneyFromRaw(tipAmount, cart.currency),
+      total: moneyFromRaw(total, cart.currency),
+      coupon_code: couponCode,
     }
-  }, [activeDeliveryMethods, formState.delivery_method, formState.fulfillment_type])
-
-  const updateFulfillmentType = (fulfillmentType: FulfillmentType) => {
-    setFieldErrors((current) => ({ ...current, delivery_method: undefined }))
-    setValidationMessage(null)
-    setFormState((current) => ({ ...current, fulfillment_type: fulfillmentType }))
-  }
-
-  const updateFieldError = (field: keyof CheckoutFieldErrors, value?: string) => {
-    setFieldErrors((current) => ({ ...current, [field]: value }))
-  }
-
-  const handleTextFieldChange = (field: 'full_name' | 'mobile_number', value: string) => {
-    setValidationMessage(null)
-    updateFieldError(field, undefined)
-    setFormState((current) => ({ ...current, [field]: value }))
-  }
-
-  const handleAddressFieldChange = (
-    field: 'street_address' | 'city' | 'state' | 'postcode' | 'country',
-    value: string,
-  ) => {
-    setValidationMessage(null)
-    updateFieldError(field, undefined)
-    setFormState((current) => ({ ...current, address: { ...current.address, [field]: value } }))
-  }
+  }, [cart.currency, cart.subtotal, couponCode, pricingPreview, tipAmount])
 
   const validateLocally = () => {
     const nextErrors: CheckoutFieldErrors = {}
@@ -180,8 +246,34 @@ export function CheckoutPage() {
       nextErrors.delivery_method = 'Choose a delivery method.'
     }
 
+    if (formState.fulfillment_type === 'delivery' && deliveryStatus && !deliveryStatus.available) {
+      nextErrors.street_address = deliveryStatus.message || 'Delivery is unavailable for this address.'
+    }
+
     setFieldErrors(nextErrors)
     return Object.keys(nextErrors).length === 0
+  }
+
+  const buildCheckoutPayload = (): CheckoutInput => ({
+    ...formState,
+    coupon_code: couponCode.trim() || undefined,
+    tip_amount: tipAmount > 0 ? tipAmount.toFixed(2) : undefined,
+  })
+
+  const handlePreviewPricing = async () => {
+    if (!validateLocally()) {
+      return
+    }
+
+    setFormError(null)
+
+    try {
+      const validation = await validateCurrentCheckout(buildCheckoutPayload())
+      setPricingPreview(validation.pricing)
+      setValidationMessage(validation.message || 'Checkout details look good.')
+    } catch (caughtError) {
+      setFormError(caughtError instanceof Error ? caughtError.message : 'Unable to validate checkout.')
+    }
   }
 
   const handlePlaceOrder = async () => {
@@ -191,17 +283,17 @@ export function CheckoutPage() {
 
     setSubmitting(true)
     setFormError(null)
-    setValidationMessage(null)
 
     try {
-      const validation = await validateCurrentCheckout(formState)
+      const validation = await validateCurrentCheckout(buildCheckoutPayload())
+      setPricingPreview(validation.pricing)
       setValidationMessage(validation.message || 'Checkout details look good.')
 
-      const response = await submitOrder(formState)
+      const response = await submitOrder(buildCheckoutPayload())
       try {
         window.sessionStorage.setItem(ORDER_CONFIRMATION_CACHE_KEY, JSON.stringify(response.confirmation))
       } catch {
-        // Ignore session storage issues and continue to confirmation.
+        // Ignore session storage failures.
       }
 
       const confirmationUrl = new URL(response.confirmation_url, window.location.origin)
@@ -214,33 +306,31 @@ export function CheckoutPage() {
     }
   }
 
-  if (!ready) {
-    return <OrderLoadingState label="Loading checkout..." />
-  }
-
-  if (!cart?.items.length) {
+  if (!cart.items.length) {
     return <OrderEmptyState title="Cart required" body="Add something to your cart before heading to checkout." actionLabel="Browse menu" />
   }
 
-  if (loadingConfig && !config) {
-    return <OrderLoadingState label="Loading checkout options..." />
-  }
-
   return (
-    <div className="mx-auto max-w-[1140px] space-y-6">
+    <div className="w-full space-y-6 xl:mx-auto xl:max-w-[1140px]">
       <div className="space-y-2">
         <div className="text-sm font-semibold uppercase tracking-[0.1em] text-[var(--orange)]">Step 2</div>
         <h1 className="font-western text-[42px] leading-[0.95] text-[var(--cocoa)]">Checkout</h1>
         <p className="max-w-[56ch] text-sm leading-[1.7] text-[var(--muted)]">
-          Choose pickup or delivery, confirm your details, and place the order. Online payment is intentionally disabled for now.
+          Delivery and payment are validated against the live WooCommerce backend, while the cart stays fast and local in the storefront.
         </p>
       </div>
 
       {error ? <OrderErrorState message={error} /> : null}
+      {configError ? <OrderErrorState message={configError} /> : null}
       {formError ? <OrderErrorState message={formError} /> : null}
       {validationMessage ? (
         <div className="rounded-[22px] border border-[rgba(61,107,53,0.18)] bg-[rgba(61,107,53,0.08)] px-4 py-3 text-sm font-medium text-[var(--sage)]">
           {validationMessage}
+        </div>
+      ) : null}
+      {loadingConfig ? (
+        <div className="rounded-[22px] border border-[rgba(106,45,31,0.12)] bg-[rgba(255,249,241,0.9)] px-4 py-3 text-sm text-[var(--muted)]">
+          Loading live payment and store settings in the background.
         </div>
       ) : null}
 
@@ -248,11 +338,11 @@ export function CheckoutPage() {
         <section className="space-y-5 rounded-[32px] border border-[rgba(106,45,31,0.12)] bg-white p-5 shadow-[0_24px_52px_rgba(31,25,21,0.08)] md:p-7">
           <div className="rounded-[28px] border border-[rgba(106,45,31,0.12)] bg-[var(--paper)] p-1.5">
             <div className="grid grid-cols-2 gap-1.5">
-              {availableFulfillmentModes.map((mode) => (
+              {effectiveConfig.fulfillment_modes.map((mode) => (
                 <button
                   key={mode.id}
                   type="button"
-                  onClick={() => updateFulfillmentType(mode.id)}
+                  onClick={() => setFormState((current) => ({ ...current, fulfillment_type: mode.id }))}
                   aria-pressed={formState.fulfillment_type === mode.id}
                   className={[
                     'rounded-full px-4 py-3 text-sm font-semibold transition',
@@ -267,157 +357,218 @@ export function CheckoutPage() {
             </div>
           </div>
 
-          <div className="space-y-5">
-            <section className="space-y-4 rounded-[24px] border border-[rgba(106,45,31,0.1)] bg-[var(--card)] p-5">
-              <div>
-                <h2 className="font-western text-[28px] text-[var(--cocoa)]">
-                  {formState.fulfillment_type === 'delivery' ? 'Delivery Details' : 'Pickup Details'}
-                </h2>
-                <p className="mt-2 text-sm leading-[1.6] text-[var(--muted)]">
-                  {formState.fulfillment_type === 'delivery'
-                    ? 'Enter the delivery details required by the current storefront configuration.'
-                    : 'We only need a few details to get your pickup order moving.'}
-                </p>
-              </div>
+          <section className="space-y-4 rounded-[24px] border border-[rgba(106,45,31,0.1)] bg-[var(--card)] p-5">
+            <div>
+              <h2 className="font-western text-[28px] text-[var(--cocoa)]">
+                {formState.fulfillment_type === 'delivery' ? 'Delivery Details' : 'Pickup Details'}
+              </h2>
+              <p className="mt-2 text-sm leading-[1.6] text-[var(--muted)]">
+                {formState.fulfillment_type === 'delivery'
+                  ? 'We geocode the address client-side and validate it against the store delivery radius before the order is placed.'
+                  : effectiveConfig.store.pickup_address || 'Pickup is available at the store location.'}
+              </p>
+            </div>
 
-              <InputField
-                label="Full Name"
-                value={formState.full_name}
-                onChange={(value) => handleTextFieldChange('full_name', value)}
-                placeholder="John Doe"
-                error={fieldErrors.full_name}
-                required={requiredFields.includes('full_name')}
-                autoComplete="name"
-              />
+            <InputField
+              label="Full Name"
+              value={formState.full_name}
+              onChange={(value) => setFormState((current) => ({ ...current, full_name: value }))}
+              placeholder="John Doe"
+              error={fieldErrors.full_name}
+              required={requiredFields.includes('full_name')}
+              autoComplete="name"
+            />
 
-              <InputField
-                label="Mobile Number"
-                value={formState.mobile_number}
-                onChange={(value) => handleTextFieldChange('mobile_number', value)}
-                placeholder="+1 (555) 000-0000"
-                error={fieldErrors.mobile_number}
-                required={requiredFields.includes('mobile_number')}
-                autoComplete="tel"
-                inputMode="tel"
-              />
+            <InputField
+              label="Mobile Number"
+              value={formState.mobile_number}
+              onChange={(value) => setFormState((current) => ({ ...current, mobile_number: value }))}
+              placeholder="+1 (555) 000-0000"
+              error={fieldErrors.mobile_number}
+              required={requiredFields.includes('mobile_number')}
+              autoComplete="tel"
+              inputMode="tel"
+            />
 
-              {formState.fulfillment_type === 'delivery' ? (
-                <>
+            {formState.fulfillment_type === 'pickup' ? (
+              <StoreMapCard config={effectiveConfig} />
+            ) : (
+              <>
+                <InputField
+                  label="Street Address"
+                  value={formState.address.street_address}
+                  onChange={(value) => setFormState((current) => ({ ...current, address: { ...current.address, street_address: value } }))}
+                  placeholder="123 Spicy Taco Blvd."
+                  error={fieldErrors.street_address}
+                  required={requiredFields.includes('street_address')}
+                  autoComplete="address-line1"
+                />
+
+                <div className="grid gap-4 md:grid-cols-2">
                   <InputField
-                    label="Street Address"
-                    value={formState.address.street_address}
-                    onChange={(value) => handleAddressFieldChange('street_address', value)}
-                    placeholder="123 Spicy Taco Blvd."
-                    error={fieldErrors.street_address}
-                    required={requiredFields.includes('street_address')}
-                    autoComplete="address-line1"
+                    label="City"
+                    value={formState.address.city}
+                    onChange={(value) => setFormState((current) => ({ ...current, address: { ...current.address, city: value } }))}
+                    placeholder="Agoura Hills"
+                    error={fieldErrors.city}
+                    required={requiredFields.includes('city')}
+                    autoComplete="address-level2"
                   />
+                  <InputField
+                    label="State"
+                    value={formState.address.state}
+                    onChange={(value) => setFormState((current) => ({ ...current, address: { ...current.address, state: value } }))}
+                    placeholder="CA"
+                    error={fieldErrors.state}
+                    required={requiredFields.includes('state')}
+                    autoComplete="address-level1"
+                  />
+                  <InputField
+                    label="Postcode"
+                    value={formState.address.postcode}
+                    onChange={(value) => setFormState((current) => ({ ...current, address: { ...current.address, postcode: value } }))}
+                    placeholder="91301"
+                    error={fieldErrors.postcode}
+                    required={requiredFields.includes('postcode')}
+                    autoComplete="postal-code"
+                  />
+                  <InputField
+                    label="Country"
+                    value={formState.address.country}
+                    onChange={(value) => setFormState((current) => ({ ...current, address: { ...current.address, country: value } }))}
+                    placeholder="US"
+                    error={fieldErrors.country}
+                    required={requiredFields.includes('country')}
+                    autoComplete="country"
+                  />
+                </div>
 
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <InputField
-                      label="City"
-                      value={formState.address.city}
-                      onChange={(value) => handleAddressFieldChange('city', value)}
-                      placeholder="Agoura Hills"
-                      error={fieldErrors.city}
-                      required={requiredFields.includes('city')}
-                      autoComplete="address-level2"
-                    />
-                    <InputField
-                      label="State"
-                      value={formState.address.state}
-                      onChange={(value) => handleAddressFieldChange('state', value)}
-                      placeholder="CA"
-                      error={fieldErrors.state}
-                      required={requiredFields.includes('state')}
-                      autoComplete="address-level1"
-                    />
-                    <InputField
-                      label="Postcode"
-                      value={formState.address.postcode}
-                      onChange={(value) => handleAddressFieldChange('postcode', value)}
-                      placeholder="91301"
-                      error={fieldErrors.postcode}
-                      required={requiredFields.includes('postcode')}
-                      autoComplete="postal-code"
-                    />
-                    <InputField
-                      label="Country"
-                      value={formState.address.country}
-                      onChange={(value) => handleAddressFieldChange('country', value)}
-                      placeholder="US"
-                      error={fieldErrors.country}
-                      required={requiredFields.includes('country')}
-                      autoComplete="country"
-                    />
-                  </div>
+                <div className="rounded-[18px] border border-[rgba(106,45,31,0.12)] bg-white px-4 py-4 text-sm leading-[1.6] text-[var(--muted)]">
+                  {deliveryLoading ? 'Checking delivery radius...' : deliveryStatus?.message || 'Enter a full delivery address to validate coverage.'}
+                </div>
 
-                  {activeDeliveryMethods.length ? (
-                    <FieldSection title="Delivery Method" error={fieldErrors.delivery_method}>
-                      <div className="space-y-3">
-                        {activeDeliveryMethods.map((method) => (
-                          <label
-                            key={method.id}
-                            className={[
-                              'flex cursor-pointer items-center justify-between gap-3 rounded-[18px] border px-4 py-3 transition',
-                              formState.delivery_method === method.id
-                                ? 'border-[var(--red)] bg-[rgba(185,49,47,0.04)]'
-                                : 'border-[rgba(106,45,31,0.14)] bg-white',
-                            ].join(' ')}
-                          >
-                            <span className="flex items-center gap-3">
-                              <input
-                                type="radio"
-                                name="delivery_method"
-                                checked={formState.delivery_method === method.id}
-                                onChange={() => {
-                                  updateFieldError('delivery_method', undefined)
-                                  setFormState((current) => ({ ...current, delivery_method: method.id }))
-                                }}
-                              />
-                              <span>
-                                <span className="block text-sm font-semibold text-[var(--cocoa)]">{method.label}</span>
-                                <span className="block text-xs text-[var(--muted)]">Dynamic delivery option from the storefront</span>
-                              </span>
-                            </span>
-                            <span className="text-sm font-semibold text-[var(--red)]">{method.price.formatted}</span>
-                          </label>
-                        ))}
-                      </div>
-                    </FieldSection>
-                  ) : null}
-                </>
+                {activeDeliveryMethods.length ? (
+                  <FieldSection title="Delivery Method" error={fieldErrors.delivery_method}>
+                    <div className="space-y-3">
+                      {activeDeliveryMethods.map((method) => (
+                        <label
+                          key={method.id}
+                          className={[
+                            'flex cursor-pointer items-center justify-between gap-3 rounded-[18px] border px-4 py-3 transition',
+                            formState.delivery_method === method.id
+                              ? 'border-[var(--red)] bg-[rgba(185,49,47,0.04)]'
+                              : 'border-[rgba(106,45,31,0.14)] bg-white',
+                          ].join(' ')}
+                        >
+                          <span className="flex items-center gap-3">
+                            <input
+                              type="radio"
+                              name="delivery_method"
+                              checked={formState.delivery_method === method.id}
+                              onChange={() => setFormState((current) => ({ ...current, delivery_method: method.id }))}
+                            />
+                            <span className="block text-sm font-semibold text-[var(--cocoa)]">{method.label}</span>
+                          </span>
+                          <span className="text-sm font-semibold text-[var(--red)]">{method.price.formatted}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </FieldSection>
+                ) : null}
+              </>
+            )}
+          </section>
+
+          <section className="space-y-4 rounded-[24px] border border-[rgba(106,45,31,0.1)] bg-[var(--card)] p-5">
+            <div>
+              <h2 className="font-western text-[28px] text-[var(--cocoa)]">Payment</h2>
+              <p className="mt-2 text-sm leading-[1.6] text-[var(--muted)]">
+                {config?.notes.payment || 'Choose how the customer will pay for this order.'}
+              </p>
+            </div>
+
+            <FieldSection title="Payment Method" error={fieldErrors.payment_method}>
+              <div className="space-y-3">
+                {effectiveConfig.payment_methods.map((method) => (
+                  <label
+                    key={method.id}
+                    className={[
+                      'flex cursor-pointer items-center justify-between gap-3 rounded-[18px] border px-4 py-3 transition',
+                      formState.payment_method === method.id
+                        ? 'border-[var(--red)] bg-[rgba(185,49,47,0.04)]'
+                        : 'border-[rgba(106,45,31,0.14)] bg-white',
+                    ].join(' ')}
+                  >
+                    <span className="flex items-center gap-3">
+                      <input
+                        type="radio"
+                        name="payment_method"
+                        checked={formState.payment_method === method.id}
+                        onChange={() => setFormState((current) => ({ ...current, payment_method: method.id }))}
+                      />
+                      <span>
+                        <span className="block text-sm font-semibold text-[var(--cocoa)]">{method.label}</span>
+                        {method.description ? <span className="block text-xs text-[var(--muted)]">{method.description}</span> : null}
+                      </span>
+                    </span>
+                    <span className="rounded-full bg-[var(--paper)] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--brick)]">
+                      {method.type.replaceAll('_', ' ')}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </FieldSection>
+          </section>
+
+          <section className="grid gap-5 lg:grid-cols-2">
+            <FieldSection title="Coupon">
+              <div className="flex gap-3">
+                <input
+                  value={couponCode}
+                  onChange={(event) => setCouponCode(event.target.value)}
+                  className="w-full rounded-[18px] border border-[rgba(106,45,31,0.14)] bg-white px-4 py-3 text-sm outline-none"
+                  placeholder="Enter coupon code"
+                />
+                <button
+                  type="button"
+                  onClick={() => void handlePreviewPricing()}
+                  className="rounded-full border border-[rgba(106,45,31,0.14)] px-4 py-3 text-sm font-semibold text-[var(--brick)]"
+                >
+                  Apply
+                </button>
+              </div>
+            </FieldSection>
+
+            <FieldSection title="Tip">
+              <div className="grid grid-cols-4 gap-2">
+                {(['10', '15', '20', 'custom'] as const).map((choice) => (
+                  <button
+                    key={choice}
+                    type="button"
+                    onClick={() => setTipChoice(choice)}
+                    className={[
+                      'rounded-full px-3 py-3 text-sm font-semibold transition',
+                      tipChoice === choice ? 'bg-[var(--red)] text-white' : 'bg-[var(--paper)] text-[var(--brick)]',
+                    ].join(' ')}
+                  >
+                    {choice === 'custom' ? 'Custom' : `${choice}%`}
+                  </button>
+                ))}
+              </div>
+              {tipChoice === 'custom' ? (
+                <input
+                  value={customTip}
+                  onChange={(event) => setCustomTip(event.target.value)}
+                  className="mt-3 w-full rounded-[18px] border border-[rgba(106,45,31,0.14)] bg-white px-4 py-3 text-sm outline-none"
+                  placeholder="0.00"
+                  inputMode="decimal"
+                />
               ) : null}
-            </section>
-
-            <section className="space-y-4 rounded-[24px] border border-[rgba(106,45,31,0.1)] bg-[var(--card)] p-5">
-              <div>
-                <h2 className="font-western text-[28px] text-[var(--cocoa)]">Payment</h2>
-                <p className="mt-2 text-sm leading-[1.6] text-[var(--muted)]">
-                  Payment collection is disabled for now. Orders will be submitted as pending confirmation until payment options are finalized with the client.
-                </p>
-              </div>
-
-              <div className="rounded-[18px] border border-[rgba(106,45,31,0.12)] bg-white px-4 py-4 text-sm leading-[1.6] text-[var(--muted)]">
-                Payment integration has been paused. The store can still accept pickup or delivery orders through this flow and follow up manually.
-              </div>
-            </section>
-          </div>
+            </FieldSection>
+          </section>
         </section>
 
         <aside className="space-y-4 lg:sticky lg:top-32 lg:self-start">
-          <div className="rounded-[30px] bg-[var(--footer)] px-5 py-4 text-[var(--cream)] shadow-[0_18px_36px_rgba(31,25,21,0.14)]">
-            <div className="text-xs font-semibold uppercase tracking-[0.14em] text-[rgba(255,248,239,0.72)]">Order summary</div>
-            <div className="mt-2 font-western text-[30px] text-white">
-              {formState.fulfillment_type === 'delivery' ? 'Delivery' : 'Pickup'}
-            </div>
-            {config ? (
-              <div className="mt-2 text-sm leading-[1.7] text-[rgba(255,248,239,0.82)]">
-                Estimated ready time: {config.estimated_times[formState.fulfillment_type]} minutes
-              </div>
-            ) : null}
-          </div>
-
           <div className="rounded-[28px] border border-[rgba(106,45,31,0.12)] bg-white p-5 shadow-[0_18px_38px_rgba(31,25,21,0.08)]">
             <div className="text-sm font-semibold uppercase tracking-[0.08em] text-[var(--brick)]">Cart items</div>
             <div className="mt-4">
@@ -427,10 +578,10 @@ export function CheckoutPage() {
 
           <CheckoutTotalsCard
             cart={cart}
-            config={config}
+            totals={displayTotals}
             fulfillmentType={formState.fulfillment_type}
             submitting={submitting || mutation.type === 'checkout'}
-            canPlaceOrder
+            onPreview={handlePreviewPricing}
             onPlaceOrder={handlePlaceOrder}
           />
         </aside>
@@ -499,64 +650,122 @@ function InputField({
   )
 }
 
+function StoreMapCard({ config }: { config: CheckoutConfig | null }) {
+  const location = config?.store.location
+  const mapUrl = location
+    ? `https://www.openstreetmap.org/export/embed.html?bbox=${location.lng - 0.01}%2C${location.lat - 0.01}%2C${location.lng + 0.01}%2C${location.lat + 0.01}&layer=mapnik&marker=${location.lat}%2C${location.lng}`
+    : ''
+
+  return (
+    <div className="overflow-hidden rounded-[22px] border border-[rgba(106,45,31,0.12)] bg-white">
+      {mapUrl ? <iframe title="Store location" src={mapUrl} className="h-56 w-full border-0" loading="lazy" /> : null}
+      <div className="space-y-2 px-4 py-4 text-sm leading-[1.6] text-[var(--muted)]">
+        <div className="font-semibold text-[var(--cocoa)]">Pickup location</div>
+        <div>{config?.store.pickup_address || 'Store address unavailable.'}</div>
+      </div>
+    </div>
+  )
+}
+
 function CheckoutTotalsCard({
   cart,
-  config,
+  totals,
   fulfillmentType,
   submitting,
-  canPlaceOrder,
+  onPreview,
   onPlaceOrder,
 }: {
   cart: CartResponse
-  config: CheckoutConfig | null
+  totals: {
+    subtotal: Money
+    discount: Money
+    tip: Money
+    total: Money
+    coupon_code?: string
+  }
   fulfillmentType: FulfillmentType
   submitting: boolean
-  canPlaceOrder: boolean
+  onPreview: () => void
   onPlaceOrder: () => void
 }) {
   return (
     <div className="rounded-[28px] border border-[rgba(106,45,31,0.12)] bg-white p-5 shadow-[0_18px_38px_rgba(31,25,21,0.08)]">
       <div className="text-sm font-semibold uppercase tracking-[0.08em] text-[var(--brick)]">Order total</div>
-      <div className="mt-1 text-[32px] font-semibold text-[var(--red)]">{cart.total.formatted}</div>
+      <div className="mt-1 text-[32px] font-semibold text-[var(--red)]">{totals.total.formatted}</div>
 
       <div className="mt-4 space-y-2 text-sm text-[var(--muted)]">
         <div className="flex items-center justify-between">
           <span>Subtotal</span>
-          <span>{cart.subtotal.formatted}</span>
+          <span>{totals.subtotal.formatted}</span>
         </div>
         <div className="flex items-center justify-between">
-          <span>Taxes</span>
-          <span>{cart.taxes.formatted}</span>
+          <span>Discount</span>
+          <span>-{totals.discount.formatted}</span>
         </div>
         <div className="flex items-center justify-between">
-          <span>Fees</span>
-          <span>{cart.fees.formatted}</span>
+          <span>Tip</span>
+          <span>{totals.tip.formatted}</span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span>Items</span>
+          <span>{cart.item_count}</span>
         </div>
         <div className="flex items-center justify-between border-t border-[rgba(106,45,31,0.08)] pt-3 text-base font-semibold text-[var(--cocoa)]">
           <span>Total</span>
-          <span>{cart.total.formatted}</span>
+          <span>{totals.total.formatted}</span>
         </div>
       </div>
 
-      {config ? (
-        <div className="mt-4 rounded-[18px] bg-[var(--paper)] px-4 py-3 text-sm leading-[1.6] text-[var(--muted)]">
-          Estimated {fulfillmentType} time: {config.estimated_times[fulfillmentType]} minutes
-        </div>
-      ) : null}
+      <div className="mt-4 rounded-[18px] bg-[var(--paper)] px-4 py-3 text-sm leading-[1.6] text-[var(--muted)]">
+        Estimated {fulfillmentType} time updates after backend validation.
+      </div>
+
+      <button
+        type="button"
+        onClick={onPreview}
+        className="mt-5 inline-flex w-full items-center justify-center rounded-full border border-[rgba(106,45,31,0.14)] px-5 py-3 text-sm font-semibold text-[var(--brick)]"
+      >
+        Preview totals
+      </button>
 
       <button
         type="button"
         onClick={onPlaceOrder}
-        disabled={submitting || !canPlaceOrder}
-        className="mt-5 inline-flex w-full items-center justify-center rounded-full bg-[var(--red)] px-5 py-3 text-sm font-semibold text-white shadow-[0_12px_24px_rgba(185,49,47,0.22)] disabled:cursor-not-allowed disabled:bg-[rgba(185,49,47,0.45)]"
+        disabled={submitting}
+        className="mt-3 inline-flex w-full items-center justify-center rounded-full bg-[var(--red)] px-5 py-3 text-sm font-semibold text-white shadow-[0_12px_24px_rgba(185,49,47,0.22)] disabled:cursor-not-allowed disabled:bg-[rgba(185,49,47,0.45)]"
       >
         {submitting ? 'Placing order...' : 'Place Order'}
       </button>
-      {!canPlaceOrder ? (
-        <p className="mt-3 text-sm leading-[1.6] text-[var(--muted)]">
-          Checkout needs at least one enabled payment method before the order can be placed.
-        </p>
-      ) : null}
     </div>
   )
+}
+
+async function geocodeAddress(address: string, signal?: AbortSignal) {
+  const url = new URL('https://nominatim.openstreetmap.org/search')
+  url.searchParams.set('q', address)
+  url.searchParams.set('format', 'jsonv2')
+  url.searchParams.set('limit', '1')
+
+  const response = await fetch(url.toString(), {
+    signal,
+    headers: {
+      Accept: 'application/json',
+    },
+  })
+
+  if (!response.ok) {
+    throw new Error('Unable to geocode this delivery address.')
+  }
+
+  const payload = (await response.json()) as Array<{ lat?: string; lon?: string }>
+  const match = payload[0]
+
+  if (!match?.lat || !match?.lon) {
+    return null
+  }
+
+  return {
+    lat: Number(match.lat),
+    lng: Number(match.lon),
+  }
 }

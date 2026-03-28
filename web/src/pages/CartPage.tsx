@@ -1,11 +1,17 @@
+import { useState } from 'react'
 import { CartLineItems } from '../components/ordering/CartLineItems'
 import { CartSummary } from '../components/ordering/CartSummary'
+import { CustomizeModal } from '../components/ordering/CustomizeModal'
 import { OrderEmptyState, OrderErrorState, OrderLoadingState } from '../components/ordering/OrderState'
+import { getMenuItem } from '../features/ordering/api'
+import type { CustomizableMenuItem } from '../features/ordering/customization'
 import { useCart } from '../features/ordering/cart'
 import { withBase } from '../lib/base-path'
 
 export function CartPage() {
-  const { cart, error, loading, mutation, ready, updateItemQuantity, removeItem, clearAllItems, addItem } = useCart()
+  const { cart, error, loading, mutation, ready, updateItemQuantity, updateItemCustomization, removeItem, clearAllItems } = useCart()
+  const [editingCartItemKey, setEditingCartItemKey] = useState<string | null>(null)
+  const [editingItem, setEditingItem] = useState<CustomizableMenuItem | null>(null)
 
   if (!ready) {
     return <OrderLoadingState label="Loading your cart..." />
@@ -19,8 +25,44 @@ export function CartPage() {
     return <OrderEmptyState title="Your cart is empty" body="Pick a burrito, add a drink, and we'll keep the checkout path short from there." />
   }
 
+  const editingCartItem = editingCartItemKey ? cart.items.find((item) => item.key === editingCartItemKey) || null : null
+
+  const handleEditItem = async (item: (typeof cart.items)[number]) => {
+    setEditingCartItemKey(item.key)
+    setEditingItem({
+      id: item.product_id,
+      slug: item.slug,
+      name: item.name,
+      image: item.image,
+      image_alt: item.name,
+      image_data: item.image_data,
+      short_description: '',
+      formatted_price: item.base_price.formatted,
+      base_price: item.base_price.raw,
+      badge: '',
+      availability: 'available',
+      fulfillment_mode: item.fulfillment_mode || 'both',
+      sort_order: 0,
+      add_on_groups: [],
+      allergens_enabled: true,
+    })
+
+    try {
+      const detail = await getMenuItem(item.slug)
+      setEditingItem(detail)
+    } catch {
+      // Keep the cart-backed fallback item visible if detail fetch fails.
+    }
+  }
+
+  const handleUpdateCustomizedItem = async (input: Parameters<typeof updateItemCustomization>[0]) => {
+    await updateItemCustomization(input)
+    setEditingCartItemKey(null)
+    setEditingItem(null)
+  }
+
   return (
-    <div className="mx-auto max-w-[1180px] space-y-6">
+    <div className="w-full space-y-6 xl:mx-auto xl:max-w-[1180px]">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <div className="text-sm font-semibold uppercase tracking-[0.1em] text-[var(--orange)]">Step 1</div>
@@ -51,6 +93,7 @@ export function CartPage() {
             removingKey={mutation.type === 'remove' ? mutation.key : null}
             onQuantityChange={(key, nextQuantity) => void updateItemQuantity(key, nextQuantity)}
             onRemove={(key) => void removeItem(key)}
+            onEdit={(item) => void handleEditItem(item)}
           />
 
           {cart.available_upsells.length ? (
@@ -64,13 +107,9 @@ export function CartPage() {
                     <div className="mt-1 text-sm text-[var(--muted)]">{item.short_description}</div>
                     <div className="mt-3 flex items-center justify-between gap-3">
                       <div className="text-sm font-semibold text-[var(--red)]">{item.formatted_price}</div>
-                      <button
-                        type="button"
-                        onClick={() => void addItem({ product_id: item.id, quantity: 1 })}
-                        className="rounded-full bg-[var(--red)] px-4 py-2 text-sm font-semibold text-white"
-                      >
-                        Add
-                      </button>
+                      <a href={withBase('/menu')} className="rounded-full bg-[var(--red)] px-4 py-2 text-sm font-semibold text-white">
+                        Customize
+                      </a>
                     </div>
                   </div>
                 ))}
@@ -110,6 +149,17 @@ export function CartPage() {
           </div>
         </aside>
       </div>
+
+      <CustomizeModal
+        item={editingItem}
+        open={Boolean(editingItem && editingCartItem)}
+        existingCartItem={editingCartItem}
+        onClose={() => {
+          setEditingCartItemKey(null)
+          setEditingItem(null)
+        }}
+        onConfirm={(input, cartKey) => void handleUpdateCustomizedItem({ ...input, key: cartKey || editingCartItem?.key || '' })}
+      />
     </div>
   )
 }

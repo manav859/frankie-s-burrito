@@ -32,6 +32,30 @@ function isExternalHref(href: string) {
   return /^(?:[a-z]+:)?\/\//i.test(href) || href.startsWith('mailto:') || href.startsWith('tel:')
 }
 
+function shouldForceMenuHref(href: string, label?: string) {
+  const normalizedHref = normalizePath(href)
+  const normalizedLabel = normalizeLabel(label)
+
+  if (normalizedHref === APP_ROUTES.order) {
+    return true
+  }
+
+  if (/^order(?:\s+online|\s+now)?$/.test(normalizedLabel)) {
+    return true
+  }
+
+  if (!isExternalHref(href)) {
+    return false
+  }
+
+  try {
+    const { host } = new URL(href)
+    return /(?:^|\.)toasttab\.com$/i.test(host) || /(?:^|\.)toasttakeout\.com$/i.test(host)
+  } catch {
+    return false
+  }
+}
+
 function getKnownInternalHosts() {
   const hosts = new Set<string>()
 
@@ -117,6 +141,10 @@ export function resolveAppHref(href: string, label?: string) {
 
   if (trimmedHref.startsWith('mailto:') || trimmedHref.startsWith('tel:')) {
     return trimmedHref
+  }
+
+  if (shouldForceMenuHref(trimmedHref, label)) {
+    return withBase(APP_ROUTES.menu)
   }
 
   if (trimmedHref.startsWith('#')) {

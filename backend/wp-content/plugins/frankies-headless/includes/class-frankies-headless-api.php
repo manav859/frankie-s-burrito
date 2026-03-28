@@ -8,66 +8,30 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class Frankies_Headless_Api {
-	private function get_attachment_alt( $attachment_id, $fallback = '' ) {
-		$alt = trim( (string) get_post_meta( $attachment_id, '_wp_attachment_image_alt', true ) );
+	public function decode_public_text( $value ) {
+		$value = (string) $value;
 
-		if ( '' !== $alt ) {
-			return $alt;
-		}
-
-		$title = trim( (string) get_the_title( $attachment_id ) );
-		if ( '' !== $title ) {
-			return $title;
-		}
-
-		return trim( (string) $fallback );
-	}
-
-	private function normalize_srcset( $srcset ) {
-		$srcset = trim( (string) $srcset );
-
-		if ( '' === $srcset ) {
+		if ( '' === $value ) {
 			return '';
 		}
 
-		$candidates = array();
-		foreach ( explode( ',', $srcset ) as $candidate ) {
-			$candidate = trim( $candidate );
-			if ( '' === $candidate ) {
-				continue;
+		$decoded = $value;
+
+		for ( $index = 0; $index < 3; $index++ ) {
+			$next = html_entity_decode( wp_specialchars_decode( $decoded, ENT_QUOTES ), ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+
+			if ( $next === $decoded ) {
+				break;
 			}
 
-			$parts = preg_split( '/\s+/', $candidate, 2 );
-			if ( empty( $parts[0] ) ) {
-				continue;
-			}
-
-			$url = $this->normalize_public_url( $parts[0] );
-			$descriptor = isset( $parts[1] ) ? trim( $parts[1] ) : '';
-			$candidates[] = $descriptor ? $url . ' ' . $descriptor : $url;
+			$decoded = $next;
 		}
 
-		return implode( ', ', $candidates );
+		return $decoded;
 	}
 
-	private function get_attachment_sources( $attachment_id ) {
-		$sources = array();
-		$preferred_sizes = array( 'thumbnail', 'medium', 'medium_large', 'large', 'full', 'woocommerce_thumbnail', 'woocommerce_single', 'woocommerce_gallery_thumbnail' );
-
-		foreach ( array_unique( $preferred_sizes ) as $size ) {
-			$image = wp_get_attachment_image_src( $attachment_id, $size );
-			if ( ! is_array( $image ) || empty( $image[0] ) ) {
-				continue;
-			}
-
-			$sources[ (string) $size ] = array(
-				'url'    => $this->normalize_public_url( $image[0] ),
-				'width'  => isset( $image[1] ) ? (int) $image[1] : 0,
-				'height' => isset( $image[2] ) ? (int) $image[2] : 0,
-			);
-		}
-
-		return $sources;
+	public function decode_public_plain_text( $value ) {
+		return wp_strip_all_tags( $this->decode_public_text( $value ) );
 	}
 
 	public function get_product_badge( WC_Product $product ) {
@@ -94,10 +58,10 @@ final class Frankies_Headless_Api {
 		$override = (string) get_post_meta( $product->get_id(), '_frankies_card_description', true );
 
 		if ( '' !== trim( $override ) ) {
-			return wp_strip_all_tags( $override );
+			return $this->decode_public_plain_text( $override );
 		}
 
-		return wp_strip_all_tags( $product->get_short_description() ?: $product->get_description() );
+		return $this->decode_public_plain_text( $product->get_short_description() ?: $product->get_description() );
 	}
 
 	public function get_product_estimated_prep_minutes( WC_Product $product ) {
@@ -124,80 +88,34 @@ final class Frankies_Headless_Api {
 		return esc_url_raw( home_url( '/' . ltrim( $url, '/' ) ) );
 	}
 
-	public function get_attachment_payload( $attachment_id, $size = 'large', $fallback_alt = '' ) {
+	public function get_attachment_payload( $attachment_id, $size = 'large' ) {
 		$attachment_id = (int) $attachment_id;
 
 		if ( $attachment_id <= 0 ) {
 			return array(
-				'id'       => 0,
-				'url'      => '',
-				'alt'      => trim( (string) $fallback_alt ),
-				'width'    => 0,
-				'height'   => 0,
-				'mimeType' => '',
-				'srcset'   => '',
-				'sources'  => array(),
+				'url' => '',
+				'alt' => '',
 			);
 		}
 
 		$image = wp_get_attachment_image_src( $attachment_id, $size );
-		$full = wp_get_attachment_image_src( $attachment_id, 'full' );
-		$mime_type = (string) get_post_mime_type( $attachment_id );
-		$alt = $this->get_attachment_alt( $attachment_id, $fallback_alt );
 
 		return array(
-			'id'       => $attachment_id,
-			'url'      => $image ? $this->normalize_public_url( $image[0] ) : '',
-			'alt'      => $alt,
-			'width'    => $full && isset( $full[1] ) ? (int) $full[1] : ( $image && isset( $image[1] ) ? (int) $image[1] : 0 ),
-			'height'   => $full && isset( $full[2] ) ? (int) $full[2] : ( $image && isset( $image[2] ) ? (int) $image[2] : 0 ),
-			'mimeType' => $mime_type,
-			'srcset'   => $this->normalize_srcset( wp_get_attachment_image_srcset( $attachment_id, $size ) ),
-			'sources'  => $this->get_attachment_sources( $attachment_id ),
-		);
-	}
-
-	public function get_media_payload_from_url( $url, $fallback_alt = '', $size = 'large' ) {
-		$normalized_url = $this->normalize_public_url( $url );
-
-		if ( '' === $normalized_url ) {
-			return array(
-				'id'       => 0,
-				'url'      => '',
-				'alt'      => trim( (string) $fallback_alt ),
-				'width'    => 0,
-				'height'   => 0,
-				'mimeType' => '',
-				'srcset'   => '',
-				'sources'  => array(),
-			);
-		}
-
-		$attachment_id = attachment_url_to_postid( $normalized_url );
-		if ( $attachment_id > 0 ) {
-			return $this->get_attachment_payload( $attachment_id, $size, $fallback_alt );
-		}
-
-		return array(
-			'id'       => 0,
-			'url'      => $normalized_url,
-			'alt'      => trim( (string) $fallback_alt ),
-			'width'    => 0,
-			'height'   => 0,
-			'mimeType' => '',
-			'srcset'   => '',
-			'sources'  => array(),
+			'url' => $image ? $this->normalize_public_url( $image[0] ) : '',
+			'alt' => (string) get_post_meta( $attachment_id, '_wp_attachment_image_alt', true ),
 		);
 	}
 
 	public function get_product_image_payload( WC_Product $product, $size = 'large' ) {
 		$image_id = (int) $product->get_image_id();
-		$image = $this->get_attachment_payload( $image_id, $size, $product->get_name() );
+		$image = $this->get_attachment_payload( $image_id, $size );
 
 		if ( '' === $image['url'] && function_exists( 'wc_placeholder_img_src' ) ) {
 			$image['url'] = $this->normalize_public_url( wc_placeholder_img_src() );
-			$image['alt'] = $product->get_name();
+			$image['alt'] = $this->decode_public_plain_text( $product->get_name() );
 		}
+
+		$image['alt'] = $this->decode_public_plain_text( $image['alt'] ?: $product->get_name() );
 
 		return $image;
 	}
@@ -223,18 +141,15 @@ final class Frankies_Headless_Api {
 		$thumbnail_id = (int) get_term_meta( $term->term_id, 'thumbnail_id', true );
 
 		if ( $thumbnail_id > 0 ) {
-			return $this->get_attachment_payload( $thumbnail_id, $size, $term->name );
+			return $this->get_attachment_payload( $thumbnail_id, $size );
 		}
 
-		$fallback = (string) get_term_meta( $term->term_id, '_frankies_image', true );
-		$image = $this->get_media_payload_from_url( $fallback, $term->name, $size );
+		$fallback = $this->normalize_public_url( (string) get_term_meta( $term->term_id, '_frankies_image', true ) );
 
-		if ( '' === $image['url'] && function_exists( 'wc_placeholder_img_src' ) ) {
-			$image['url'] = $this->normalize_public_url( wc_placeholder_img_src() );
-			$image['alt'] = $term->name;
-		}
-
-		return $image;
+		return array(
+			'url' => $fallback ?: ( function_exists( 'wc_placeholder_img_src' ) ? $this->normalize_public_url( wc_placeholder_img_src() ) : '' ),
+			'alt' => $this->decode_public_plain_text( $term->name ),
+		);
 	}
 
 	public function format_money( $amount ) {
@@ -254,12 +169,11 @@ final class Frankies_Headless_Api {
 		return array(
 			'id'           => (int) $term->term_id,
 			'slug'         => $term->slug,
-			'name'         => $term->name,
-			'description'  => wp_strip_all_tags( term_description( $term ) ),
+			'name'         => $this->decode_public_plain_text( $term->name ),
+			'description'  => $this->decode_public_plain_text( term_description( $term ) ),
 			'image'        => $image['url'],
-			'image_alt'    => $image['alt'],
-			'image_data'   => $image,
-			'cta_label'    => (string) ( get_term_meta( $term->term_id, '_frankies_cta_label', true ) ?: $term->name ),
+			'image_alt'    => $this->decode_public_plain_text( $image['alt'] ),
+			'cta_label'    => $this->decode_public_plain_text( get_term_meta( $term->term_id, '_frankies_cta_label', true ) ?: $term->name ),
 			'display_order'=> (int) get_term_meta( $term->term_id, '_frankies_display_order', true ),
 			'item_count'   => (int) $term->count,
 		);
@@ -283,10 +197,9 @@ final class Frankies_Headless_Api {
 			'id'                => (int) $product->get_id(),
 			'slug'              => $product->get_slug(),
 			'sku'               => (string) $product->get_sku(),
-			'name'              => $product->get_name(),
+			'name'              => $this->decode_public_plain_text( $product->get_name() ),
 			'image'             => $image['url'],
-			'image_alt'         => $image['alt'],
-			'image_data'        => $image,
+			'image_alt'         => $this->decode_public_plain_text( $image['alt'] ),
 			'short_description' => $this->get_product_card_description( $product ),
 			'description'       => wp_kses_post( $product->get_description() ),
 			'base_price'        => $price['raw'],
@@ -297,7 +210,7 @@ final class Frankies_Headless_Api {
 					return array(
 						'id'   => (int) $term->term_id,
 						'slug' => $term->slug,
-						'name' => $term->name,
+						'name' => $this->decode_public_plain_text( $term->name ),
 					);
 				},
 				$categories

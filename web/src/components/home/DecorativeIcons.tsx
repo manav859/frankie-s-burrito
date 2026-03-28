@@ -14,7 +14,7 @@ export const CowboyRider = () => (
 )
 
 export const CactusSVG = () => (
-  <svg viewBox="0 0 100 100" className="h-[100px] w-[100px] fill-[#4a5d23]">
+  <svg viewBox="0 0 100 100" className="h-[100px] w-[100px] fill-[#555555]">
     <rect x="40" y="20" width="20" height="70" rx="10" />
     <path d="M 45 55 Q 15 55 15 30 L 25 30 Q 25 45 40 45 Z" />
     <path d="M 55 65 Q 85 65 85 40 L 75 40 Q 75 55 60 55 Z" />

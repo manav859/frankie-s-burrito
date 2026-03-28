@@ -18,7 +18,7 @@ export function Footer({
     : [...content.navigation, blogNavItem]
 
   return (
-    <footer ref={reveal.ref} className="deferred-section bg-[var(--footer)] px-8 py-10 pb-28 text-[var(--cream-dim)] md:px-16 md:py-14">
+    <footer ref={reveal.ref} className="deferred-section w-full bg-[var(--footer)] px-4 py-10 pb-28 text-[var(--cream-dim)] md:px-16 md:py-14">
       <div className="mx-auto grid max-w-[1312px] gap-8 md:grid-cols-[360px_220px_260px_260px] md:gap-12">
         <Reveal visible={reveal.visible} reducedMotion={prefersReducedMotion} direction="left">
           <div>

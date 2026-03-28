@@ -22,7 +22,6 @@ import {
 import { BlogIndexPage } from './pages/BlogIndexPage'
 import { BlogPostPage } from './pages/BlogPostPage'
 import { HomePage } from './pages/HomePage'
-import { MenuItemPage } from './pages/MenuItemPage'
 import { MenuPage } from './pages/MenuPage'
 import { OrderSuccessPage } from './pages/OrderSuccessPage'
 import type {
@@ -291,13 +290,13 @@ function App() {
   }
 
   return (
-    <div id="top" className="min-h-screen bg-[var(--sand)] text-[var(--ink)]">
+    <div id="top" className="min-h-screen w-full overflow-x-hidden bg-[var(--sand)] text-[var(--ink)]">
       <SiteHeader content={shellContent} isScrolled={isScrolled} prefersReducedMotion={prefersReducedMotion} />
-      <main className={orderingRoute ? 'px-4 pb-16 pt-24 md:px-8 md:pt-32' : 'px-8 pb-20 pt-28 md:px-16 md:pt-36'}>
+      <main className={orderingRoute ? 'w-full overflow-x-hidden px-0 pb-16 pt-4 md:pt-10' : 'px-8 pb-20 pt-28 md:px-16 md:pt-36'}>
         {route.kind === 'menu' || route.kind === 'order' ? (
           <MenuPage />
         ) : route.kind === 'menu-item' ? (
-          <MenuItemPage slug={route.slug} />
+          <MenuPage />
         ) : route.kind === 'cart' ? (
           <CartPage />
         ) : route.kind === 'checkout' ? (

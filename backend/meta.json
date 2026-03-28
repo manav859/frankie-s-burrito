@@ -1,0 +1,89 @@
+{
+  "siteUrl": "http://localhost:8885",
+  "phpVersion": "8.3",
+  "wordpressVersion": "6.9.4",
+  "plugins": [
+    {
+      "name": "akismet",
+      "status": "inactive",
+      "version": "5.6"
+    },
+    {
+      "name": "all-in-one-wp-migration",
+      "status": "active",
+      "version": "7.103"
+    },
+    {
+      "name": "frankies-headless",
+      "status": "inactive",
+      "version": "1.1.0"
+    },
+    {
+      "name": "hello",
+      "status": "inactive",
+      "version": "1.7.2"
+    },
+    {
+      "name": "klaviyo",
+      "status": "active",
+      "version": "3.7.3"
+    },
+    {
+      "name": "facebook-for-woocommerce",
+      "status": "active",
+      "version": "3.6.0"
+    },
+    {
+      "name": "reddit-for-woocommerce",
+      "status": "active",
+      "version": "1.0.3"
+    },
+    {
+      "name": "snapchat-for-woocommerce",
+      "status": "active",
+      "version": "1.0.2"
+    },
+    {
+      "name": "woocommerce",
+      "status": "active",
+      "version": "10.6.1"
+    },
+    {
+      "name": "woocommerce-shipping",
+      "status": "active",
+      "version": "2.2.5"
+    },
+    {
+      "name": "woocommerce-services",
+      "status": "active",
+      "version": "3.5.1"
+    },
+    {
+      "name": "woocommerce-payments",
+      "status": "active",
+      "version": "10.6.0"
+    }
+  ],
+  "themes": [
+    {
+      "name": "frankies-headless",
+      "status": "inactive",
+      "version": "1.0.0"
+    },
+    {
+      "name": "twentytwentyfive",
+      "status": "active",
+      "version": "1.4"
+    },
+    {
+      "name": "twentytwentyfour",
+      "status": "inactive",
+      "version": "1.4"
+    },
+    {
+      "name": "twentytwentythree",
+      "status": "inactive",
+      "version": "1.6"
+    }
+  ]
+}

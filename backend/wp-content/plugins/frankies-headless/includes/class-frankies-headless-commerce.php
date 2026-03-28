@@ -12,7 +12,7 @@ final class Frankies_Headless_Commerce {
 	const MENU_NAMESPACE = 'frankies-headless/v1';
 	const CART_HEADER = 'x-frankies-cart-token';
 	const CART_TTL = 604800;
-	const MENU_CACHE_TTL = 30;
+	const MENU_CACHE_TTL = 600;
 	const PRODUCT_META_NONCE = 'frankies_headless_product_meta_nonce';
 	const CATEGORY_META_NONCE = 'frankies_headless_category_meta_nonce';
 	const MENU_SEED_OPTION = 'frankies_headless_menu_seed_20260326';
@@ -26,6 +26,21 @@ final class Frankies_Headless_Commerce {
 	 * @var Frankies_Headless_Api
 	 */
 	private $api;
+
+	/**
+	 * @var string
+	 */
+	private $last_menu_cache_status = 'miss';
+
+	/**
+	 * @var float
+	 */
+	private $last_menu_build_ms = 0.0;
+
+	/**
+	 * @var string
+	 */
+	private $last_menu_cache_key = '';
 
 	public function __construct( Frankies_Headless_Plugin $plugin, Frankies_Headless_Api $api ) {
 		$this->plugin = $plugin;
@@ -62,6 +77,7 @@ final class Frankies_Headless_Commerce {
 			'_frankies_card_description' => 'string',
 			'_frankies_spice_levels'     => 'string',
 			'_frankies_add_on_groups'    => 'string',
+			'_frankies_allergens_enabled' => 'boolean',
 			'_frankies_fulfillment_mode' => 'string',
 			'_frankies_badge'            => 'string',
 			'_frankies_availability'     => 'string',
@@ -208,9 +224,16 @@ final class Frankies_Headless_Commerce {
 			self::MENU_NAMESPACE,
 			'/checkout/config',
 			array(
-				'methods'             => WP_REST_Server::READABLE,
-				'callback'            => array( $this, 'rest_headless_checkout_config' ),
-				'permission_callback' => array( $this, 'allow_public_mutation_request' ),
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'rest_headless_checkout_config' ),
+					'permission_callback' => array( $this, 'allow_public_mutation_request' ),
+				),
+				array(
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, 'rest_headless_checkout_config' ),
+					'permission_callback' => array( $this, 'allow_public_mutation_request' ),
+				),
 			)
 		);
 
@@ -230,6 +253,16 @@ final class Frankies_Headless_Commerce {
 			array(
 				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'rest_headless_checkout_place_order' ),
+				'permission_callback' => array( $this, 'allow_public_mutation_request' ),
+			)
+		);
+
+		register_rest_route(
+			self::MENU_NAMESPACE,
+			'/delivery/validate',
+			array(
+				'methods'             => WP_REST_Server::CREATABLE,
+				'callback'            => array( $this, 'rest_headless_delivery_validate' ),
 				'permission_callback' => array( $this, 'allow_public_mutation_request' ),
 			)
 		);
@@ -551,6 +584,14 @@ final class Frankies_Headless_Commerce {
 			)
 		);
 
+		woocommerce_wp_checkbox(
+			array(
+				'id'          => '_frankies_allergens_enabled',
+				'label'       => 'Collect allergies note',
+				'description' => 'When enabled, the storefront prompts for allergy or dietary instructions before adding the item to cart.',
+			)
+		);
+
 		echo '</div>';
 	}
 
@@ -586,6 +627,7 @@ final class Frankies_Headless_Commerce {
 		update_post_meta( $product_id, '_frankies_estimated_prep_minutes', $estimated_prep_minutes );
 		update_post_meta( $product_id, '_frankies_spice_levels', wp_json_encode( $spice_levels ) );
 		update_post_meta( $product_id, '_frankies_add_on_groups', wp_json_encode( $add_on_groups ) );
+		update_post_meta( $product_id, '_frankies_allergens_enabled', ! empty( $_POST['_frankies_allergens_enabled'] ) ? 'yes' : '' );
 		$this->maybe_report_invalid_structured_meta( $product_id, '_frankies_spice_levels', $spice_levels_raw, $spice_levels );
 		$this->maybe_report_invalid_structured_meta( $product_id, '_frankies_add_on_groups', $add_on_groups_raw, $add_on_groups );
 
@@ -716,14 +758,6 @@ final class Frankies_Headless_Commerce {
 				'description' => 'Morning burritos and breakfast-forward favorites.',
 				'prep_minutes' => 15,
 				'items' => array(
-					array(
-						'name' => 'Breakfast',
-						'slug' => 'breakfast',
-						'price' => '8.00',
-						'short_description' => 'Classic breakfast burrito with eggs, cheese, and choice of fillings.',
-						'description' => 'Classic breakfast burrito with eggs, cheese, and choice of fillings.',
-						'badge' => 'featured',
-					),
 					array(
 						'name' => 'Smoky Rooster',
 						'slug' => 'smoky-rooster',
@@ -1131,7 +1165,7 @@ final class Frankies_Headless_Commerce {
 
 	public function rest_menu_v1( WP_REST_Request $request ) {
 		$params = $this->sanitize_menu_query_params( $request );
-		$cache_key = 'menu:' . md5( wp_json_encode( $params ) );
+		$cache_key = 'menu:v2:' . md5( wp_json_encode( $params ) );
 
 		$data = $this->get_cached_menu_payload(
 			$cache_key,
@@ -1156,7 +1190,7 @@ final class Frankies_Headless_Commerce {
 
 	public function rest_menu_items_v1( WP_REST_Request $request ) {
 		$params = $this->sanitize_menu_query_params( $request );
-		$cache_key = 'menu:items:' . md5( wp_json_encode( $params ) );
+		$cache_key = 'menu:items:v2:' . md5( wp_json_encode( $params ) );
 
 		$data = $this->get_cached_menu_payload(
 			$cache_key,
@@ -1170,7 +1204,7 @@ final class Frankies_Headless_Commerce {
 
 	public function rest_menu_item_v1( WP_REST_Request $request ) {
 		$item = sanitize_text_field( (string) $request['item'] );
-		$cache_key = 'menu:item:' . md5( $item );
+		$cache_key = 'menu:item:v2:' . md5( $item );
 
 		$data = $this->get_cached_menu_payload(
 			$cache_key,
@@ -1188,7 +1222,7 @@ final class Frankies_Headless_Commerce {
 
 	public function rest_menu_bootstrap_v1( WP_REST_Request $request ) {
 		$params = $this->sanitize_menu_query_params( $request );
-		$cache_key = 'menu:bootstrap:' . md5( wp_json_encode( $params ) );
+		$cache_key = 'menu:bootstrap:v2:' . md5( wp_json_encode( $params ) );
 
 		$data = $this->get_cached_menu_payload(
 			$cache_key,
@@ -1223,6 +1257,7 @@ final class Frankies_Headless_Commerce {
 			'quantity'     => $item['quantity'],
 			'spice_option' => $item['spice_option'],
 			'addons'       => $item['addons'],
+			'allergies_note' => $item['allergies_note'],
 		);
 		$this->save_headless_storage_cart( $token, $cart );
 
@@ -1304,8 +1339,8 @@ final class Frankies_Headless_Commerce {
 
 	public function rest_headless_checkout_config( WP_REST_Request $request ) {
 		$token = $this->get_or_create_cart_token( $request, true );
-		$cart = $this->get_headless_storage_cart( $token );
 		$params = $request->get_json_params() ?: $request->get_params();
+		$cart = $this->resolve_headless_checkout_cart( $token, is_array( $params ) ? $params : array() );
 		$address = is_array( $params['address'] ?? null ) ? $params['address'] : array();
 
 		return rest_ensure_response( $this->build_headless_checkout_config_payload_from_storage( $token, $cart, $address ) );
@@ -1326,6 +1361,7 @@ final class Frankies_Headless_Commerce {
 				'valid'      => true,
 				'cart'       => $this->build_headless_storage_cart_payload( $token, $cart ),
 				'checkout'   => $validation,
+				'pricing'    => $this->build_headless_checkout_pricing_payload( $cart, $validation ),
 				'message'    => 'Checkout data is valid.',
 			)
 		);
@@ -1359,6 +1395,43 @@ final class Frankies_Headless_Commerce {
 				'confirmation_url'  => rest_url( self::MENU_NAMESPACE . '/orders/' . $order->get_id() . '/confirmation?key=' . rawurlencode( $order->get_order_key() ) ),
 				'next_actions'      => $this->build_headless_order_next_actions( $order ),
 				'confirmation'      => $this->build_headless_order_confirmation_payload( $order ),
+			)
+		);
+	}
+
+	public function rest_headless_delivery_validate( WP_REST_Request $request ) {
+		$payload = $request->get_json_params() ?: $request->get_params();
+		$location = is_array( $payload['location'] ?? null ) ? $payload['location'] : $payload;
+		$latitude = isset( $location['latitude'] ) ? (float) $location['latitude'] : null;
+		$longitude = isset( $location['longitude'] ) ? (float) $location['longitude'] : null;
+		$settings = $this->get_headless_store_settings();
+
+		if ( ! is_numeric( $latitude ) || ! is_numeric( $longitude ) ) {
+			return new WP_Error( 'frankies_delivery_coordinates_required', 'Latitude and longitude are required for delivery validation.', array( 'status' => 422 ) );
+		}
+
+		if ( empty( $settings['store_location'] ) ) {
+			return new WP_Error( 'frankies_delivery_store_location_missing', 'Store delivery location is not configured.', array( 'status' => 422 ) );
+		}
+
+		$distance_km = $this->calculate_haversine_distance_km(
+			(float) $settings['store_location']['lat'],
+			(float) $settings['store_location']['lng'],
+			(float) $latitude,
+			(float) $longitude
+		);
+		$available = $settings['delivery_radius_km'] <= 0 || $distance_km <= $settings['delivery_radius_km'];
+
+		return rest_ensure_response(
+			array(
+				'available'      => $available,
+				'distance_km'    => round( $distance_km, 2 ),
+				'radius_km'      => (float) $settings['delivery_radius_km'],
+				'pickup_address' => $settings['pickup_address'],
+				'store_location' => $settings['store_location'],
+				'message'        => $available
+					? 'Delivery is available for this location.'
+					: 'This address is outside the current delivery radius.',
 			)
 		);
 	}
@@ -1560,13 +1633,19 @@ final class Frankies_Headless_Commerce {
 
 	private function get_cached_menu_payload( $cache_key, $builder ) {
 		$transient_key = 'frnk_menu_' . md5( $cache_key . '|' . get_option( Frankies_Headless_Plugin::CACHE_VERSION_KEY, 1 ) );
+		$this->last_menu_cache_key = $cache_key;
 		$cached = get_transient( $transient_key );
 
 		if ( false !== $cached ) {
+			$this->last_menu_cache_status = 'hit';
+			$this->last_menu_build_ms = 0.0;
 			return $cached;
 		}
 
+		$started_at = microtime( true );
 		$value = is_callable( $builder ) ? call_user_func( $builder ) : null;
+		$this->last_menu_build_ms = round( ( microtime( true ) - $started_at ) * 1000, 2 );
+		$this->last_menu_cache_status = is_wp_error( $value ) ? 'error' : 'miss';
 
 		if ( ! is_wp_error( $value ) ) {
 			set_transient( $transient_key, $value, self::MENU_CACHE_TTL );
@@ -1583,6 +1662,9 @@ final class Frankies_Headless_Commerce {
 
 		$response->header( 'Cache-Control', 'public, max-age=0, must-revalidate, s-maxage=' . self::MENU_CACHE_TTL . ', stale-while-revalidate=15' );
 		$response->header( 'ETag', $etag );
+		$response->header( 'X-Frankies-Menu-Cache', $this->last_menu_cache_status );
+		$response->header( 'X-Frankies-Menu-Cache-Key', substr( md5( $this->last_menu_cache_key ), 0, 12 ) );
+		$response->header( 'Server-Timing', 'menu-build;dur=' . $this->last_menu_build_ms );
 
 		if ( $if_none_match && $if_none_match === $etag ) {
 			$response->set_status( 304 );
@@ -1593,29 +1675,60 @@ final class Frankies_Headless_Commerce {
 	}
 
 	private function build_menu_payload_v1( array $params ) {
-		$categories = $this->build_menu_categories_payload_v1();
-		$sections = array();
+		$categories_payload = $this->build_menu_categories_payload_v1();
+		$categories = array();
 
-		foreach ( $categories['items'] as $category ) {
+		foreach ( $categories_payload['items'] as $category ) {
 			if ( '' !== $params['category'] && $params['category'] !== $category['slug'] ) {
 				continue;
 			}
 
 			$item_params = $params;
 			$item_params['category'] = $category['slug'];
+			$items = $this->build_menu_items_collection_v1( $item_params );
 
-			$sections[] = array(
-				'category' => $category,
-				'items'    => $this->build_menu_items_collection_v1( $item_params ),
+			if ( empty( $items ) && '' === $params['category'] ) {
+				continue;
+			}
+
+			$categories[] = array_merge(
+				$category,
+				array(
+					'items' => $items,
+				)
 			);
 		}
 
+		$sections = array_map(
+			function( $category ) {
+				$section_category = $category;
+				unset( $section_category['items'] );
+
+				return array(
+					'category' => $section_category,
+					'items'    => array_values( $category['items'] ?? array() ),
+				);
+			},
+			$categories
+		);
+
 		return array(
-			'meta'     => array(
+			'meta'       => array(
 				'version' => 'v1',
-				'empty'   => empty( $sections ),
+				'empty'   => empty( $categories ),
 			),
-			'sections' => $sections,
+			'categories' => array_values( $categories ),
+			'sections'   => array_values( $sections ),
+			'featured'   => $this->build_menu_items_collection_v1(
+				array(
+					'category'     => '',
+					'featured'     => true,
+					'search'       => '',
+					'availability' => $params['availability'],
+					'limit'        => min( 8, max( 1, (int) $params['limit'] ) ),
+					'initial'      => '',
+				)
+			),
 		);
 	}
 
@@ -1633,7 +1746,6 @@ final class Frankies_Headless_Commerce {
 						'name'        => $summary['name'],
 						'image'       => $summary['image'],
 						'image_alt'   => $summary['image_alt'],
-						'image_data'  => $summary['image_data'],
 						'count'       => $summary['item_count'],
 						'sort_order'  => $summary['display_order'],
 						'description' => $summary['description'],
@@ -1662,7 +1774,7 @@ final class Frankies_Headless_Commerce {
 
 	private function build_menu_bootstrap_payload_v1( array $params ) {
 		$categories = $this->build_menu_categories_payload_v1();
-		$initial_category = $params['initial'] ?: ( $params['category'] ?: ( $categories['items'][0]['slug'] ?? '' ) );
+		$initial_category = $this->resolve_initial_menu_category( $categories['items'], $params );
 
 		return array(
 			'meta' => array(
@@ -1703,6 +1815,22 @@ final class Frankies_Headless_Commerce {
 
 	private function build_menu_items_collection_v1( array $params ) {
 		$products = $this->query_menu_products( $params );
+		$products = array_values(
+			array_filter(
+				$products,
+				function( $product ) use ( $params ) {
+					if ( ! $product instanceof WC_Product ) {
+						return false;
+					}
+
+					if ( '' !== ( $params['availability'] ?? '' ) && $this->api->get_product_availability( $product ) !== $params['availability'] ) {
+						return false;
+					}
+
+					return true;
+				}
+			)
+		);
 
 		return array_map(
 			function( $product ) {
@@ -1714,7 +1842,10 @@ final class Frankies_Headless_Commerce {
 
 	private function build_menu_item_card_payload_v1( WC_Product $product ) {
 		$payload = $this->api->map_product_card( $product );
-		unset( $payload['price'] );
+		$payload['price'] = (float) ( $payload['base_price'] ?? 0 );
+		$payload['add_on_groups'] = $this->get_add_on_groups( $product->get_id() );
+		$payload['spice_options'] = $this->get_spice_levels( $product->get_id() );
+		$payload['allergens_enabled'] = $this->product_allergens_enabled( $product->get_id() );
 		unset( $payload['sku'] );
 		unset( $payload['is_featured'] );
 		unset( $payload['dark'] );
@@ -1731,6 +1862,31 @@ final class Frankies_Headless_Commerce {
 		}
 
 		return $this->build_product_detail_payload( $product );
+	}
+
+	private function resolve_initial_menu_category( array $categories, array $params ) {
+		$requested = array_filter(
+			array(
+				$params['initial'] ?? '',
+				$params['category'] ?? '',
+			)
+		);
+
+		foreach ( $requested as $slug ) {
+			foreach ( $categories as $category ) {
+				if ( ( $category['slug'] ?? '' ) === $slug ) {
+					return $slug;
+				}
+			}
+		}
+
+		foreach ( $categories as $category ) {
+			if ( ! empty( $category['count'] ) ) {
+				return (string) $category['slug'];
+			}
+		}
+
+		return (string) ( $categories[0]['slug'] ?? '' );
 	}
 
 	private function get_products_for_category( $term_id, $preview = false ) {
@@ -1810,12 +1966,12 @@ final class Frankies_Headless_Commerce {
 
 	private function build_product_detail_payload( WC_Product $product ) {
 		$payload = $this->api->map_product_card( $product );
-		$gallery = $this->api->get_product_gallery_payload( $product );
 
-		$payload['gallery'] = wp_list_pluck( $gallery, 'url' );
-		$payload['gallery_data'] = $gallery;
+		$payload['gallery'] = wp_list_pluck( $this->api->get_product_gallery_payload( $product ), 'url' );
 		$payload['spice_options'] = $this->get_spice_levels( $product->get_id() );
 		$payload['addon_groups'] = $this->get_add_on_groups( $product->get_id() );
+		$payload['add_on_groups'] = $payload['addon_groups'];
+		$payload['allergens_enabled'] = $this->product_allergens_enabled( $product->get_id() );
 		$payload['upsell_products'] = array_values(
 			array_map(
 				array( $this, 'build_menu_item_card_payload_v1' ),
@@ -1851,7 +2007,76 @@ final class Frankies_Headless_Commerce {
 
 	private function get_add_on_groups( $product_id ) {
 		$data = $this->decode_json_meta( get_post_meta( $product_id, '_frankies_add_on_groups', true ) );
+
+		if ( empty( $data ) ) {
+			$data = $this->normalize_woocommerce_product_add_ons_meta( get_post_meta( $product_id, '_product_addons', true ) );
+		}
+
 		return $this->sanitize_add_on_groups( $data, true );
+	}
+
+	private function product_allergens_enabled( $product_id ) {
+		return 'yes' === get_post_meta( $product_id, '_frankies_allergens_enabled', true );
+	}
+
+	private function normalize_woocommerce_product_add_ons_meta( $raw_meta ) {
+		if ( is_string( $raw_meta ) ) {
+			$maybe_unserialized = maybe_unserialize( $raw_meta );
+			$raw_meta = is_array( $maybe_unserialized ) ? $maybe_unserialized : array();
+		}
+
+		if ( ! is_array( $raw_meta ) ) {
+			return array();
+		}
+
+		$groups = array();
+
+		foreach ( $raw_meta as $group ) {
+			if ( ! is_array( $group ) ) {
+				continue;
+			}
+
+			$label = sanitize_text_field( $group['name'] ?? $group['title'] ?? '' );
+			$group_id = sanitize_title( $group['name'] ?? $group['title'] ?? $label );
+			$type = sanitize_key( (string) ( $group['type'] ?? '' ) );
+			$required = ! empty( $group['required'] );
+			$options = array();
+
+			foreach ( (array) ( $group['options'] ?? array() ) as $option ) {
+				if ( ! is_array( $option ) ) {
+					continue;
+				}
+
+				$option_label = sanitize_text_field( $option['label'] ?? $option['name'] ?? '' );
+				$option_id = sanitize_title( $option['label'] ?? $option['name'] ?? $option_label );
+
+				if ( '' === $option_id || '' === $option_label ) {
+					continue;
+				}
+
+				$options[] = array(
+					'key'   => $option_id,
+					'label' => $option_label,
+					'price' => wc_format_decimal( $option['price'] ?? $option['price_adjustment'] ?? 0, wc_get_price_decimals() ),
+				);
+			}
+
+			if ( '' === $group_id || '' === $label || empty( $options ) ) {
+				continue;
+			}
+
+			$groups[] = array(
+				'key'      => $group_id,
+				'label'    => $label,
+				'type'     => in_array( $type, array( 'radiobutton', 'radio', 'select' ), true ) ? 'single' : 'multiple',
+				'min'      => $required ? 1 : 0,
+				'max'      => in_array( $type, array( 'radiobutton', 'radio', 'select' ), true ) ? 1 : max( 1, absint( $group['max'] ?? 0 ) ),
+				'options'  => $options,
+				'required' => $required,
+			);
+		}
+
+		return array_values( $groups );
 	}
 
 	private function sanitize_spice_levels( $data ) {
@@ -1906,7 +2131,7 @@ final class Frankies_Headless_Commerce {
 
 			$group_id = sanitize_title( $group['key'] ?? $group['id'] ?? $group['label'] ?? '' );
 			$label = sanitize_text_field( $group['label'] ?? '' );
-			$type = 'radio' === ( $group['type'] ?? '' ) ? 'radio' : 'checkbox';
+			$type = 'radio' === ( $group['type'] ?? '' ) || 'single' === ( $group['type'] ?? '' ) ? 'single' : 'multiple';
 			$min = max( 0, absint( $group['min'] ?? 0 ) );
 			$max = max( $min, absint( $group['max'] ?? 0 ) );
 			$options = array();
@@ -1925,7 +2150,9 @@ final class Frankies_Headless_Commerce {
 				}
 
 				$payload = array(
+					'id'         => $option_id,
 					'key'        => $option_id,
+					'name'       => $option_label,
 					'label'      => $option_label,
 					'product_id' => absint( $option['product_id'] ?? $option['productId'] ?? 0 ),
 				);
@@ -1947,11 +2174,14 @@ final class Frankies_Headless_Commerce {
 			}
 
 			$groups[] = array(
+				'id'       => $group_id,
 				'key'      => $group_id,
+				'name'     => $label,
 				'label'    => $label,
 				'type'     => $type,
-				'min'      => 'radio' === $type ? min( 1, max( 0, $min ) ) : $min,
-				'max'      => 'radio' === $type ? 1 : $max,
+				'required' => $min > 0,
+				'min'      => 'single' === $type ? min( 1, max( 0, $min ) ) : $min,
+				'max'      => 'single' === $type ? 1 : $max,
 				'options'  => $options,
 			);
 		}
@@ -2032,17 +2262,23 @@ final class Frankies_Headless_Commerce {
 
 		$validated = array();
 
-		foreach ( $selected_add_ons as $add_on_id ) {
-			$add_on_id = sanitize_title( is_array( $add_on_id ) ? ( $add_on_id['key'] ?? $add_on_id['id'] ?? '' ) : $add_on_id );
+		foreach ( $selected_add_ons as $add_on ) {
+			$add_on_payload = is_array( $add_on ) ? $add_on : array( 'id' => $add_on );
+			$add_on_id = sanitize_title( $add_on_payload['option_id'] ?? $add_on_payload['optionId'] ?? $add_on_payload['key'] ?? $add_on_payload['id'] ?? '' );
+			$requested_group = sanitize_title( $add_on_payload['group_id'] ?? $add_on_payload['groupId'] ?? '' );
 
 			if ( '' === $add_on_id || empty( $options_by_id[ $add_on_id ] ) ) {
 				return new WP_Error( 'frankies_invalid_add_on', 'Invalid add-on selected.', array( 'status' => 422 ) );
 			}
 
 			$resolved = $options_by_id[ $add_on_id ];
+			if ( '' !== $requested_group && $requested_group !== $resolved['group_key'] ) {
+				return new WP_Error( 'frankies_invalid_add_on_group', 'Selected add-on does not belong to the requested group.', array( 'status' => 422 ) );
+			}
 			$option = $resolved['option'];
 			$selection_counts[ $resolved['group_key'] ]++;
 			$validated[] = array(
+				'group_id'         => $resolved['group_key'],
 				'key'              => $option['key'],
 				'label'            => $option['label'],
 				'price_adjustment' => wc_format_decimal( is_array( $option['price_adjustment'] ) ? ( $option['price_adjustment']['raw'] ?? 0 ) : $option['price_adjustment'], wc_get_price_decimals() ),
@@ -2153,11 +2389,16 @@ final class Frankies_Headless_Commerce {
 			return $spice_option;
 		}
 
-		$addons = $payload['addons'] ?? $payload['addOns'] ?? array();
+		$addons = $payload['selected_add_ons'] ?? $payload['selectedAddOns'] ?? $payload['addons'] ?? $payload['addOns'] ?? array();
 		$validated_add_ons = $this->validate_selected_add_ons( $product_id, (array) $addons );
 
 		if ( is_wp_error( $validated_add_ons ) ) {
 			return $validated_add_ons;
+		}
+
+		$allergies_note = '';
+		if ( $this->product_allergens_enabled( $product_id ) ) {
+			$allergies_note = sanitize_textarea_field( (string) ( $payload['allergies_note'] ?? $payload['allergiesNote'] ?? '' ) );
 		}
 
 		return array(
@@ -2165,6 +2406,7 @@ final class Frankies_Headless_Commerce {
 			'quantity'     => $quantity,
 			'spice_option' => $spice_option,
 			'addons'       => $validated_add_ons,
+			'allergies_note' => $allergies_note,
 		);
 	}
 
@@ -2213,6 +2455,7 @@ final class Frankies_Headless_Commerce {
 		$config = array(
 			'spice_level'      => $spice,
 			'addons'           => $addons,
+			'allergies_note'   => sanitize_textarea_field( (string) ( $item['allergies_note'] ?? '' ) ),
 			'price_adjustment' => (string) wc_format_decimal( $spice_adjustment + $addons_total, wc_get_price_decimals() ),
 		);
 
@@ -2261,6 +2504,13 @@ final class Frankies_Headless_Commerce {
 			);
 		}
 
+		if ( ! empty( $cart_item['frankies_config']['allergies_note'] ) ) {
+			$item_data[] = array(
+				'key'   => 'Allergies',
+				'value' => sanitize_textarea_field( $cart_item['frankies_config']['allergies_note'] ),
+			);
+		}
+
 		return $item_data;
 	}
 
@@ -2292,6 +2542,11 @@ final class Frankies_Headless_Commerce {
 			);
 			$item->add_meta_data( '_frankies_addons', wp_json_encode( array_values( (array) $values['frankies_config']['addons'] ) ), true );
 		}
+
+		if ( ! empty( $values['frankies_config']['allergies_note'] ) ) {
+			$item->add_meta_data( 'Allergies', sanitize_textarea_field( $values['frankies_config']['allergies_note'] ), true );
+			$item->add_meta_data( '_frankies_allergies_note', sanitize_textarea_field( $values['frankies_config']['allergies_note'] ), true );
+		}
 	}
 
 	private function build_headless_cart_payload( $cart_token ) {
@@ -2318,7 +2573,6 @@ final class Frankies_Headless_Commerce {
 				'product_id'       => (int) $product->get_id(),
 				'name'             => $product->get_name(),
 				'image'            => $image['url'],
-				'image_data'       => $image,
 				'quantity'         => (int) $cart_item['quantity'],
 				'unit_price'       => $this->api->format_money( $product->get_price() ),
 				'line_subtotal'    => $this->api->format_money( $line_subtotal ),
@@ -2379,6 +2633,7 @@ final class Frankies_Headless_Commerce {
 				},
 				(array) ( $config['addons'] ?? array() )
 			),
+			'allergies_note' => sanitize_textarea_field( (string) ( $config['allergies_note'] ?? '' ) ),
 		);
 	}
 
@@ -2390,7 +2645,11 @@ final class Frankies_Headless_Commerce {
 		}
 
 		foreach ( (array) ( $selected_options['addons'] ?? array() ) as $addon ) {
-			$lines[] = 'Add-on: ' . $addon['label'];
+			$lines[] = 'Add-on: ' . sanitize_text_field( $addon['name'] ?? $addon['label'] ?? '' );
+		}
+
+		if ( ! empty( $selected_options['allergies_note'] ) ) {
+			$lines[] = 'Allergies: ' . sanitize_textarea_field( $selected_options['allergies_note'] );
 		}
 
 		return $lines;
@@ -2475,26 +2734,44 @@ final class Frankies_Headless_Commerce {
 				'addons' => array_map(
 					function( $addon ) {
 						return array(
-							'key' => sanitize_title( $addon['key'] ?? '' ),
-							'label' => sanitize_text_field( $addon['label'] ?? '' ),
-							'price_adjustment' => $this->api->format_money( $addon['price_adjustment'] ?? 0 ),
+							'group_id' => sanitize_title( $addon['group_id'] ?? '' ),
+							'option_id' => sanitize_title( $addon['key'] ?? $addon['option_id'] ?? '' ),
+							'name' => sanitize_text_field( $addon['label'] ?? $addon['name'] ?? '' ),
+							'price' => $this->api->format_money( $addon['price_adjustment'] ?? $addon['price'] ?? 0 ),
 						);
 					},
 					(array) ( $item['addons'] ?? array() )
 				),
+				'allergies_note' => sanitize_textarea_field( (string) ( $item['allergies_note'] ?? '' ) ),
 			);
 
 			$items[] = array(
 				'key' => sanitize_text_field( $item['key'] ?? '' ),
 				'product_id' => (int) $product->get_id(),
+				'slug' => $product->get_slug(),
 				'name' => $product->get_name(),
 				'image' => $image['url'],
 				'quantity' => (int) ( $item['quantity'] ?? 0 ),
-				'unit_price' => $this->api->format_money( $unit_price ),
+				'base_price' => $this->api->format_money( $base_price ),
 				'line_subtotal' => $this->api->format_money( $line_total ),
 				'line_total' => $this->api->format_money( $line_total ),
+				'selected_add_ons' => array_values(
+					array_map(
+						function( $addon ) {
+							return array(
+								'group_id' => sanitize_title( $addon['group_id'] ?? '' ),
+								'option_id' => sanitize_title( $addon['key'] ?? $addon['option_id'] ?? '' ),
+								'name' => sanitize_text_field( $addon['label'] ?? $addon['name'] ?? '' ),
+								'price' => $this->api->format_money( $addon['price_adjustment'] ?? $addon['price'] ?? 0 ),
+							);
+						},
+						(array) ( $item['addons'] ?? array() )
+					)
+				),
 				'selected_options' => $selected_options,
 				'summary_lines' => $this->build_headless_summary_lines( $selected_options ),
+				'allergies_note' => sanitize_textarea_field( (string) ( $item['allergies_note'] ?? '' ) ),
+				'fulfillment_mode' => $this->build_product_fulfillment_payload( $product->get_id() )['mode'],
 			);
 		}
 
@@ -2513,20 +2790,17 @@ final class Frankies_Headless_Commerce {
 		);
 
 		return array(
-			'cart_token' => $cart_token,
 			'items' => $items,
 			'item_count' => $item_count,
 			'subtotal' => $this->api->format_money( $subtotal ),
 			'taxes' => $this->api->format_money( 0 ),
 			'fees' => $this->api->format_money( 0 ),
+			'discount' => $this->api->format_money( 0 ),
+			'tip' => $this->api->format_money( 0 ),
 			'total' => $this->api->format_money( $subtotal ),
 			'currency' => get_woocommerce_currency(),
 			'available_upsells' => $available_upsells,
-			'integration' => array(
-				'cart_token_header' => 'X-Frankies-Cart-Token',
-				'guest_cart' => true,
-				'nonce' => 'Guest storefront requests do not require a WordPress nonce. Send X-WP-Nonce only for authenticated wp-admin sessions.',
-			),
+			'coupon_code' => '',
 		);
 	}
 
@@ -2555,21 +2829,35 @@ final class Frankies_Headless_Commerce {
 			);
 		}
 
+		$payment_methods = $this->get_headless_payment_methods_payload();
+		$required_pickup_fields = array( 'full_name', 'mobile_number' );
+		$required_delivery_fields = array( 'full_name', 'mobile_number', 'street_address', 'city', 'state', 'postcode', 'delivery_method' );
+
+		if ( ! empty( $payment_methods ) ) {
+			$required_pickup_fields[] = 'payment_method';
+			$required_delivery_fields[] = 'payment_method';
+		}
+
 		return array(
-			'cart' => $this->build_headless_storage_cart_payload( $cart_token, $cart ),
 			'fulfillment_modes' => $fulfillment_modes,
-			'payment_methods' => array(),
+			'payment_methods' => $payment_methods,
 			'delivery_methods' => $delivery_methods,
+			'store' => array(
+				'pickup_address' => $this->get_headless_store_settings()['pickup_address'],
+				'delivery_radius_km' => $this->get_headless_store_settings()['delivery_radius_km'],
+				'location' => $this->get_headless_store_settings()['store_location'],
+			),
 			'required_fields' => array(
-				'pickup' => array( 'full_name', 'mobile_number' ),
-				'delivery' => array( 'full_name', 'mobile_number', 'street_address', 'city', 'state', 'postcode', 'delivery_method' ),
+				'pickup' => $required_pickup_fields,
+				'delivery' => $required_delivery_fields,
 			),
 			'estimated_times' => array(
 				'pickup' => $this->get_estimated_minutes_for_storage_cart( $cart, 'pickup' ),
 				'delivery' => $this->get_estimated_minutes_for_storage_cart( $cart, 'delivery' ),
 			),
 			'notes' => array(
-				'payment' => 'Payment integration is intentionally disabled for now and should be finalized after client consultation.',
+				'payment' => empty( $payment_methods ) ? 'No payment gateways are currently enabled.' : 'Select an enabled WooCommerce payment method for this order.',
+				'upi' => 'UPI methods appear automatically when an enabled WooCommerce gateway is mapped as UPI.',
 				'auth' => 'Menu, cart, and checkout endpoints are intentionally public for the storefront. Browser apps should use HTTPS, persist X-Frankies-Cart-Token, and only send X-WP-Nonce when acting as an authenticated WordPress user.',
 			),
 		);
@@ -2614,23 +2902,17 @@ final class Frankies_Headless_Commerce {
 	}
 
 	private function resolve_headless_checkout_cart( $token, array $payload ) {
-		$cart = $this->get_headless_storage_cart( $token );
-
-		if ( ! empty( $cart['items'] ) ) {
-			return $cart;
-		}
-
 		$cart_items = $payload['cart_items'] ?? $payload['cartItems'] ?? array();
 		$normalized_items = $this->normalize_headless_client_cart_items( is_array( $cart_items ) ? $cart_items : array() );
 
-		if ( empty( $normalized_items ) ) {
-			return $cart;
+		if ( ! empty( $normalized_items ) ) {
+			return array(
+				'items' => $normalized_items,
+				'updated_at' => gmdate( DATE_ATOM ),
+			);
 		}
 
-		return array(
-			'items' => $normalized_items,
-			'updated_at' => gmdate( DATE_ATOM ),
-		);
+		return $this->get_headless_storage_cart( $token );
 	}
 
 	private function normalize_headless_client_cart_items( array $items ) {
@@ -2641,40 +2923,19 @@ final class Frankies_Headless_Commerce {
 				continue;
 			}
 
-			$product_id = absint( $item['product_id'] ?? $item['productId'] ?? 0 );
-			$quantity = max( 1, absint( $item['quantity'] ?? 1 ) );
-			$product = wc_get_product( $product_id );
+			$validated_item = $this->validate_headless_cart_request_item( $item );
 
-			if ( ! $product instanceof WC_Product || 'publish' !== $product->get_status() ) {
+			if ( is_wp_error( $validated_item ) ) {
 				continue;
-			}
-
-			$selected_options = is_array( $item['selected_options'] ?? null ) ? $item['selected_options'] : array();
-			$spice_level = is_array( $selected_options['spice_level'] ?? null ) ? $selected_options['spice_level'] : null;
-			$addons = array();
-
-			foreach ( (array) ( $selected_options['addons'] ?? array() ) as $addon ) {
-				if ( ! is_array( $addon ) ) {
-					continue;
-				}
-
-				$addons[] = array(
-					'key' => sanitize_title( $addon['key'] ?? '' ),
-					'label' => sanitize_text_field( $addon['label'] ?? '' ),
-					'price_adjustment' => (string) wc_format_decimal( $addon['price_adjustment']['raw'] ?? $addon['price_adjustment'] ?? 0, wc_get_price_decimals() ),
-				);
 			}
 
 			$normalized[] = array(
 				'key' => sanitize_text_field( $item['key'] ?? wp_generate_uuid4() ),
-				'product_id' => $product_id,
-				'quantity' => $quantity,
-				'spice_option' => is_array( $spice_level ) ? array(
-					'key' => sanitize_title( $spice_level['key'] ?? '' ),
-					'label' => sanitize_text_field( $spice_level['label'] ?? '' ),
-					'price_adjustment' => (string) wc_format_decimal( $spice_level['price_adjustment']['raw'] ?? $spice_level['price_adjustment'] ?? 0, wc_get_price_decimals() ),
-				) : null,
-				'addons' => $addons,
+				'product_id' => $validated_item['product_id'],
+				'quantity' => $validated_item['quantity'],
+				'spice_option' => $validated_item['spice_option'],
+				'addons' => $validated_item['addons'],
+				'allergies_note' => $validated_item['allergies_note'],
 			);
 		}
 
@@ -2706,6 +2967,9 @@ final class Frankies_Headless_Commerce {
 			'postcode' => sanitize_text_field( (string) ( $address['postcode'] ?? '' ) ),
 			'country' => sanitize_text_field( (string) ( $address['country'] ?? WC()->countries->get_base_country() ) ),
 		);
+		$payment_method = sanitize_key( (string) ( $payload['payment_method'] ?? $payload['paymentMethod'] ?? '' ) );
+		$coupon_code = wc_format_coupon_code( (string) ( $payload['coupon_code'] ?? $payload['couponCode'] ?? '' ) );
+		$tip_amount = max( 0, (float) wc_format_decimal( $payload['tip_amount'] ?? $payload['tipAmount'] ?? 0, wc_get_price_decimals() ) );
 
 		$available_modes = wp_list_pluck( $this->get_headless_enabled_fulfillment_modes_for_storage( $cart, $normalized_address ), 'id' );
 		if ( ! in_array( $fulfillment_type, $available_modes, true ) ) {
@@ -2742,10 +3006,33 @@ final class Frankies_Headless_Commerce {
 			}
 		}
 
+		$payment_methods = $this->get_headless_payment_methods_payload();
+		if ( ! empty( $payment_methods ) ) {
+			$payment_ids = wp_list_pluck( $payment_methods, 'id' );
+			if ( '' === $payment_method ) {
+				return new WP_Error( 'frankies_checkout_payment_required', 'Payment method is required.', array( 'status' => 422 ) );
+			}
+
+			if ( ! in_array( $payment_method, $payment_ids, true ) ) {
+				return new WP_Error( 'frankies_checkout_invalid_payment_method', 'Selected payment method is not available.', array( 'status' => 422 ) );
+			}
+		}
+
+		if ( '' !== $coupon_code ) {
+			$coupon = new WC_Coupon( $coupon_code );
+
+			if ( ! $coupon->get_id() ) {
+				return new WP_Error( 'frankies_checkout_invalid_coupon', 'Coupon code is invalid.', array( 'status' => 422 ) );
+			}
+		}
+
 		return array(
 			'fulfillment_type' => $fulfillment_type,
 			'full_name' => $full_name,
 			'mobile_number' => $mobile_number,
+			'payment_method' => $payment_method,
+			'coupon_code' => $coupon_code,
+			'tip_amount' => (string) wc_format_decimal( $tip_amount, wc_get_price_decimals() ),
 			'address' => $normalized_address,
 			'delivery_method' => $delivery_method,
 			'estimated_ready_time' => gmdate( DATE_ATOM, time() + ( $this->get_estimated_minutes_for_storage_cart( $cart, $fulfillment_type ) * MINUTE_IN_SECONDS ) ),
@@ -2770,6 +3057,80 @@ final class Frankies_Headless_Commerce {
 		}
 
 		return (int) apply_filters( 'frankies_headless_estimated_minutes', $minutes, $fulfillment_type );
+	}
+
+	private function calculate_headless_storage_cart_subtotal( array $cart ) {
+		$subtotal = 0.0;
+
+		foreach ( (array) $cart['items'] as $stored_item ) {
+			$product = wc_get_product( absint( $stored_item['product_id'] ?? 0 ) );
+
+			if ( ! $product instanceof WC_Product ) {
+				continue;
+			}
+
+			$base_price = (float) $product->get_regular_price();
+			if ( $base_price <= 0 ) {
+				$base_price = (float) $product->get_price( 'edit' );
+			}
+
+			$spice_adjustment = (float) ( $stored_item['spice_option']['price_adjustment'] ?? 0 );
+			$addons_total = 0.0;
+
+			foreach ( (array) ( $stored_item['addons'] ?? array() ) as $addon ) {
+				$addons_total += (float) ( $addon['price_adjustment'] ?? 0 );
+			}
+
+			$subtotal += max( 0, $base_price + $spice_adjustment + $addons_total ) * max( 1, absint( $stored_item['quantity'] ?? 1 ) );
+		}
+
+		return (float) wc_format_decimal( $subtotal, wc_get_price_decimals() );
+	}
+
+	private function calculate_headless_coupon_discount( $coupon_code, $subtotal ) {
+		$coupon_code = wc_format_coupon_code( (string) $coupon_code );
+
+		if ( '' === $coupon_code || $subtotal <= 0 ) {
+			return 0.0;
+		}
+
+		$coupon = new WC_Coupon( $coupon_code );
+
+		if ( ! $coupon->get_id() ) {
+			return 0.0;
+		}
+
+		$amount = (float) $coupon->get_amount();
+		$discount = 0.0;
+
+		switch ( $coupon->get_discount_type() ) {
+			case 'percent':
+				$discount = $subtotal * ( $amount / 100 );
+				break;
+			case 'fixed_cart':
+				$discount = $amount;
+				break;
+			default:
+				$discount = 0.0;
+				break;
+		}
+
+		return (float) wc_format_decimal( min( $subtotal, max( 0, $discount ) ), wc_get_price_decimals() );
+	}
+
+	private function build_headless_checkout_pricing_payload( array $cart, array $checkout ) {
+		$subtotal = $this->calculate_headless_storage_cart_subtotal( $cart );
+		$discount = $this->calculate_headless_coupon_discount( $checkout['coupon_code'] ?? '', $subtotal );
+		$tip = max( 0, (float) wc_format_decimal( $checkout['tip_amount'] ?? 0, wc_get_price_decimals() ) );
+		$total = max( 0, $subtotal - $discount + $tip );
+
+		return array(
+			'subtotal' => $this->api->format_money( $subtotal ),
+			'discount' => $this->api->format_money( $discount ),
+			'tip' => $this->api->format_money( $tip ),
+			'total' => $this->api->format_money( $total ),
+			'coupon_code' => sanitize_text_field( (string) ( $checkout['coupon_code'] ?? '' ) ),
+		);
 	}
 
 	private function create_headless_order_from_storage_cart( array $cart, array $checkout ) {
@@ -2834,6 +3195,11 @@ final class Frankies_Headless_Commerce {
 					$item->add_meta_data( '_frankies_addons', wp_json_encode( array_values( (array) $stored_item['addons'] ) ), true );
 				}
 
+				if ( ! empty( $stored_item['allergies_note'] ) ) {
+					$item->add_meta_data( 'Allergies', sanitize_textarea_field( $stored_item['allergies_note'] ), true );
+					$item->add_meta_data( '_frankies_allergies_note', sanitize_textarea_field( $stored_item['allergies_note'] ), true );
+				}
+
 				$order->add_item( $item );
 			}
 
@@ -2856,7 +3222,10 @@ final class Frankies_Headless_Commerce {
 			$order->update_meta_data( '_frankies_fulfillment_type', $checkout['fulfillment_type'] );
 			$order->update_meta_data( '_frankies_customer_phone', $checkout['mobile_number'] );
 			$order->update_meta_data( '_frankies_estimated_ready_time', $checkout['estimated_ready_time'] );
-			$order->update_meta_data( '_frankies_payment_state', 'deferred' );
+			$order->update_meta_data( '_frankies_payment_state', 'cod' === ( $checkout['payment_method'] ?? '' ) ? 'deferred' : 'pending' );
+			$order->update_meta_data( '_frankies_selected_payment_method', sanitize_key( $checkout['payment_method'] ?? '' ) );
+			$order->update_meta_data( '_frankies_coupon_code', sanitize_text_field( (string) ( $checkout['coupon_code'] ?? '' ) ) );
+			$order->update_meta_data( '_frankies_tip_amount', wc_format_decimal( $checkout['tip_amount'] ?? 0, wc_get_price_decimals() ) );
 
 			if ( 'delivery' === $checkout['fulfillment_type'] && ! empty( $checkout['delivery_method'] ) ) {
 				$shipping_item = new WC_Order_Item_Shipping();
@@ -2867,7 +3236,33 @@ final class Frankies_Headless_Commerce {
 				$order->update_meta_data( '_frankies_delivery_method', sanitize_text_field( $checkout['delivery_method']['id'] ) );
 			}
 
+			if ( ! empty( $checkout['payment_method'] ) ) {
+				$gateways = WC()->payment_gateways()->payment_gateways();
+				if ( ! empty( $gateways[ $checkout['payment_method'] ] ) ) {
+					$order->set_payment_method( $gateways[ $checkout['payment_method'] ] );
+				}
+			}
+
+			$tip_amount = max( 0, (float) wc_format_decimal( $checkout['tip_amount'] ?? 0, wc_get_price_decimals() ) );
+			if ( $tip_amount > 0 ) {
+				$tip_item = new WC_Order_Item_Fee();
+				$tip_item->set_name( 'Tip' );
+				$tip_item->set_total( $tip_amount );
+				$order->add_item( $tip_item );
+			}
+
 			$order->calculate_totals( true );
+
+			if ( ! empty( $checkout['coupon_code'] ) ) {
+				$coupon_result = $order->apply_coupon( $checkout['coupon_code'] );
+
+				if ( is_wp_error( $coupon_result ) ) {
+					return $coupon_result;
+				}
+
+				$order->calculate_totals( true );
+			}
+
 			$saved_order_id = $order->save();
 
 			if ( ! $order->get_id() && $saved_order_id ) {
@@ -3143,7 +3538,6 @@ final class Frankies_Headless_Commerce {
 				'quantity' => (int) $item->get_quantity(),
 				'total' => $this->api->format_money( $item->get_total() + $item->get_total_tax() ),
 				'image' => $image['url'],
-				'image_data' => $image,
 				'selected_options' => $selected_options,
 				'summary_lines' => $this->build_headless_summary_lines( $selected_options ),
 			);
@@ -3170,10 +3564,12 @@ final class Frankies_Headless_Commerce {
 	private function build_headless_order_item_selected_options( WC_Order_Item_Product $item ) {
 		$spice_meta = $this->decode_json_meta( $item->get_meta( '_frankies_spice_level', true ) );
 		$addons_meta = $this->decode_json_meta( $item->get_meta( '_frankies_addons', true ) );
+		$allergies_note = sanitize_textarea_field( (string) $item->get_meta( '_frankies_allergies_note', true ) );
 
 		$selected_options = array(
 			'spice_level' => null,
 			'addons' => array(),
+			'allergies_note' => $allergies_note,
 		);
 
 		if ( ! empty( $spice_meta['label'] ) ) {
@@ -3220,6 +3616,8 @@ final class Frankies_Headless_Commerce {
 	}
 
 	private function build_headless_order_next_actions( WC_Order $order ) {
+		$payment_method = sanitize_key( (string) $order->get_payment_method() );
+
 		return array(
 			array(
 				'type' => 'confirmation',
@@ -3228,10 +3626,91 @@ final class Frankies_Headless_Commerce {
 			),
 			array(
 				'type' => 'payment',
-				'label' => 'Payment method pending client confirmation',
-				'status' => 'deferred',
+				'label' => 'cod' === $payment_method ? 'Pay on pickup or delivery' : 'Payment pending',
+				'status' => 'pending',
 			),
 		);
+	}
+
+	private function get_headless_payment_methods_payload() {
+		if ( ! function_exists( 'WC' ) || ! WC()->payment_gateways() ) {
+			return array();
+		}
+
+		$gateways = WC()->payment_gateways()->payment_gateways();
+		$payload = array();
+
+		foreach ( $gateways as $gateway ) {
+			if ( empty( $gateway->id ) || 'yes' !== $gateway->enabled ) {
+				continue;
+			}
+
+			$payload[] = array(
+				'id' => sanitize_key( $gateway->id ),
+				'type' => $this->map_headless_payment_method_type( $gateway->id ),
+				'label' => wp_strip_all_tags( $gateway->get_title() ),
+				'description' => wp_strip_all_tags( $gateway->get_description() ),
+				'enabled' => true,
+			);
+		}
+
+		return array_values( $payload );
+	}
+
+	private function map_headless_payment_method_type( $gateway_id ) {
+		$gateway_id = sanitize_key( (string) $gateway_id );
+
+		if ( in_array( $gateway_id, array( 'cod', 'cash_on_delivery' ), true ) ) {
+			return 'cash_on_delivery';
+		}
+
+		if ( false !== strpos( $gateway_id, 'upi' ) ) {
+			return 'upi';
+		}
+
+		return 'card';
+	}
+
+	private function get_headless_store_settings() {
+		$pickup_address = sanitize_text_field( (string) get_option( 'frankies_headless_pickup_address', '' ) );
+		if ( '' === $pickup_address ) {
+			$pickup_address = trim(
+				implode(
+					', ',
+					array_filter(
+						array(
+							get_option( 'woocommerce_store_address', '' ),
+							get_option( 'woocommerce_store_city', '' ),
+							get_option( 'woocommerce_store_state', '' ),
+							get_option( 'woocommerce_store_postcode', '' ),
+							get_option( 'woocommerce_default_country', '' ),
+						)
+					)
+				)
+			);
+		}
+
+		$lat = get_option( 'frankies_headless_store_latitude', '' );
+		$lng = get_option( 'frankies_headless_store_longitude', '' );
+
+		return array(
+			'pickup_address' => $pickup_address,
+			'delivery_radius_km' => (float) get_option( 'frankies_headless_delivery_radius_km', 0 ),
+			'store_location' => ( '' !== (string) $lat && '' !== (string) $lng ) ? array(
+				'lat' => (float) $lat,
+				'lng' => (float) $lng,
+			) : null,
+		);
+	}
+
+	private function calculate_haversine_distance_km( $lat1, $lng1, $lat2, $lng2 ) {
+		$earth_radius = 6371.0;
+		$lat_delta = deg2rad( $lat2 - $lat1 );
+		$lng_delta = deg2rad( $lng2 - $lng1 );
+		$a = sin( $lat_delta / 2 ) * sin( $lat_delta / 2 ) + cos( deg2rad( $lat1 ) ) * cos( deg2rad( $lat2 ) ) * sin( $lng_delta / 2 ) * sin( $lng_delta / 2 );
+		$c = 2 * atan2( sqrt( $a ), sqrt( 1 - $a ) );
+
+		return $earth_radius * $c;
 	}
 
 	private function get_or_create_cart_token( WP_REST_Request $request, $create_if_missing ) {

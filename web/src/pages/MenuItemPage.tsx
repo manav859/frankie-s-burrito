@@ -4,6 +4,7 @@ import { QuantityControl } from '../components/ordering/QuantityControl'
 import { OrderEmptyState, OrderErrorState, OrderLoadingState } from '../components/ordering/OrderState'
 import { useCart } from '../features/ordering/cart'
 import { FrankiesHeadlessError, getMenuItem } from '../features/ordering/api'
+import { moneyFromRaw } from '../features/ordering/helpers'
 import type { MenuAddonGroup, MenuItemCard, MenuItemDetail } from '../features/ordering/types'
 import { withBase } from '../lib/base-path'
 import { CmsImage } from '../components/ui/CmsImage'
@@ -14,6 +15,7 @@ export function MenuItemPage({ slug }: { slug: string }) {
   const [quantity, setQuantity] = useState(1)
   const [selectedSpiceLevel, setSelectedSpiceLevel] = useState('')
   const [selectedAddons, setSelectedAddons] = useState<Record<string, string[]>>({})
+  const [allergiesNote, setAllergiesNote] = useState('')
   const [validationError, setValidationError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
@@ -33,6 +35,7 @@ export function MenuItemPage({ slug }: { slug: string }) {
         setQuantity(1)
         setSelectedSpiceLevel(response.spice_options[0]?.key || '')
         setSelectedAddons(Object.fromEntries(response.addon_groups.map((group) => [group.key, []])) as Record<string, string[]>)
+        setAllergiesNote('')
         setValidationError(null)
       } catch (caughtError) {
         if (controller.signal.aborted) {
@@ -130,9 +133,10 @@ export function MenuItemPage({ slug }: { slug: string }) {
 
     for (const group of item.addon_groups) {
       const activeCount = (selectedAddons[group.key] || []).length
+      const minimumRequired = Math.max(group.min, group.required ? 1 : 0)
 
-      if (group.min > 0 && activeCount < group.min) {
-        setValidationError(`Choose at least ${group.min} option${group.min === 1 ? '' : 's'} for ${group.label}.`)
+      if (minimumRequired > 0 && activeCount < minimumRequired) {
+        setValidationError(`Choose at least ${minimumRequired} option${minimumRequired === 1 ? '' : 's'} for ${group.label}.`)
         return false
       }
 
@@ -151,15 +155,47 @@ export function MenuItemPage({ slug }: { slug: string }) {
       return
     }
 
+    const selectedSpice = item.spice_options.find((option) => option.key === selectedSpiceLevel)
+
     setSubmitting(true)
     setError(null)
 
     try {
       await addItem({
         product_id: item.id,
+        slug: item.slug,
+        name: item.name,
+        image: item.image,
+        image_data: item.image_data,
+        base_price: moneyFromRaw(item.base_price),
         quantity,
-        spice_level: selectedSpiceLevel || undefined,
-        addons: Object.values(selectedAddons).flat(),
+        fulfillment_mode: item.fulfillment_mode,
+        spice_level: selectedSpice
+          ? {
+              key: selectedSpice.key,
+              label: selectedSpice.label,
+              price_adjustment: moneyFromRaw(
+                typeof selectedSpice.price_adjustment === 'object'
+                  ? selectedSpice.price_adjustment.raw
+                  : selectedSpice.price_adjustment || 0,
+              ),
+            }
+          : null,
+        selected_add_ons: Object.entries(selectedAddons).flatMap(([groupId, optionIds]) =>
+          optionIds.map((optionId) => {
+            const option = item.addon_groups
+              .find((group) => group.key === groupId)
+              ?.options.find((entry) => entry.key === optionId)
+
+            return {
+              group_id: groupId,
+              option_id: optionId,
+              name: option?.label || optionId,
+              price: option?.price_adjustment || moneyFromRaw(0),
+            }
+          }),
+        ),
+        allergies_note: item.allergens_enabled ? allergiesNote.trim() || undefined : undefined,
       })
       setFlashMessage(`${item.name} added to your cart.`)
     } catch (caughtError) {
@@ -394,6 +430,22 @@ export function MenuItemPage({ slug }: { slug: string }) {
                         </span>
                       ))}
                     </div>
+                  </section>
+                ) : null}
+
+                {item.allergens_enabled ? (
+                  <section className="rounded-[24px] border border-[rgba(106,45,31,0.1)] bg-white p-5">
+                    <div className="font-western text-[26px] text-[var(--cocoa)]">Allergies or dietary notes</div>
+                    <p className="mt-2 text-sm leading-[1.6] text-[var(--muted)]">
+                      Add anything the kitchen should know before this item goes into your cart.
+                    </p>
+                    <textarea
+                      value={allergiesNote}
+                      onChange={(event) => setAllergiesNote(event.target.value)}
+                      rows={4}
+                      placeholder="Example: no dairy, peanut allergy, gluten sensitive"
+                      className="mt-4 w-full rounded-[18px] border border-[rgba(106,45,31,0.14)] bg-[var(--paper)] px-4 py-3 text-sm leading-[1.6] text-[var(--cocoa)] outline-none transition focus:border-[var(--red)]"
+                    />
                   </section>
                 ) : null}
 

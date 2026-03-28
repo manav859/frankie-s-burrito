@@ -11,7 +11,7 @@
       "mobileImage": "/wp-content/uploads/2026/03/home.jpeg",
       "primaryCta": {
         "label": "Order Online",
-        "href": "/order",
+        "href": "/menu",
         "variant": "primary"
       },
       "secondaryCta": {
@@ -94,7 +94,7 @@
       "footerNote": "Open live ordering for modifiers and full details.",
       "footerCta": {
         "label": "Order Online",
-        "href": "/order",
+        "href": "/menu",
         "variant": "primary"
       }
     },
@@ -155,10 +155,10 @@
         "Mo-Su 08:00-15:00"
       ],
       "ordering": "Pickup, delivery, and catering can be managed through the online ordering page.",
-      "orderUrl": "/order",
+      "orderUrl": "/menu",
       "primaryCta": {
         "label": "Order Online",
-        "href": "/order",
+        "href": "/menu",
         "variant": "primary"
       },
       "secondaryCta": {
@@ -182,7 +182,7 @@
       "body": "Use this final section to push directly into the live ordering flow.",
       "primaryCta": {
         "label": "Order Now",
-        "href": "/order",
+        "href": "/menu",
         "variant": "light"
       },
       "secondaryCta": {
