@@ -30,7 +30,7 @@ export function DesktopHero({
           <CmsImage
             src={content.hero.backgroundImage}
             media={content.hero.backgroundImageMedia}
-            alt={content.hero.title}
+            alt={content.siteLogoAlt || content.siteName}
             className="h-full w-full object-cover"
             sizes="100vw"
             priority
@@ -86,13 +86,8 @@ export function DesktopHero({
 
       <div ref={heroReveal.ref} className="relative z-10 mx-auto flex w-full max-w-[1440px] flex-1 items-center justify-center px-16 pb-14 pt-6">
         <div className="w-full max-w-[1100px] rounded-[28px] px-6 py-6 text-center">
-          <div className={['mask-reveal', heroReveal.visible || prefersReducedMotion ? 'is-visible' : ''].join(' ')}>
-            <h1 className="mask-reveal-inner whitespace-pre-line font-western text-[56px] leading-[1.05] tracking-normal text-[var(--cream)] md:text-[76px] md:leading-[1.1]">
-              {content.hero.title}
-            </h1>
-          </div>
-          <Reveal reducedMotion={prefersReducedMotion} visible={heroReveal.visible} delay={300}>
-            <div className="mt-6 flex items-center justify-center gap-4">
+          <Reveal reducedMotion={prefersReducedMotion} visible={heroReveal.visible} delay={120}>
+            <div className="flex items-center justify-center gap-4">
               <Button cta={content.hero.primaryCta} attention />
               <Button cta={content.hero.secondaryCta} />
             </div>

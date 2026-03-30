@@ -17,19 +17,19 @@ export function MobileMenu({
   return (
     <div
       className={[
-        'pointer-events-none absolute inset-0 z-50 bg-[rgba(31,25,21,0.35)] transition-opacity duration-300',
+        'pointer-events-none fixed inset-0 z-[60] bg-[rgba(31,25,21,0.35)] transition-opacity duration-300',
         open ? 'pointer-events-auto opacity-100' : 'opacity-0',
       ].join(' ')}
     >
       <div
         className={[
-          'ml-auto flex h-full w-[85%] max-w-[320px] flex-col bg-[var(--paper)] px-6 py-6 shadow-[-24px_0_40px_rgba(0,0,0,0.18)] transition-transform duration-300',
+          'ml-auto flex h-full w-[88vw] max-w-[340px] flex-col overflow-y-auto bg-[var(--paper)] px-4 py-5 shadow-[-24px_0_40px_rgba(0,0,0,0.18)] transition-transform duration-300 min-[380px]:px-6 min-[380px]:py-6',
           open ? 'translate-x-0' : 'translate-x-full',
           prefersReducedMotion ? 'duration-0' : '',
         ].join(' ')}
-      >
-        <div className="flex items-center justify-between">
-          <BrandMark content={content} className="max-h-12 w-auto object-contain" />
+        >
+        <div className="flex items-center justify-between gap-3">
+          <BrandMark content={content} className="block h-auto max-h-10 w-auto max-w-full object-contain min-[380px]:max-h-12" />
           <button type="button" onClick={onClose} className="rounded-full p-2 text-[var(--brick)] transition-transform hover:rotate-90">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="6" x2="6" y2="18" />

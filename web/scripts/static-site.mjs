@@ -150,7 +150,6 @@ function renderHomepageMarkup(bootstrap) {
       <header id="top">
         <nav>${renderNavigation(content.navigation)}</nav>
         <p>${escapeHtml(content.announcement)}</p>
-        <h1>${escapeHtml(content.hero.title)}</h1>
         <p>${escapeHtml(content.siteTagline)}</p>
       </header>
       <section id="featured">

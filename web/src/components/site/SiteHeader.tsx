@@ -41,9 +41,12 @@ export function SiteHeader({
           isScrolled ? 'bg-white shadow-[0_10px_30px_rgba(31,31,31,0.10)]' : 'bg-[rgba(255,255,255,0.92)] backdrop-blur',
         ].join(' ')}
       >
-        <div className="mx-auto flex w-full max-w-[1440px] items-center justify-between px-2 py-3 sm:px-4 md:px-16 md:py-4">
-          <a href={withBase('/')} className="block">
-            <BrandMark content={content} className="max-h-11 w-auto object-contain sm:max-h-12 md:max-h-14" />
+        <div className="mx-auto flex w-full max-w-[1440px] items-center justify-between gap-2 px-3 py-3 min-[380px]:gap-3 min-[380px]:px-4 md:px-16 md:py-4">
+          <a href={withBase('/')} className="block min-w-0 flex-1 pr-1 min-[380px]:pr-2 md:flex-none md:pr-0">
+            <BrandMark
+              content={content}
+              className="block h-auto max-h-10 w-auto max-w-full object-contain min-[380px]:max-h-11 sm:max-h-12 md:max-h-14 md:max-w-none"
+            />
           </a>
 
           <nav className="hidden items-center gap-6 text-[15px] font-medium text-[var(--ink)] md:flex">
@@ -67,10 +70,10 @@ export function SiteHeader({
             <Button cta={content.hero.primaryCta} />
           </nav>
 
-          <div className="flex items-center gap-2 md:hidden">
+          <div className="flex shrink-0 items-center gap-1.5 min-[380px]:gap-2 md:hidden">
             <a
               href={withBase('/cart')}
-              className="relative inline-flex h-10 min-w-10 items-center justify-center rounded-[12px] border border-[rgba(31,31,31,0.08)] bg-white px-2.5 text-xs font-semibold text-[var(--ink)] sm:h-11 sm:min-w-11 sm:px-3 sm:text-sm"
+              className="relative inline-flex h-10 min-w-[44px] shrink-0 items-center justify-center rounded-[12px] border border-[rgba(31,31,31,0.08)] bg-white px-2 text-[11px] font-semibold text-[var(--ink)] min-[360px]:px-2.5 min-[380px]:h-11 min-[380px]:min-w-11 min-[380px]:px-3 min-[380px]:text-sm"
               aria-label={`Cart with ${cartCount} item${cartCount === 1 ? '' : 's'}`}
             >
               Cart
@@ -84,7 +87,7 @@ export function SiteHeader({
               type="button"
               aria-label="Open menu"
               onClick={() => setMenuOpen(true)}
-              className="flex h-10 w-10 flex-col items-center justify-center gap-1 rounded-[12px] sm:h-11 sm:w-11"
+              className="flex h-10 w-10 shrink-0 flex-col items-center justify-center gap-1 rounded-[12px] min-[380px]:h-11 min-[380px]:w-11"
             >
               <span className="h-0.5 w-5 rounded-full bg-[var(--ink)]" />
               <span className="h-0.5 w-5 rounded-full bg-[var(--ink)]" />

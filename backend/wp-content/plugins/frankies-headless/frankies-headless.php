@@ -1248,6 +1248,7 @@ final class Frankies_Headless_Plugin {
 		$hero = $settings['hero'];
 		$hero['backgroundImage'] = $this->normalize_public_url( $hero['backgroundImage'], $site_url );
 		$hero['mobileImage'] = $this->normalize_public_url( $hero['mobileImage'], $site_url );
+		unset( $hero['title'] );
 		$about = $settings['about'];
 		$about['image'] = $this->normalize_public_url( $about['image'], $site_url );
 		$proof = $settings['proof'];
@@ -1352,6 +1353,7 @@ final class Frankies_Headless_Plugin {
 		$hero = $settings['hero'];
 		$hero['backgroundImage'] = $this->normalize_public_url( $hero['backgroundImage'], $site_url );
 		$hero['mobileImage'] = $this->normalize_public_url( $hero['mobileImage'], $site_url );
+		unset( $hero['title'] );
 		$about = $settings['about'];
 		$about['image'] = $this->normalize_public_url( $about['image'], $site_url );
 		$proof = $settings['proof'];
@@ -2289,7 +2291,6 @@ final class Frankies_Headless_Plugin {
 				array( 'label' => 'Location', 'href' => '#location' ),
 			),
 			'hero'          => array(
-				'title'           => "FRANKIE'S\nBREAKFAST BURRITOS",
 				'backgroundImage' => '',
 				'mobileImage'     => '',
 				'primaryCta'      => array( 'label' => 'Order Online', 'href' => '/order', 'variant' => 'primary' ),
@@ -2434,7 +2435,6 @@ final class Frankies_Headless_Plugin {
 			'site.logoLightUrl'                 => array( 'label' => 'Site logo image URL for transparent/dark navbar', 'type' => 'url' ),
 			'site.logoAlt'                      => array( 'label' => 'Site logo alt text', 'type' => 'text' ),
 			'navigation'                        => array( 'label' => 'Navigation JSON fallback', 'type' => 'json', 'help' => 'Used only if no Primary Navigation menu is assigned under Appearance > Menus.' ),
-			'hero.title'                        => array( 'label' => 'Hero title', 'type' => 'textarea' ),
 			'hero.backgroundImage'              => array( 'label' => 'Hero desktop image URL', 'type' => 'url' ),
 			'hero.mobileImage'                  => array( 'label' => 'Hero mobile image URL', 'type' => 'url' ),
 			'hero.primaryCta.label'             => array( 'label' => 'Hero primary CTA label', 'type' => 'text' ),

@@ -42,7 +42,6 @@ export type SiteContent = {
   siteLogoMedia?: ResponsiveImageAsset
   siteLogoLightMedia?: ResponsiveImageAsset
   hero: {
-    title: string
     backgroundImage: string
     mobileImage: string
     backgroundImageMedia?: ResponsiveImageAsset
