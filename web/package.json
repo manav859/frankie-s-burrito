@@ -8,7 +8,8 @@
     "sync:wordpress": "node ./scripts/sync-wordpress.mjs",
     "build:static": "node ./scripts/static-site.mjs",
     "build": "npm run sync:wordpress && tsc && vite build",
-    "preview": "vite preview"
+    "preview": "npm run build && wrangler dev",
+    "deploy": "npm run build && wrangler deploy"
   },
   "dependencies": {
     "react": "^19.2.4",
@@ -16,6 +17,7 @@
     "zustand": "^5.0.12"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.31.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
@@ -23,6 +25,7 @@
     "postcss": "^8.5.8",
     "tailwindcss": "^3.4.17",
     "typescript": "~5.9.3",
-    "vite": "^8.0.1"
+    "vite": "^8.0.1",
+    "wrangler": "^4.80.0"
   }
 }
