@@ -7,6 +7,7 @@ import { Button } from '../ui/Button'
 import { Reveal, useReveal } from '../ui/Reveal'
 import { CmsImage } from '../ui/CmsImage'
 import { resolveAppHref } from '../../lib/routes'
+import { useMediaQuery } from '../../lib/hooks'
 
 export function DesktopHero({
   content,
@@ -21,7 +22,7 @@ export function DesktopHero({
   const floatRef1 = useFloatingAccent(10, 5000, 0)
   const floatRef2 = useFloatingAccent(7, 4200, 1400)
   const floatRef3 = useFloatingAccent(9, 4800, 2800)
-  const shouldLoadDesktopHero = typeof window === 'undefined' || window.matchMedia('(min-width: 768px)').matches
+  const shouldLoadDesktopHero = useMediaQuery('(min-width: 768px)')
   const desktopHeroImage = content.hero.backgroundImage || content.hero.mobileImage
   const desktopHeroMedia = content.hero.backgroundImageMedia ?? content.hero.mobileImageMedia
 

@@ -6,6 +6,7 @@ import { Button } from '../ui/Button'
 import { MobileMenu } from '../site/MobileMenu'
 import { CowboyRider } from './DecorativeIcons'
 import { CmsImage } from '../ui/CmsImage'
+import { useMediaQuery } from '../../lib/hooks'
 
 export function MobileHero({
   content,
@@ -17,7 +18,7 @@ export function MobileHero({
   prefersReducedMotion: boolean
 }) {
   const [menuOpen, setMenuOpen] = useState(false)
-  const shouldLoadMobileHero = typeof window === 'undefined' || window.matchMedia('(max-width: 767px)').matches
+  const shouldLoadMobileHero = useMediaQuery('(max-width: 767px)')
   const mobileHeroImage = content.hero.mobileImage || content.hero.backgroundImage
   const mobileHeroMedia = content.hero.mobileImageMedia ?? content.hero.backgroundImageMedia
 
