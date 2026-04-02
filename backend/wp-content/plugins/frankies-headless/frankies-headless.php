@@ -32,6 +32,11 @@ final class Frankies_Headless_Plugin {
 	 */
 	private $commerce = null;
 
+	/**
+	 * @var string
+	 */
+	private $admin_page_hook = '';
+
 	public static function instance() {
 		if ( null === self::$instance ) {
 			self::$instance = new self();
@@ -58,6 +63,7 @@ final class Frankies_Headless_Plugin {
 		add_action( 'admin_menu', array( $this, 'rename_posts_admin_menu' ), 20 );
 		add_action( 'admin_menu', array( $this, 'cleanup_admin_menu' ), 99 );
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
 		add_action( 'admin_init', array( $this, 'configure_headless_runtime' ) );
 		add_action( 'add_meta_boxes', array( $this, 'register_meta_boxes' ) );
 		add_action( 'save_post_menu_item', array( $this, 'save_menu_item_meta' ) );
@@ -934,7 +940,7 @@ final class Frankies_Headless_Plugin {
 	}
 
 	public function register_admin_page() {
-		add_menu_page(
+		$this->admin_page_hook = add_menu_page(
 			'Headless Settings',
 			'Headless Settings',
 			'manage_options',
@@ -942,6 +948,23 @@ final class Frankies_Headless_Plugin {
 			array( $this, 'render_admin_page' ),
 			'dashicons-rest-api',
 			59
+		);
+	}
+
+	public function enqueue_admin_assets( $hook_suffix ) {
+		if ( $hook_suffix !== $this->admin_page_hook ) {
+			return;
+		}
+
+		$script_path = plugin_dir_path( __FILE__ ) . 'assets/admin-media.js';
+
+		wp_enqueue_media();
+		wp_enqueue_script(
+			'frankies-headless-admin-media',
+			plugin_dir_url( __FILE__ ) . 'assets/admin-media.js',
+			array(),
+			file_exists( $script_path ) ? filemtime( $script_path ) : self::PLUGIN_VERSION,
+			true
 		);
 	}
 
@@ -966,7 +989,7 @@ final class Frankies_Headless_Plugin {
 
 			if ( 'boolean' === $field['type'] ) {
 				$value = ! empty( $value );
-			} elseif ( 'url' === $field['type'] ) {
+			} elseif ( in_array( $field['type'], array( 'url', 'media' ), true ) ) {
 				$value = esc_url_raw( (string) $value );
 			} elseif ( 'json' === $field['type'] ) {
 				$decoded = json_decode( wp_unslash( (string) $value ), true );
@@ -1041,9 +1064,49 @@ final class Frankies_Headless_Plugin {
 			return;
 		}
 
+		if ( 'media' === $field['type'] ) {
+			$this->render_media_field_control( $path, $field, $name, $id, $value );
+			return;
+		}
+
 		$type = 'url' === $field['type'] ? 'url' : 'text';
 		?>
 		<input class="regular-text" type="<?php echo esc_attr( $type ); ?>" id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $name ); ?>" value="<?php echo esc_attr( (string) $value ); ?>" />
+		<?php
+	}
+
+	private function render_media_field_control( $path, $field, $name, $id, $value ) {
+		$has_value = ! empty( $value );
+		$preview_style = $has_value ? 'margin-top:12px;' : 'margin-top:12px;display:none;';
+		$remove_style = $has_value ? 'margin-left:8px;' : 'margin-left:8px;display:none;';
+		?>
+		<div
+			class="frankies-media-field"
+			data-field-path="<?php echo esc_attr( $path ); ?>"
+			data-media-title="<?php echo esc_attr( sprintf( 'Select %s', strtolower( $field['label'] ) ) ); ?>"
+			data-media-button-label="<?php echo esc_attr__( 'Use image', 'frankies-headless' ); ?>"
+		>
+			<input
+				class="regular-text code frankies-media-field__input"
+				type="url"
+				id="<?php echo esc_attr( $id ); ?>"
+				name="<?php echo esc_attr( $name ); ?>"
+				value="<?php echo esc_attr( (string) $value ); ?>"
+			/>
+			<p class="description">Upload or select an image from the WordPress media library, or paste an image URL.</p>
+			<p>
+				<button type="button" class="button button-secondary frankies-media-field__select"><?php esc_html_e( 'Select image', 'frankies-headless' ); ?></button>
+				<button type="button" class="button-link-delete frankies-media-field__remove" style="<?php echo esc_attr( $remove_style ); ?>"><?php esc_html_e( 'Remove image', 'frankies-headless' ); ?></button>
+			</p>
+			<div class="frankies-media-field__preview" style="<?php echo esc_attr( $preview_style ); ?>">
+				<img
+					class="frankies-media-field__preview-image"
+					src="<?php echo esc_url( (string) $value ); ?>"
+					alt=""
+					style="display:block;max-width:320px;height:auto;border-radius:8px;"
+				/>
+			</div>
+		</div>
 		<?php
 	}
 
@@ -2435,8 +2498,8 @@ final class Frankies_Headless_Plugin {
 			'site.logoLightUrl'                 => array( 'label' => 'Site logo image URL for transparent/dark navbar', 'type' => 'url' ),
 			'site.logoAlt'                      => array( 'label' => 'Site logo alt text', 'type' => 'text' ),
 			'navigation'                        => array( 'label' => 'Navigation JSON fallback', 'type' => 'json', 'help' => 'Used only if no Primary Navigation menu is assigned under Appearance > Menus.' ),
-			'hero.backgroundImage'              => array( 'label' => 'Hero desktop image URL', 'type' => 'url' ),
-			'hero.mobileImage'                  => array( 'label' => 'Hero mobile image URL', 'type' => 'url' ),
+			'hero.backgroundImage'              => array( 'label' => 'Hero desktop background image', 'type' => 'media' ),
+			'hero.mobileImage'                  => array( 'label' => 'Hero mobile background image', 'type' => 'media' ),
 			'hero.primaryCta.label'             => array( 'label' => 'Hero primary CTA label', 'type' => 'text' ),
 			'hero.primaryCta.href'              => array( 'label' => 'Hero primary CTA href', 'type' => 'text' ),
 			'hero.primaryCta.variant'           => array( 'label' => 'Hero primary CTA variant', 'type' => 'text' ),

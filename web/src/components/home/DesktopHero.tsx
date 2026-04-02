@@ -22,14 +22,16 @@ export function DesktopHero({
   const floatRef2 = useFloatingAccent(7, 4200, 1400)
   const floatRef3 = useFloatingAccent(9, 4800, 2800)
   const shouldLoadDesktopHero = typeof window === 'undefined' || window.matchMedia('(min-width: 768px)').matches
+  const desktopHeroImage = content.hero.backgroundImage || content.hero.mobileImage
+  const desktopHeroMedia = content.hero.backgroundImageMedia ?? content.hero.mobileImageMedia
 
   return (
     <section className="relative hidden min-h-[100dvh] flex-col overflow-hidden md:flex">
-      {shouldLoadDesktopHero && content.hero.backgroundImage ? (
+      {shouldLoadDesktopHero && desktopHeroImage ? (
         <div className="absolute inset-0">
           <CmsImage
-            src={content.hero.backgroundImage}
-            media={content.hero.backgroundImageMedia}
+            src={desktopHeroImage}
+            media={desktopHeroMedia}
             alt={content.siteLogoAlt || content.siteName}
             className="h-full w-full object-cover"
             sizes="100vw"

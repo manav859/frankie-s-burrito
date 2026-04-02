@@ -18,6 +18,8 @@ export function MobileHero({
 }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const shouldLoadMobileHero = typeof window === 'undefined' || window.matchMedia('(max-width: 767px)').matches
+  const mobileHeroImage = content.hero.mobileImage || content.hero.backgroundImage
+  const mobileHeroMedia = content.hero.mobileImageMedia ?? content.hero.backgroundImageMedia
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : ''
@@ -29,11 +31,11 @@ export function MobileHero({
 
   return (
     <section className="relative flex min-h-[100dvh] flex-col items-center justify-center md:hidden">
-      {shouldLoadMobileHero && content.hero.mobileImage ? (
+      {shouldLoadMobileHero && mobileHeroImage ? (
         <div className="absolute inset-0">
           <CmsImage
-            src={content.hero.mobileImage}
-            media={content.hero.mobileImageMedia}
+            src={mobileHeroImage}
+            media={mobileHeroMedia}
             alt={content.siteLogoAlt || content.siteName}
             className="h-full w-full object-cover"
             sizes="100vw"
